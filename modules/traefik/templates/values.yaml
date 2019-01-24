@@ -3,7 +3,7 @@ imageTag: ${image_tag}
 
 serviceType: ${service_type}
 loadBalancerIP: "${external_static_ip}"
-loadBalancerSourceRanges:  ${jsonencode(external_lb_cidr)}
+loadBalancerSourceRanges:  ${external_lb_cidr}
 # whiteListSourceRange: []
 externalTrafficPolicy: ${external_traffic_policy}
 replicas: ${replicas}
@@ -34,22 +34,22 @@ deploymentStrategy: {}
   #   maxUnavailable: 0
   # type: RollingUpdate
 
-nodeSelector: ${jsonencode(node_selector)}
+nodeSelector: ${node_selector}
 
-affinity: ${jsonencode(affinity)}
+affinity: ${affinity}
 
 tolerations: []
 # - key: "key"
 #   operator: "Equal|Exists"
 #   value: "value"
 #   effect: "NoSchedule|PreferNoSchedule|NoExecute(1.6 only)"
+
 ## Kubernetes ingress filters
-# kubernetes:
+kubernetes:
   # endpoint:
-  # namespaces:
-  # - default
-  # labelSelector:
-  # ingressClass:
+  namespaces: ${namespaces}
+  labelSelector: ${jsonencode(label_selector)}
+  ingressClass: "${ingress_class}"
   # ingressEndpoint:
   #   hostname: "localhost"
   #   ip: "127.0.0.1"
@@ -188,8 +188,8 @@ dashboard:
     ## Number of recent errors to show in the ‘Health’ tab
     # recentErrors:
 service:
-  annotations: ${jsonencode(service_annotations)}
-  labels: ${jsonencode(service_labels)}
+  annotations: ${service_annotations}
+  labels: ${service_labels}
 
   ## Further config for service of type NodePort
   ## Default config with empty string "" will assign a dynamic
@@ -231,8 +231,8 @@ metrics:
     # buckets: [0.1,0.3,1.2,5]
 
 deployment:
-  podLabels: ${jsonencode(pod_labels)}
-  podAnnotations: ${jsonencode(pod_annotations)}
+  podLabels: ${pod_labels}
+  podAnnotations: ${pod_annotations}
   hostPort:
     httpEnabled: false
     httpsEnabled: false

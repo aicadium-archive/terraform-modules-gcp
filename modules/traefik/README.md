@@ -5,7 +5,7 @@ Deploys a [Traefik](https://traefik.io/)
 on GCP.
 
 The Kubernetes cluster can be managed
-(i.e. [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/)) or not.
+(i.e. [Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine/)) or not.
 
 ## Requirements
 
@@ -18,6 +18,21 @@ You will need to have the following configured on your machine:
 
 - Credentials for GCP
 - Credentials for Kubernetes configured for `kubectl`
+
+### GKE RBAC
+
+If you are using GKE and have configured `kuebctl` with credentials using
+`gcloud container clusters get-credentials [CLUSTER_NAME]` only, your account in Kubernetes might
+not have the necessary rights to deploy this Helm chart. You can
+[give](https://cloud.google.com/kubernetes-engine/docs/how-to/role-based-access-control#prerequisites_for_using_role-based_access_control)
+yourself the necessary rights by running
+
+```bash
+kubectl create clusterrolebinding cluster-admin-binding \
+    --clusterrole cluster-admin --user [USER_ACCOUNT]
+```
+
+where `[USER_ACCOUNT]` is your email address.
 
 ## Provisioned Resources
 

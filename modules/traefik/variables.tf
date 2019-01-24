@@ -9,6 +9,7 @@ variable "internal_static_ip_name" {
 
 variable "internal_static_ip_subnetwork" {
   description = "The URL of the subnetwork in which to reserve the internal static address"
+  default     = ""
 }
 
 variable "release_name" {
@@ -29,6 +30,11 @@ variable "chart_repository" {
 variable "chart_version" {
   description = "Version of Chart to install. Set to empty to install the latest version"
   default     = "1.59.2"
+}
+
+variable "chart_namespace" {
+  description = "Namespace to install the chart into"
+  default     = "kube-system"
 }
 
 variable "traefik_image_name" {
@@ -88,6 +94,7 @@ variable "node_selector" {
 
 variable "affinity" {
   description = "Affinity settings"
+  default     = {}
 }
 
 variable "service_annotations" {
@@ -113,4 +120,19 @@ variable "pod_labels" {
 variable "rbac_enabled" {
   description = "Whether to enable RBAC with a specific cluster role and binding for Traefik"
   default     = "true"
+}
+
+variable "namespaces" {
+  description = "List of Kubernetes namespaces to watch"
+  default     = ["default"]
+}
+
+variable "label_selector" {
+  description = "Valid Kubernetes ingress label selector to watch"
+  default     = ""
+}
+
+variable "ingress_class" {
+  description = "Value of kubernetes.io/ingress.class annotation to watch - must start with traefik if set"
+  default     = "traefik"
 }
