@@ -1,0 +1,109 @@
+# Consul
+
+Deploys a [Consul](https://www.consul.io/) cluster on Kubernetes cluster running on GCP. This module
+makes use of the official Hashicorp [Helm Chart](https://www.consul.io/docs/platform/k8s/helm.html).
+
+For more information regarding Consul's integration with Kubernetes, see the
+[documentation](https://www.consul.io/docs/platform/k8s/index.html).
+
+## Requirements
+
+You will need to have the following resources available:
+
+- A Kubernetes cluster, managed by GKE, or not
+- [Helm](https://helm.sh/) with Tiller running on the Cluster or you can opt to run
+    [Tiller locally](https://docs.helm.sh/using_helm/#running-tiller-locally)
+
+You will need to have the following configured on your machine:
+
+- Credentials for GCP
+- Credentials for Kubernetes configured for `kubectl`
+
+### GKE RBAC
+
+If you are using GKE and have configured `kuebctl` with credentials using
+`gcloud container clusters get-credentials [CLUSTER_NAME]` only, your account in Kubernetes might
+not have the necessary rights to deploy this Helm chart. You can
+[give](https://cloud.google.com/kubernetes-engine/docs/how-to/role-based-access-control#prerequisites_for_using_role-based_access_control)
+yourself the necessary rights by running
+
+```bash
+kubectl create clusterrolebinding cluster-admin-binding \
+    --clusterrole cluster-admin --user [USER_ACCOUNT]
+```
+
+where `[USER_ACCOUNT]` is your email address.
+
+## Provisioned Resources
+
+## Usage
+
+### Consul Server Persistent Volumes
+
+The Consul servers are deployed with
+[persistent volumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/) in a
+[`StatefulSet`](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/).
+
+If you are running your own cluster in GCP, you will have to define your own set of storage classes.
+Since the cluster is on GCP, you can make use of the
+[`GCE PD` provisioner](https://kubernetes.io/docs/concepts/storage/storage-classes/#gce-pd).
+
+The default [Storage Class](https://kubernetes.io/docs/concepts/storage/storage-classes/) for GKE
+uses
+[standard hard disks](https://cloud.google.com/kubernetes-engine/docs/concepts/persistent-volumes#storageclasses).
+
+You can use the
+[`kubernetes_storage_class`](https://www.terraform.io/docs/providers/kubernetes/r/storage_class.html)
+Terraform resource to create a new `StorageClass`.
+
+### Consul Server Resources
+
+You might want to refer to HashiCorp's [guide](https://www.consul.io/docs/guides/performance.html)
+and [summary](https://learn.hashicorp.com/consul/advanced/day-1-operations/reference-architecture)
+on considering the resources needed for your Consul servers.
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+| chart\_name | Helm chart name to provision | string | `"https://github.com/basisai/consul-helm/archive/extensions.tar.gz"` | no |
+| chart\_namespace | Namespace to install the chart into | string | `"default"` | no |
+| chart\_repository | Helm repository for the chart | string | `""` | no |
+| chart\_version | Version of Chart to install. Set to empty to install the latest version | string | `""` | no |
+| client\_cpu\_limit | CPU limit for client agent pods | string | `"1000m"` | no |
+| client\_cpu\_request | CPU request for client agent pods | string | `"250m"` | no |
+| client\_enabled | Enable running Consul client agents on every Kubernetes node | string | `"true"` | no |
+| client\_extra\_config | Additional configuration to include for client agents | map | `<map>` | no |
+| client\_extra\_volumes | List of map of extra volumes specification. See https://www.consul.io/docs/platform/k8s/helm.html#v-client-extravolumes for the keys | list | `<list>` | no |
+| client\_memory\_limit | Memory limit for client agent pods | string | `"2Gi"` | no |
+| client\_memory\_request | Memory request for client agent pods | string | `"1Gi"` | no |
+| connect\_inject\_by\_default | If true, the injector will inject the Connect sidecar into all pods by default. Otherwise, pods must specify the injection annotation to opt-in to Connect injection. If this is true, pods can use the same annotation to explicitly opt-out of injection. | string | `"false"` | no |
+| connect\_inject\_namespace\_selector | A selector for restricting injection to only matching namespaces. By default all namespaces except the system namespace will have injection enabled. | string | `""` | no |
+| consul\_domain | Top level Consul domain for DNS queries | string | `"consul"` | no |
+| consul\_image\_name | Docker Image of Consul to run | string | `"consul"` | no |
+| consul\_image\_tag | Docker image tag of Consul to run | string | `"1.4.1"` | no |
+| consul\_k8s\_image | Docker image of the consul-k8s binary to run | string | `"hashicorp/consul-k8s"` | no |
+| consul\_k8s\_tag | Image tag of the consul-k8s binary to run | string | `"0.4.0"` | no |
+| enable\_connect\_inject | Enable Connect Injector process | string | `"false"` | no |
+| enable\_sync\_catalog | Enable Service catalog sync: https://www.consul.io/docs/platform/k8s/service-sync.html | string | `"true"` | no |
+| enable\_ui | Enable Consul UI | string | `"false"` | no |
+| release\_name | Helm release name for Consul | string | `"consul"` | no |
+| server\_cpu\_limit | CPU limit for server pods | string | `"2000m"` | no |
+| server\_cpu\_request | CPU request for server pods | string | `"500m"` | no |
+| server\_extra\_config | Additional configuration to include for servers | map | `<map>` | no |
+| server\_extra\_volumes | List of map of extra volumes specification for server pods. See https://www.consul.io/docs/platform/k8s/helm.html#v-server-extravolumes for the keys | list | `<list>` | no |
+| server\_memory\_limit | Memory limit for server pods | string | `"4Gi"` | no |
+| server\_memory\_request | Memory request for server pods | string | `"2Gi"` | no |
+| server\_replicas | Number of server replicas to run | string | `"5"` | no |
+| server\_storage | This defines the disk size for configuring the servers' StatefulSet storage. For dynamically provisioned storage classes, this is the desired size. For manually defined persistent volumes, this should be set to the disk size of the attached volume. | string | `"10Gi"` | no |
+| server\_storage\_class | The StorageClass to use for the servers' StatefulSet storage. It must be able to be dynamically provisioned if you want the storage to be automatically created. For example, to use Local storage classes, the PersistentVolumeClaims would need to be manually created. An empty value will use the Kubernetes cluster's default StorageClass. | string | `""` | no |
+| sync\_by\_default | If true, all valid services in K8S are synced by default. If false, the service must be annotated properly to sync. In either case an annotation can override the default. | string | `"true"` | no |
+| sync\_cluster\_ip\_services | If true, will sync Kubernetes ClusterIP services to Consul. This can be disabled to have the sync ignore ClusterIP-type services. | string | `"true"` | no |
+| sync\_k8s\_prefix | A prefix to prepend to all services registered in Kubernetes from Consul. This defaults to '' where no prefix is prepended; Consul services are synced with the same name to Kubernetes. (Consul -> Kubernetes sync only) | string | `""` | no |
+| sync\_k8s\_tag | An optional tag that is applied to all of the Kubernetes services that are synced into Consul. If nothing is set, this defaults to 'k8s'. (Kubernetes -> Consul sync only) | string | `"k8s"` | no |
+| sync\_node\_port\_type | Configures the type of syncing that happens for NodePort services. The only valid options are: ExternalOnly, InternalOnly, and ExternalFirst. ExternalOnly will only use a node's ExternalIP address for the sync, otherwise the service will not be synced. InternalOnly uses the node's InternalIP address. ExternalFirst will preferentially use the node's ExternalIP address, but if it doesn't exist, it will use the node's InternalIP address instead. | string | `""` | no |
+| sync\_to\_consul | If true, will sync Kubernetes services to Consul. This can be disabled to have a one-way sync. | string | n/a | yes |
+| sync\_to\_k8s | If true, will sync Consul services to Kubernetes. This can be disabled to have a one-way sync. | string | `"true"` | no |
+| ui\_additional\_spec | Additional Spec for the UI service | string | `""` | no |
+| ui\_annotations | UI service annotations | string | `""` | no |
+| ui\_service\_type | Type of service for Consul UI | string | `"ClusterIP"` | no |
