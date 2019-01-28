@@ -27,5 +27,4 @@ resource "kubernetes_config_map" "consul_dns" {
 { "consul": ["${data.kubernetes_service.consul_dns.spec.0.cluster_ip}"] }
 EOF
   }
-
 }
