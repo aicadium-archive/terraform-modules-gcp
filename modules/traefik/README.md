@@ -12,7 +12,8 @@ The Kubernetes cluster can be managed
 You will need to have the following resources available:
 
 - A Kubernetes cluster, managed by GKE, or not
-- [Helm](https://helm.sh/) with Tiller running locally or on the Cluster
+- [Helm](https://helm.sh/) with Tiller running on the Cluster or you can opt to run
+    [Tiller locally](https://docs.helm.sh/using_helm/#running-tiller-locally)
 
 You will need to have the following configured on your machine:
 

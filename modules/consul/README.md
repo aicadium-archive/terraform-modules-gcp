@@ -62,6 +62,35 @@ You might want to refer to HashiCorp's [guide](https://www.consul.io/docs/guides
 and [summary](https://learn.hashicorp.com/consul/advanced/day-1-operations/reference-architecture)
 on considering the resources needed for your Consul servers.
 
+### Configuring Consul DNS
+
+You can configure Consul to act as the
+[DNS resolver](https://www.consul.io/docs/platform/k8s/dns.html) for `.consul` domains. By default,
+this module does not attempt to do so manually because there is no good way to append to any
+existing `kube-dns` or `CoreDNS` configuration. If you would like to do so, you can set the
+`configure_kube_dns` to `true` to **overwrite** any existing `kube-dns` configuration.
+
+#### Error Configuring `kube-dns`
+
+If you get the error:
+
+```text
+1 error(s) occurred:
+
+* module.consul.kubernetes_config_map.consul_dns: 1 error(s) occurred:
+
+* kubernetes_config_map.consul_dns: configmaps "kube-dns" already exists
+
+```
+
+You have an existing `kube-dns` configuration. Use
+`kubectl describe configMap -n kube-system kube-dns` to see the existing configuration. You can
+append to it using the documentation [here](https://www.consul.io/docs/platform/k8s/dns.html).
+
+Alternatively, if the configuration is empty, you can delete it with
+`kubectl delete configMap -n kube-system kube-dns`, set variable `configure_kube_dns` to `true`
+and let this module manage the configuration.
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |

@@ -202,3 +202,8 @@ variable "connect_inject_namespace_selector" {
   description = "A selector for restricting injection to only matching namespaces. By default all namespaces except the system namespace will have injection enabled."
   default     = ""
 }
+
+variable "configure_kube_dns" {
+  description = "Configure kube-dns and OVERWRITE it to resolve .consul domains with Consul DNS"
+  default     = false
+}
