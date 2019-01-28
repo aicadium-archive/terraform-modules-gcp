@@ -20,6 +20,13 @@ You will need to have the following configured on your machine:
 - Credentials for GCP
 - Credentials for Kubernetes configured for `kubectl`
 
+In addition, if you would like to run more than one replica of Traefik, you have to provision a
+[Consul cluster](../consul) on your Kubernetes cluster. We recommend that you use the linked
+Terraform module to do so.
+
+If you would like to enable ACME certificate, you _must_ have a Consul cluster running. In addition,
+you will have to configure additional variables for the ACME challenge to work.
+
 ### GKE RBAC
 
 If you are using GKE and have configured `kuebctl` with credentials using
@@ -40,15 +47,21 @@ where `[USER_ACCOUNT]` is your email address.
 This module deploys a Traefik Ingress controller to Kubernetes using a
 [Helm Chart](https://github.com/helm/charts/tree/master/stable/traefik).
 
-In addiition, this module provisions:
-
-- A static IP address for use with the network load balancer
-
 ### KV Store
 
 In addition, this module optionally supports using the [Consul](../consul) module to provide
 [KV Store](https://docs.traefik.io/user-guide/kv-config) configuration for Traefik. This allows you
 to define additional resources like additional entrypoints etc.
+
+Some features require that you have a KV store. For example, to enable additional replicas AND
+support the ACME protocol, you will need to have a KV store.
+
+### Let's Encrypt Certificates
+
+To support [Let's Encrypt](https://letsencrypt.org/) certificates using the ACME protocol, you
+__must__ use the Consul KV store. See the previous section for more information.
+
+For more information, read the guide on [Traefik Documentation](https://docs.traefik.io/configuration/acme/).
 
 ## Usage
 

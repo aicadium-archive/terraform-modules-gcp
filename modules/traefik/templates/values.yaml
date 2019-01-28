@@ -1,24 +1,24 @@
-image: ${image}
-imageTag: ${image_tag}
+image: "${image}"
+imageTag: "${image_tag}"
 
-serviceType: ${service_type}
-loadBalancerIP: "${external_static_ip}"
-loadBalancerSourceRanges:  ${external_lb_cidr}
-# whiteListSourceRange: []
-externalTrafficPolicy: ${external_traffic_policy}
+serviceType: "${service_type}"
+loadBalancerIP: "${static_ip}"
+loadBalancerSourceRanges:  ${lb_source_range}
+whiteListSourceRange: ${whitelist_source_range}
+externalTrafficPolicy: "${external_traffic_policy}"
 replicas: ${replicas}
 
 startupArguments: ${startup_arguments}
 
 env: ${env}
 
-podDisruptionBudget: {}
+podDisruptionBudget: ${pod_disruption_budget}
   # maxUnavailable: 1
   # minAvailable: 2
 
-# priorityClassName: ""
+priorityClassName: "${pod_priority_class}"
 
-# rootCAs: []
+rootCAs: ${root_ca}
 
 cpuRequest: ${cpu_request}
 memoryRequest: ${memory_request}
@@ -26,9 +26,9 @@ cpuLimit: ${cpu_limit}
 memoryLimit: ${memory_limit}
 
 debug:
-  enabled: false
+  enabled: ${debug}
 
-deploymentStrategy: {}
+deploymentStrategy: ${deployment_strategy}
   # rollingUpdate:
   #   maxSurge: 1
   #   maxUnavailable: 0
@@ -38,7 +38,7 @@ nodeSelector: ${node_selector}
 
 affinity: ${affinity}
 
-tolerations: []
+tolerations: ${tolerations}
 # - key: "key"
 #   operator: "Equal|Exists"
 #   value: "value"
@@ -50,11 +50,11 @@ kubernetes:
   namespaces: ${namespaces}
   labelSelector: ${jsonencode(label_selector)}
   ingressClass: "${ingress_class}"
-  # ingressEndpoint:
+  ingressEndpoint:
   #   hostname: "localhost"
   #   ip: "127.0.0.1"
   #   publishedService: "namespace/servicename"
-  #   useDefaultPublishedService: false
+    useDefaultPublishedService: true
 proxyProtocol:
   enabled: false
   # trustedIPs is required when enabled
@@ -66,38 +66,31 @@ forwardedHeaders:
   trustedIPs: []
   # - 10.0.0.0/8
 ssl:
-  enabled: false
-  enforced: false
-  permanentRedirect: false
-  upstream: false
-  insecureSkipVerify: false
-  generateTLS: false
+  enabled: ${ssl_enabled}
+  enforced: ${ssl_enforced}
+  permanentRedirect: ${ssl_permanent_redirect}
+  tlsMinVersion: "${ssl_min_version}"
+  cipherSuites: ${ssl_ciphersuites}
 
 kvprovider:
-  ## storeAcme has to be enabled to support HA Support using acme, but at least one kvprovider is needed
-  storeAcme: "${enable_consul_kv}"
+  # We don't support the PV ACME store and we don't want the chart's `storeconfig` job to run
+  # We will manually configure this outside of the chart.
+  storeAcme: false
   ${consul_kv}
 
 acme:
-  enabled: false
-  email: admin@example.com
-  onHostRule: true
-  staging: true
-  logging: false
+  enabled: ${acme_enabled}
+  email: ${acme_email}
+  onHostRule: ${acme_on_host_rule}
+  staging: ${acme_staging}
+  logging: ${acme_logging}
   # Configure a Let's Encrypt certificate to be managed by default.
   # This is the only way to request wildcard certificates (works only with dns challenge).
   domains:
-    enabled: false
+    enabled: ${acme_domains_enabled}
     # List of sets of main and (optional) SANs to generate for
     # for wildcard certificates see https://docs.traefik.io/configuration/acme/#wildcard-domains
-    domainsList:
-      # - main: "*.example.com"
-      # - sans:
-      #   - "example.com"
-      # - main: "*.example2.com"
-      # - sans:
-      #   - "test1.example2.com"
-      #   - "test2.example2.com"
+    domainsList: ${acme_domains}
   ## ACME challenge type: "tls-sni-01", "tls-alpn-01", "http-01" or "dns-01"
   ## Note the chart's default of tls-sni-01 has been DEPRECATED and (except in
   ## certain circumstances) DISABLED by Let's Encrypt. It remains as a default
@@ -105,37 +98,17 @@ acme:
   ## change. Users of this chart should strongly consider making the switch to
   ## the recommended "tls-alpn-01" (avaialbe since v1.7), dns-01 or http-01
   ## (available since v1.5) challenge.
-  challengeType: dns-01
+  challengeType: ${acme_challenge}
   ## Configure dnsProvider to perform domain verification using dns challenge
   ## Applicable only if using the dns-01 challenge type
-  delayBeforeCheck: 0
+  delayBeforeCheck: ${acme_delay_before_check}
   dnsProvider:
-    name: gcloud
-    gcloud:
-      GCE_PROJECT: ""
-      GCE_SERVICE_ACCOUNT_FILE: ""
-  ## Save ACME certs to a persistent volume.
-  ## WARNING: If you do not do this and you did not have configured
-  ## a kvprovider, you will re-request certs every time a pod (re-)starts
-  ## and you WILL be rate limited!
+    name: ${acme_dns_provider}
+    ${acme_dns_provider_variables}
   persistence:
-    enabled: true
-    annotations: {}
-    ## acme data Persistent Volume Storage Class
-    ## If defined, storageClassName: <storageClass>
-    ## If set to "-", storageClassName: "", which disables dynamic provisioning
-    ## If undefined (the default) or set to null, no storageClassName spec is
-    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
-    ##   GKE, AWS & OpenStack)
-    ##
-    # storageClass: "-"
-    accessMode: ReadWriteOnce
-    size: 1Gi
-    ## A manually managed Persistent Volume Claim
-    ## Requires persistence.enabled: true
-    ## If defined, PVC must be created manually before volume will be bound
-    ##
-    # existingClaim:
+    # We don't support the PV ACME store
+    enabled: false
+
 dashboard:
   enabled: false
   domain: traefik.example.com
@@ -158,6 +131,7 @@ dashboard:
   statistics: {}
     ## Number of recent errors to show in the ‘Health’ tab
     # recentErrors:
+
 service:
   annotations: ${service_annotations}
   labels: ${service_labels}
@@ -166,17 +140,18 @@ service:
   ## Default config with empty string "" will assign a dynamic
   ## nodePort to http and https ports
   nodePorts:
-    http: "80"
-    https: "443"
+    http: "${node_port_http}"
+    https: "${node_port_https}"
 
 gzip:
   enabled: true
-traefikLogFormat: json
+
+traefikLogFormat: ${traefik_log_format}
 accessLogs:
-  enabled: false
+  enabled: ${access_logs_enabled}
   ## Path to the access logs file. If not provided, Traefik defaults it to stdout.
   # filePath: ""
-  format: json  # choices are: common, json
+  format: ${access_log_format}  # choices are: common, json
   ## for JSON logging, finer-grained control over what is logged. Fields can be
   ## retained or dropped, and request headers can be retained, dropped or redacted
   fields:
@@ -205,10 +180,10 @@ deployment:
   podLabels: ${pod_labels}
   podAnnotations: ${pod_annotations}
   hostPort:
-    httpEnabled: false
-    httpsEnabled: false
-    dashboardEnabled: false
-sendAnonymousUsage: false
+    httpEnabled: ${http_host_port_binding}
+    httpsEnabled: ${https_host_port_binding}
+    dashboardEnabled: ${dashboard_host_port_binding}
+
 tracing:
   enabled: false
   serviceName: traefik
@@ -227,3 +202,5 @@ tracing:
   #   localAgentHostPort: "127.0.0.1:8126"
   #   debug: false
   #   globalTag: ""
+
+sendAnonymousUsage: false

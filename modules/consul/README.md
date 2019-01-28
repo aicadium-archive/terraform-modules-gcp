@@ -102,10 +102,11 @@ and let this module manage the configuration.
 | client\_cpu\_limit | CPU limit for client agent pods | string | `"1000m"` | no |
 | client\_cpu\_request | CPU request for client agent pods | string | `"250m"` | no |
 | client\_enabled | Enable running Consul client agents on every Kubernetes node | string | `"true"` | no |
-| client\_extra\_config | Additional configuration to include for client agents | map | `<map>` | no |
+| client\_extra\_config | Raw string of additional configuration to include for client agents in JSON/HCL | string | `"{}"` | no |
 | client\_extra\_volumes | List of map of extra volumes specification. See https://www.consul.io/docs/platform/k8s/helm.html#v-client-extravolumes for the keys | list | `<list>` | no |
 | client\_memory\_limit | Memory limit for client agent pods | string | `"2Gi"` | no |
 | client\_memory\_request | Memory request for client agent pods | string | `"1Gi"` | no |
+| configure\_kube\_dns | Configure kube-dns and OVERWRITE it to resolve .consul domains with Consul DNS | string | `"false"` | no |
 | connect\_inject\_by\_default | If true, the injector will inject the Connect sidecar into all pods by default. Otherwise, pods must specify the injection annotation to opt-in to Connect injection. If this is true, pods can use the same annotation to explicitly opt-out of injection. | string | `"false"` | no |
 | connect\_inject\_namespace\_selector | A selector for restricting injection to only matching namespaces. By default all namespaces except the system namespace will have injection enabled. | string | `""` | no |
 | consul\_domain | Top level Consul domain for DNS queries | string | `"consul"` | no |
@@ -119,7 +120,7 @@ and let this module manage the configuration.
 | release\_name | Helm release name for Consul | string | `"consul"` | no |
 | server\_cpu\_limit | CPU limit for server pods | string | `"2000m"` | no |
 | server\_cpu\_request | CPU request for server pods | string | `"500m"` | no |
-| server\_extra\_config | Additional configuration to include for servers | map | `<map>` | no |
+| server\_extra\_config | Raw string of additional configuration to include for servers in JSON/HCL | string | `"{}"` | no |
 | server\_extra\_volumes | List of map of extra volumes specification for server pods. See https://www.consul.io/docs/platform/k8s/helm.html#v-server-extravolumes for the keys | list | `<list>` | no |
 | server\_memory\_limit | Memory limit for server pods | string | `"4Gi"` | no |
 | server\_memory\_request | Memory request for server pods | string | `"2Gi"` | no |
@@ -131,8 +132,15 @@ and let this module manage the configuration.
 | sync\_k8s\_prefix | A prefix to prepend to all services registered in Kubernetes from Consul. This defaults to '' where no prefix is prepended; Consul services are synced with the same name to Kubernetes. (Consul -> Kubernetes sync only) | string | `""` | no |
 | sync\_k8s\_tag | An optional tag that is applied to all of the Kubernetes services that are synced into Consul. If nothing is set, this defaults to 'k8s'. (Kubernetes -> Consul sync only) | string | `"k8s"` | no |
 | sync\_node\_port\_type | Configures the type of syncing that happens for NodePort services. The only valid options are: ExternalOnly, InternalOnly, and ExternalFirst. ExternalOnly will only use a node's ExternalIP address for the sync, otherwise the service will not be synced. InternalOnly uses the node's InternalIP address. ExternalFirst will preferentially use the node's ExternalIP address, but if it doesn't exist, it will use the node's InternalIP address instead. | string | `""` | no |
-| sync\_to\_consul | If true, will sync Kubernetes services to Consul. This can be disabled to have a one-way sync. | string | n/a | yes |
+| sync\_to\_consul | If true, will sync Kubernetes services to Consul. This can be disabled to have a one-way sync. | string | `"true"` | no |
 | sync\_to\_k8s | If true, will sync Consul services to Kubernetes. This can be disabled to have a one-way sync. | string | `"true"` | no |
 | ui\_additional\_spec | Additional Spec for the UI service | string | `""` | no |
 | ui\_annotations | UI service annotations | string | `""` | no |
 | ui\_service\_type | Type of service for Consul UI | string | `"ClusterIP"` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| kube\_dns\_service\_cluster\_ip | Cluster IP of the Consul DNS service |
+| values | Values from the Consul Helm chart |
