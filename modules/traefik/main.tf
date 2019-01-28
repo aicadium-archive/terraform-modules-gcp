@@ -10,6 +10,32 @@ resource "helm_release" "traefik" {
   ]
 }
 
+locals {
+  consul_kv = <<EOF
+consul:
+  # Fallback if the HOST_IP bit is missing or fails
+  endpoint: consul.service.consul:8500
+  watch: true
+  prefix: "${var.consul_kv_prefix}"
+EOF
+
+  env = [
+    {
+      name = "HOST_IP"
+
+      valueFrom = {
+        fieldRef = {
+          fieldPath = "status.hostIP"
+        }
+      }
+    },
+  ]
+
+  consul_startup_args = [
+    "--consul.endpoint=$$(HOST_IP):8500",
+  ]
+}
+
 data "template_file" "values" {
   template = "${file("${path.module}/templates/values.yaml")}"
 
@@ -42,6 +68,12 @@ data "template_file" "values" {
     namespaces     = "${jsonencode(var.namespaces)}"
     label_selector = "${var.label_selector}"
     ingress_class  = "${var.ingress_class}"
+
+    enable_consul_kv = "${var.enable_consul_kv}"
+    consul_kv        = "${var.enable_consul_kv == "true" ? local.consul_kv : ""}"
+
+    env               = "${jsonencode(local.env)}"
+    startup_arguments = "${var.enable_consul_kv == "true" ? jsonencode(local.consul_startup_args): "[]"}"
   }
 }
 

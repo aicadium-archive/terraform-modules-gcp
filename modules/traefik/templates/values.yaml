@@ -8,9 +8,9 @@ loadBalancerSourceRanges:  ${external_lb_cidr}
 externalTrafficPolicy: ${external_traffic_policy}
 replicas: ${replicas}
 
-# startupArguments:
-#   - "--ping"
-#   - "--ping.entrypoint=http"
+startupArguments: ${startup_arguments}
+
+env: ${env}
 
 podDisruptionBudget: {}
   # maxUnavailable: 1
@@ -74,38 +74,9 @@ ssl:
   generateTLS: false
 
 kvprovider:
-  ## If you want to run Traefik in HA mode, you will need to setup a KV Provider. Therefore you can choose one of
-  ## * etcd
-  ## * consul
-  ## * boltdb
-  ## * zookeeper
-  ##
-  ## ref: https://docs.traefik.io/user-guide/cluster/
-
   ## storeAcme has to be enabled to support HA Support using acme, but at least one kvprovider is needed
-  storeAcme: false
-  importAcme: false
-
-  # consul:
-    # endpoint: consul-service:8500
-    # watch: true
-    # prefix: traefik
-
-    ## Override default configuration template.
-    ## For advanced users :)
-    ##
-    ## Optional
-    # filename: consul.tmpl
-    # username: foo
-    # password: bar
-    # tls:
-    #   ca: "/etc/ssl/ca.crt"
-    #   cert: "/etc/ssl/consul.crt"
-    #   key: "/etc/ssl/consul.key"
-    #   insecureSkipVerify: true
-
-    ## only relevant for etcd
-
+  storeAcme: "${enable_consul_kv}"
+  ${consul_kv}
 
 acme:
   enabled: false

@@ -40,14 +40,15 @@ where `[USER_ACCOUNT]` is your email address.
 This module deploys a Traefik Ingress controller to Kubernetes using a
 [Helm Chart](https://github.com/helm/charts/tree/master/stable/traefik).
 
-The chart includes:
-
-- something
-
 In addiition, this module provisions:
 
-- A static IP address for use with the external (internet) network load balancer
-- A static IP address for use with the internal (intranet) network load balancer
+- A static IP address for use with the network load balancer
+
+### KV Store
+
+In addition, this module optionally supports using the [Consul](../consul) module to provide
+[KV Store](https://docs.traefik.io/user-guide/kv-config) configuration for Traefik. This allows you
+to define additional resources like additional entrypoints etc.
 
 ## Usage
 

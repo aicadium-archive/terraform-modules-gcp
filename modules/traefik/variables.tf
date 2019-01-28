@@ -136,3 +136,13 @@ variable "ingress_class" {
   description = "Value of kubernetes.io/ingress.class annotation to watch - must start with traefik if set"
   default     = "traefik"
 }
+
+variable "enable_consul_kv" {
+  description = "Enable KV Store with Consul"
+  default     = "true"
+}
+
+variable "consul_kv_prefix" {
+  description = "Consul KV configuration store prefix"
+  default     = "traefik"
+}
