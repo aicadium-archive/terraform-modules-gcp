@@ -272,6 +272,11 @@ variable "acme_dns_provider_variables" {
   default     = {}
 }
 
+variable "acme_key_type" {
+  description = "Private key type for ACME certificates. Make sure your SSL ciphersuites supports the key type. Available values : EC256, EC384, RSA2048, RSA4096, RSA8192"
+  default     = "RSA4096"
+}
+
 variable "startup_arguments" {
   description = "List of additional startup arguments for the Traefik pods"
   default     = []

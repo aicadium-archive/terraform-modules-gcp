@@ -150,32 +150,3 @@ resource "google_compute_address" "internal" {
   address_type = "INTERNAL"
   subnetwork   = "${var.internal_static_ip_subnetwork}"
 }
-
-resource "consul_keys" "acme_storage" {
-  count = "${local.consul_enabled && local.acme_enabled ? 1 : 0}"
-
-  key {
-    path   = "${var.consul_kv_prefix}/acme/storage"
-    value  = "${var.consul_kv_prefix}/acme/account"
-    delete = true
-  }
-}
-
-resource "consul_keys" "acme_key_type" {
-  count = "${local.consul_enabled && local.acme_enabled ? 1 : 0}"
-
-  key {
-    path   = "${var.consul_kv_prefix}/acme/keytype"
-    value  = "EC384"
-    delete = true
-  }
-}
-
-# resource "consul_keys" "strict_sni" {
-#   key {
-#     path = "${var.consul_kv_prefix}/entrypoints/https/tls/snistrict"
-#     value = "true"
-#     delete = true
-#   }
-# }
-
