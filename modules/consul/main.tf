@@ -50,7 +50,6 @@ data "template_file" "values" {
     sync_cluster_ip_services = "${var.sync_cluster_ip_services}"
     sync_node_port_type      = "${var.sync_node_port_type}"
 
-    # TODO...
     enable_ui          = "${var.enable_ui}"
     ui_service_type    = "${var.ui_service_type}"
     ui_annotations     = "${jsonencode(var.ui_annotations)}"
