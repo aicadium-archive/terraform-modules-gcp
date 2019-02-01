@@ -1,0 +1,206 @@
+image: "${image}"
+imageTag: "${image_tag}"
+
+serviceType: "${service_type}"
+loadBalancerIP: "${static_ip}"
+loadBalancerSourceRanges:  ${lb_source_range}
+whiteListSourceRange: ${whitelist_source_range}
+externalTrafficPolicy: "${external_traffic_policy}"
+replicas: ${replicas}
+
+startupArguments: ${startup_arguments}
+
+env: ${env}
+
+podDisruptionBudget: ${pod_disruption_budget}
+  # maxUnavailable: 1
+  # minAvailable: 2
+
+priorityClassName: "${pod_priority_class}"
+
+rootCAs: ${root_ca}
+
+cpuRequest: ${cpu_request}
+memoryRequest: ${memory_request}
+cpuLimit: ${cpu_limit}
+memoryLimit: ${memory_limit}
+
+debug:
+  enabled: ${debug}
+
+deploymentStrategy: ${deployment_strategy}
+  # rollingUpdate:
+  #   maxSurge: 1
+  #   maxUnavailable: 0
+  # type: RollingUpdate
+
+nodeSelector: ${node_selector}
+
+affinity: ${affinity}
+
+tolerations: ${tolerations}
+# - key: "key"
+#   operator: "Equal|Exists"
+#   value: "value"
+#   effect: "NoSchedule|PreferNoSchedule|NoExecute(1.6 only)"
+
+## Kubernetes ingress filters
+kubernetes:
+  # endpoint:
+  namespaces: ${namespaces}
+  labelSelector: ${jsonencode(label_selector)}
+  ingressClass: "${ingress_class}"
+  ingressEndpoint:
+  #   hostname: "localhost"
+  #   ip: "127.0.0.1"
+  #   publishedService: "namespace/servicename"
+    useDefaultPublishedService: true
+proxyProtocol:
+  enabled: false
+  # trustedIPs is required when enabled
+  trustedIPs: []
+  # - 10.0.0.0/8
+forwardedHeaders:
+  enabled: false
+  # trustedIPs is required when enabled
+  trustedIPs: []
+  # - 10.0.0.0/8
+ssl:
+  enabled: ${ssl_enabled}
+  enforced: ${ssl_enforced}
+  permanentRedirect: ${ssl_permanent_redirect}
+  tlsMinVersion: "${ssl_min_version}"
+  cipherSuites: ${ssl_ciphersuites}
+
+kvprovider:
+  # We don't support the PV ACME store and we don't want the chart's `storeconfig` job to run
+  # We will manually configure this outside of the chart.
+  storeAcme: false
+  ${consul_kv}
+
+acme:
+  enabled: ${acme_enabled}
+  email: ${acme_email}
+  onHostRule: ${acme_on_host_rule}
+  staging: ${acme_staging}
+  logging: ${acme_logging}
+  # Configure a Let's Encrypt certificate to be managed by default.
+  # This is the only way to request wildcard certificates (works only with dns challenge).
+  domains:
+    enabled: ${acme_domains_enabled}
+    # List of sets of main and (optional) SANs to generate for
+    # for wildcard certificates see https://docs.traefik.io/configuration/acme/#wildcard-domains
+    domainsList: ${acme_domains}
+  ## ACME challenge type: "tls-sni-01", "tls-alpn-01", "http-01" or "dns-01"
+  ## Note the chart's default of tls-sni-01 has been DEPRECATED and (except in
+  ## certain circumstances) DISABLED by Let's Encrypt. It remains as a default
+  ## value in this chart to preserve legacy behavior and avoid a breaking
+  ## change. Users of this chart should strongly consider making the switch to
+  ## the recommended "tls-alpn-01" (avaialbe since v1.7), dns-01 or http-01
+  ## (available since v1.5) challenge.
+  challengeType: ${acme_challenge}
+  ## Configure dnsProvider to perform domain verification using dns challenge
+  ## Applicable only if using the dns-01 challenge type
+  delayBeforeCheck: ${acme_delay_before_check}
+  dnsProvider:
+    name: ${acme_dns_provider}
+    ${acme_dns_provider_variables}
+  persistence:
+    # We don't support the PV ACME store
+    enabled: false
+
+dashboard:
+  enabled: false
+  domain: traefik.example.com
+  # serviceType: ClusterIP
+  service: {}
+    # annotations:
+    #   key: value
+  ingress: {}
+    # annotations:
+    #   key: value
+    # labels:
+    #   key: value
+    # tls:
+      # - hosts:
+      #   - traefik.example.com
+      #   secretName: traefik-default-cert
+  auth: {}
+    # basic:
+    #   username: password
+  statistics: {}
+    ## Number of recent errors to show in the ‘Health’ tab
+    # recentErrors:
+
+service:
+  annotations: ${service_annotations}
+  labels: ${service_labels}
+
+  ## Further config for service of type NodePort
+  ## Default config with empty string "" will assign a dynamic
+  ## nodePort to http and https ports
+  nodePorts:
+    http: "${node_port_http}"
+    https: "${node_port_https}"
+
+gzip:
+  enabled: true
+
+traefikLogFormat: ${traefik_log_format}
+accessLogs:
+  enabled: ${access_logs_enabled}
+  ## Path to the access logs file. If not provided, Traefik defaults it to stdout.
+  # filePath: ""
+  format: ${access_log_format}  # choices are: common, json
+  ## for JSON logging, finer-grained control over what is logged. Fields can be
+  ## retained or dropped, and request headers can be retained, dropped or redacted
+  fields:
+    # choices are keep, drop
+    defaultMode: keep
+    names: {}
+      # ClientUsername: drop
+    headers:
+      # choices are keep, drop, redact
+      defaultMode: keep
+      names: {}
+        # Authorization: redact
+rbac:
+  enabled: ${rbac_enabled}
+## Enable the /metrics endpoint, for now only supports prometheus
+## set to true to enable metric collection by prometheus
+metrics:
+  prometheus:
+    enabled: false
+    ## If true, prevents exposing port 8080 on the main Traefik service, reserving
+    ## it to the dashboard service only
+    restrictAccess: false
+    # buckets: [0.1,0.3,1.2,5]
+
+deployment:
+  podLabels: ${pod_labels}
+  podAnnotations: ${pod_annotations}
+  hostPort:
+    httpEnabled: ${http_host_port_binding}
+    httpsEnabled: ${https_host_port_binding}
+    dashboardEnabled: ${dashboard_host_port_binding}
+
+tracing:
+  enabled: false
+  serviceName: traefik
+  # backend: choices are jaeger, zipkin, datadog
+  # jaeger:
+  #   localAgentHostPort: "127.0.0.1:6831"
+  #   samplingServerURL: http://localhost:5778/sampling
+  #   samplingType: const
+  #   samplingParam: 1.0
+  # zipkin:
+  #   httpEndpoint: http://localhost:9411/api/v1/spans
+  #   debug: false
+  #   sameSpan: false
+  #   id128bit: true
+  # datadog:
+  #   localAgentHostPort: "127.0.0.1:8126"
+  #   debug: false
+  #   globalTag: ""
+
+sendAnonymousUsage: false
