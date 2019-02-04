@@ -127,6 +127,28 @@ data "template_file" "values" {
     acme_dns_provider           = "${var.acme_dns_provider}"
     acme_dns_provider_variables = "${var.acme_dns_provider}: ${jsonencode(var.acme_dns_provider_variables)}"
 
+    dashboard_enabled             = "${var.dashboard_enabled}"
+    dashboard_domain              = "${var.dashboard_domain}"
+    dashboard_service_type        = "${var.dashboard_service_type}"
+    dashboard_service_annotations = "${jsonencode(var.dashboard_service_annotations)}"
+    dashboard_ingress_annotations = "${jsonencode(var.dashboard_ingress_annotations)}"
+    dashboard_ingress_labels      = "${jsonencode(var.dashboard_ingress_labels)}"
+    dashboard_ingress_tls         = "${jsonencode(var.dashboard_ingress_tls)}"
+    dashboard_auth                = "${jsonencode(var.dashboard_auth)}"
+    dashboard_recent_errors       = "${var.dashboard_recent_errors}"
+
+    prometheus_enabled         = "${var.prometheus_enabled}"
+    prometheus_restrict_access = "${var.prometheus_restrict_access}"
+    prometheus_buckets         = "${jsonencode(var.prometheus_buckets)}"
+
+    datadog_enabled       = "${var.datadog_enabled}"
+    datadog_address       = "${var.datadog_address}"
+    datadog_push_interval = "${var.datadog_push_interval}"
+
+    statsd_enabled       = "${var.statsd_enabled}"
+    statsd_address       = "${var.statsd_address}"
+    statsd_push_interval = "${var.statsd_push_interval}"
+
     env               = "${jsonencode(local.env)}"
     startup_arguments = "${jsonencode(local.startup_arguments)}"
 

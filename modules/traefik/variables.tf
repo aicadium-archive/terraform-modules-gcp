@@ -306,3 +306,93 @@ variable "access_log_format" {
   description = "Format of access logs. See https://docs.traefik.io/configuration/logs/#access-logs"
   default     = "json"
 }
+
+variable "dashboard_enabled" {
+  description = "Enable the Traefik Dashboard"
+  default     = "false"
+}
+
+variable "dashboard_domain" {
+  description = "Domain to listen on the Dashboard Ingress"
+  default     = ""
+}
+
+variable "dashboard_service_type" {
+  description = "Service type for the dashboard service"
+  default     = "ClusterIP"
+}
+
+variable "dashboard_service_annotations" {
+  description = "Annotations for the Traefik dashboard Service definition, specified as a map"
+  default     = {}
+}
+
+variable "dashboard_ingress_annotations" {
+  description = "Annotations for the Traefik dashboard Ingress definition, specified as a map"
+  default     = {}
+}
+
+variable "dashboard_ingress_labels" {
+  description = "Labels for the Traefik dashboard Ingress definition, specified as a map"
+  default     = {}
+}
+
+variable "dashboard_ingress_tls" {
+  description = "TLS settings for the Traefik dashboard Ingress definition"
+  default     = {}
+}
+
+variable "dashboard_auth" {
+  description = "Dashboard authentication settings. See https://docs.traefik.io/configuration/api/#authentication"
+  default     = {}
+}
+
+variable "dashboard_recent_errors" {
+  description = "Number of recent errors to show in the ‘Health’ tab"
+  default     = 10
+}
+
+variable "prometheus_enabled" {
+  description = "Enable the Prometheus metrics server"
+  default     = "false"
+}
+
+variable "prometheus_restrict_access" {
+  description = "Whether to limit access to the metrics port (8080) to the dashboard service. When false, it is accessible on the main Traefik service as well."
+  default     = "true"
+}
+
+variable "prometheus_buckets" {
+  description = "A list of response times (in seconds) - for each list element, Traefik will report all response times less than the element."
+  default     = [0.1, 0.3, 1.2, 5]
+}
+
+variable "datadog_enabled" {
+  description = "Enable pushing metrics to Datadog"
+  default     = "false"
+}
+
+variable "datadog_address" {
+  description = "Addess of the Datadog host"
+  default     = ""
+}
+
+variable "datadog_push_interval" {
+  description = "How often to push metrics to Datadog."
+  default     = "10s"
+}
+
+variable "statsd_enabled" {
+  description = "Enable pushing metrics to statsd"
+  default     = "false"
+}
+
+variable "statsd_address" {
+  description = "Addess of the statsd host"
+  default     = ""
+}
+
+variable "statsd_push_interval" {
+  description = "How often to push metrics to statsd."
+  default     = "10s"
+}

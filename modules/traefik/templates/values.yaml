@@ -110,27 +110,22 @@ acme:
     enabled: false
 
 dashboard:
-  enabled: false
-  domain: traefik.example.com
-  # serviceType: ClusterIP
-  service: {}
-    # annotations:
+  enabled: ${dashboard_enabled}
+  domain: "${dashboard_domain}"
+  serviceType: "${dashboard_service_type}"
+  service:
+    annotations: ${dashboard_service_annotations}
     #   key: value
-  ingress: {}
-    # annotations:
-    #   key: value
-    # labels:
-    #   key: value
-    # tls:
-      # - hosts:
-      #   - traefik.example.com
-      #   secretName: traefik-default-cert
-  auth: {}
+  ingress:
+    annotations: ${dashboard_ingress_annotations}
+    labels: ${dashboard_ingress_labels}
+    tls: ${dashboard_ingress_tls}
+  auth: ${dashboard_auth}
     # basic:
     #   username: password
-  statistics: {}
-    ## Number of recent errors to show in the ‘Health’ tab
-    # recentErrors:
+  statistics:
+    # Number of recent errors to show in the ‘Health’ tab
+    recentErrors: ${dashboard_recent_errors}
 
 service:
   annotations: ${service_annotations}
@@ -170,11 +165,19 @@ rbac:
 ## set to true to enable metric collection by prometheus
 metrics:
   prometheus:
-    enabled: false
+    enabled: ${prometheus_enabled}
     ## If true, prevents exposing port 8080 on the main Traefik service, reserving
     ## it to the dashboard service only
-    restrictAccess: false
-    # buckets: [0.1,0.3,1.2,5]
+    restrictAccess: ${prometheus_restrict_access}
+    buckets: ${prometheus_buckets}
+  datadog:
+    enabled: ${datadog_enabled}
+    address: "${datadog_address}"
+    pushInterval: ${datadog_push_interval}
+  statsd:
+    enabled: ${statsd_enabled}
+    address: ${statsd_address}
+    pushInterval: ${statsd_push_interval}
 
 deployment:
   podLabels: ${pod_labels}
