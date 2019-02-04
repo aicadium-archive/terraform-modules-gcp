@@ -76,6 +76,7 @@ For more information, read the guide on [Traefik Documentation](https://docs.tra
 | acme\_domains | List of maps of domains to generate ACME certificates for. See https://docs.traefik.io/configuration/acme/#domains for the keys required. Also see https://github.com/helm/charts/blob/15493df5ad0e38da7301bcb4979a07a0dbe5a73c/stable/traefik/values.yaml#L156-L165 for the list format required | list | `<list>` | no |
 | acme\_email | Email address for ACME certificates | string | `""` | no |
 | acme\_enabled | Enable ACME protocol (Let's Encrypt) | string | `"false"` | no |
+| acme\_key\_type | Private key type for ACME certificates. Make sure your SSL ciphersuites supports the key type. Available values : EC256, EC384, RSA2048, RSA4096, RSA8192 | string | `"RSA4096"` | no |
 | acme\_logging | Display debug log messages from the ACME client library | string | `"true"` | no |
 | acme\_on\_host\_rule | Enable certificate generation on frontend Host rules. See https://docs.traefik.io/configuration/acme/#onhostrule | string | `"true"` | no |
 | acme\_staging | Issue certificates from Let's Encrypt staging server | string | `"false"` | no |
@@ -87,7 +88,19 @@ For more information, read the guide on [Traefik Documentation](https://docs.tra
 | consul\_kv\_prefix | Consul KV configuration store prefix | string | `"traefik"` | no |
 | cpu\_limit | CPU limit per Traefik pod | string | `"100m"` | no |
 | cpu\_request | Initial share of CPU requested per Traefik pod | string | `"100m"` | no |
+| dashboard\_auth | Dashboard authentication settings. See https://docs.traefik.io/configuration/api/#authentication | map | `<map>` | no |
+| dashboard\_domain | Domain to listen on the Dashboard Ingress | string | `""` | no |
+| dashboard\_enabled | Enable the Traefik Dashboard | string | `"false"` | no |
 | dashboard\_host\_port\_binding | Whether to enable hostPort binding to host for dashboard. | string | `"false"` | no |
+| dashboard\_ingress\_annotations | Annotations for the Traefik dashboard Ingress definition, specified as a map | map | `<map>` | no |
+| dashboard\_ingress\_labels | Labels for the Traefik dashboard Ingress definition, specified as a map | map | `<map>` | no |
+| dashboard\_ingress\_tls | TLS settings for the Traefik dashboard Ingress definition | map | `<map>` | no |
+| dashboard\_recent\_errors | Number of recent errors to show in the ‘Health’ tab | string | `"10"` | no |
+| dashboard\_service\_annotations | Annotations for the Traefik dashboard Service definition, specified as a map | map | `<map>` | no |
+| dashboard\_service\_type | Service type for the dashboard service | string | `"ClusterIP"` | no |
+| datadog\_address | Addess of the Datadog host | string | `""` | no |
+| datadog\_enabled | Enable pushing metrics to Datadog | string | `"false"` | no |
+| datadog\_push\_interval | How often to push metrics to Datadog. | string | `"10s"` | no |
 | debug | Operator Traefik in Debug mode. | string | `"false"` | no |
 | deployment\_strategy | Deployment strategy for the Traefik pods. See https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy | map | `<map>` | no |
 | enable\_consul\_kv | Enable KV Store with Consul | string | `"false"` | no |
@@ -109,6 +122,8 @@ For more information, read the guide on [Traefik Documentation](https://docs.tra
 | pod\_disruption\_budget | Map describing the Pod Disruption Budget. See https://kubernetes.io/docs/tasks/run-application/configure-pdb/ | map | `<map>` | no |
 | pod\_labels | Labels for the Traefik pod definition | map | `<map>` | no |
 | pod\_priority\_class | Pod priority class name. See https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/ | string | `""` | no |
+| prometheus\_enabled | Enable the Prometheus metrics server | string | `"false"` | no |
+| prometheus\_restrict\_access | Whether to limit access to the metrics port (8080) to the dashboard service. When false, it is accessible on the main Traefik service as well. | string | `"true"` | no |
 | rbac\_enabled | Whether to enable RBAC with a specific cluster role and binding for Traefik | string | `"true"` | no |
 | release\_name | Helm release name for Traefik | string | `"traefik"` | no |
 | replicas | Number of replias to run | string | `"1"` | no |
@@ -123,7 +138,14 @@ For more information, read the guide on [Traefik Documentation](https://docs.tra
 | ssl\_permanent\_redirect | When redirecting from the non SSL endpoint to the SSL endpoint, use a permanent redirect (301) instead of a temporary one (302) | string | `"true"` | no |
 | startup\_arguments | List of additional startup arguments for the Traefik pods | list | `<list>` | no |
 | static\_ip\_name | Name of the Static IP resource to deploy for the Network LB | string | n/a | yes |
+| statsd\_address | Addess of the statsd host | string | `""` | no |
+| statsd\_enabled | Enable pushing metrics to statsd | string | `"false"` | no |
+| statsd\_push\_interval | How often to push metrics to statsd. | string | `"10s"` | no |
 | tolerations | List of map of tolerations for Traefik Pods. See https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/ | list | `<list>` | no |
+| tracing\_backend | One of `jaegar`, `zipkin` or `datadog` | string | `""` | no |
+| tracing\_enabled | Whether to enable request tracing | string | `"false"` | no |
+| tracing\_service\_name | Service name to be used in tracing backend | string | `"traefik"` | no |
+| tracing\_settings | Map of settings for the tracing backend. See `templates/values.yaml` for information | map | `<map>` | no |
 | traefik\_image\_name | Docker Image of Traefik to run | string | `"traefik"` | no |
 | traefik\_image\_tag | Docker image tag of Traefik to run | string | `"1.7-alpine"` | no |
 | traefik\_log\_format | Log format for Traefik. See https://docs.traefik.io/configuration/logs/#traefik-logs | string | `"json"` | no |
