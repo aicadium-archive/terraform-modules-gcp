@@ -139,7 +139,8 @@ data "template_file" "values" {
 
     prometheus_enabled         = "${var.prometheus_enabled}"
     prometheus_restrict_access = "${var.prometheus_restrict_access}"
-    prometheus_buckets         = "${jsonencode(var.prometheus_buckets)}"
+    # Disabled for now because of https://github.com/hashicorp/terraform/issues/17033
+    # prometheus_buckets         = "${jsonencode(var.prometheus_buckets)}"
 
     datadog_enabled       = "${var.datadog_enabled}"
     datadog_address       = "${var.datadog_address}"
@@ -148,6 +149,10 @@ data "template_file" "values" {
     statsd_enabled       = "${var.statsd_enabled}"
     statsd_address       = "${var.statsd_address}"
     statsd_push_interval = "${var.statsd_push_interval}"
+
+    tracing_enabled      = "${var.tracing_enabled}"
+    tracing_service_name = "${var.tracing_service_name}"
+    tracing_settings     = "${var.tracing_enabled == "true" ? "${var.tracing_backend}: ${jsonencode(var.tracing_settings)}" : ""}"
 
     env               = "${jsonencode(local.env)}"
     startup_arguments = "${jsonencode(local.startup_arguments)}"

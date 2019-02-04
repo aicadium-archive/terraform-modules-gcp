@@ -169,7 +169,7 @@ metrics:
     ## If true, prevents exposing port 8080 on the main Traefik service, reserving
     ## it to the dashboard service only
     restrictAccess: ${prometheus_restrict_access}
-    buckets: ${prometheus_buckets}
+    # buckets:
   datadog:
     enabled: ${datadog_enabled}
     address: "${datadog_address}"
@@ -188,8 +188,9 @@ deployment:
     dashboardEnabled: ${dashboard_host_port_binding}
 
 tracing:
-  enabled: false
-  serviceName: traefik
+  enabled: ${tracing_enabled}
+  serviceName: ${tracing_service_name}
+  ${tracing_settings}
   # backend: choices are jaeger, zipkin, datadog
   # jaeger:
   #   localAgentHostPort: "127.0.0.1:6831"

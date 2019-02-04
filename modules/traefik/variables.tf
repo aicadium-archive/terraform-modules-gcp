@@ -362,10 +362,11 @@ variable "prometheus_restrict_access" {
   default     = "true"
 }
 
-variable "prometheus_buckets" {
-  description = "A list of response times (in seconds) - for each list element, Traefik will report all response times less than the element."
-  default     = [0.1, 0.3, 1.2, 5]
-}
+# Requires Terraform 0.12: https://github.com/hashicorp/terraform/issues/17033
+# variable "prometheus_buckets" {
+#   description = "A list of response times (in seconds) - for each list element, Traefik will report all response times less than the element."
+#   default     = [0.1, 0.3, 1.2, 5.0]
+# }
 
 variable "datadog_enabled" {
   description = "Enable pushing metrics to Datadog"
@@ -395,4 +396,24 @@ variable "statsd_address" {
 variable "statsd_push_interval" {
   description = "How often to push metrics to statsd."
   default     = "10s"
+}
+
+variable "tracing_enabled" {
+  description = "Whether to enable request tracing"
+  default     = "false"
+}
+
+variable "tracing_service_name" {
+  description = "Service name to be used in tracing backend"
+  default     = "traefik"
+}
+
+variable "tracing_backend" {
+  description = "One of `jaegar`, `zipkin` or `datadog`"
+  default     = ""
+}
+
+variable "tracing_settings" {
+  description = "Map of settings for the tracing backend. See `templates/values.yaml` for information"
+  default     = {}
 }
