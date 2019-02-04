@@ -22,7 +22,7 @@ variable "chart_name" {
 
   # Awaiting https://github.com/helm/charts/pull/10928 or similiar
   # default     = "stable/traefik"
-  default = "https://github.com/basisai/charts/releases/download/traefik-env/traefik.tar.gz"
+  default = "https://github.com/basisai/charts/releases/download/traefik-env/traefik-1.59.3.tgz"
 }
 
 variable "chart_repository" {
