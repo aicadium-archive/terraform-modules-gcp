@@ -139,8 +139,13 @@ data "template_file" "values" {
 
     prometheus_enabled         = "${var.prometheus_enabled}"
     prometheus_restrict_access = "${var.prometheus_restrict_access}"
-    # Disabled for now because of https://github.com/hashicorp/terraform/issues/17033
-    # prometheus_buckets         = "${jsonencode(var.prometheus_buckets)}"
+
+    env               = "${jsonencode(local.env)}"
+    startup_arguments = "${jsonencode(local.startup_arguments)}"
+
+    traefik_log_format  = "${var.traefik_log_format}"
+    access_logs_enabled = "${var.access_logs_enabled}"
+    access_log_format   = "${var.access_log_format}"
 
     datadog_enabled       = "${var.datadog_enabled}"
     datadog_address       = "${var.datadog_address}"
@@ -154,12 +159,8 @@ data "template_file" "values" {
     tracing_service_name = "${var.tracing_service_name}"
     tracing_settings     = "${var.tracing_enabled == "true" ? "${var.tracing_backend}: ${jsonencode(var.tracing_settings)}" : ""}"
 
-    env               = "${jsonencode(local.env)}"
-    startup_arguments = "${jsonencode(local.startup_arguments)}"
-
-    traefik_log_format  = "${var.traefik_log_format}"
-    access_logs_enabled = "${var.access_logs_enabled}"
-    access_log_format   = "${var.access_log_format}"
+    # Disabled for now because of https://github.com/hashicorp/terraform/issues/17033
+    # prometheus_buckets         = "${jsonencode(var.prometheus_buckets)}"
   }
 }
 
