@@ -19,7 +19,10 @@ variable "release_name" {
 
 variable "chart_name" {
   description = "Helm chart name to provision"
-  default     = "stable/traefik"
+
+  # Awaiting https://github.com/helm/charts/pull/10928 or similiar
+  # default     = "stable/traefik"
+  default = "https://github.com/basisai/charts/releases/download/traefik-env/traefik.zip"
 }
 
 variable "chart_repository" {
@@ -29,7 +32,7 @@ variable "chart_repository" {
 
 variable "chart_version" {
   description = "Version of Chart to install. Set to empty to install the latest version"
-  default     = "1.59.2"
+  default     = ""
 }
 
 variable "chart_namespace" {
