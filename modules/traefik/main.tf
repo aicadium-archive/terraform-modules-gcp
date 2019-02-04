@@ -127,12 +127,40 @@ data "template_file" "values" {
     acme_dns_provider           = "${var.acme_dns_provider}"
     acme_dns_provider_variables = "${var.acme_dns_provider}: ${jsonencode(var.acme_dns_provider_variables)}"
 
+    dashboard_enabled             = "${var.dashboard_enabled}"
+    dashboard_domain              = "${var.dashboard_domain}"
+    dashboard_service_type        = "${var.dashboard_service_type}"
+    dashboard_service_annotations = "${jsonencode(var.dashboard_service_annotations)}"
+    dashboard_ingress_annotations = "${jsonencode(var.dashboard_ingress_annotations)}"
+    dashboard_ingress_labels      = "${jsonencode(var.dashboard_ingress_labels)}"
+    dashboard_ingress_tls         = "${jsonencode(var.dashboard_ingress_tls)}"
+    dashboard_auth                = "${jsonencode(var.dashboard_auth)}"
+    dashboard_recent_errors       = "${var.dashboard_recent_errors}"
+
+    prometheus_enabled         = "${var.prometheus_enabled}"
+    prometheus_restrict_access = "${var.prometheus_restrict_access}"
+
     env               = "${jsonencode(local.env)}"
     startup_arguments = "${jsonencode(local.startup_arguments)}"
 
     traefik_log_format  = "${var.traefik_log_format}"
     access_logs_enabled = "${var.access_logs_enabled}"
     access_log_format   = "${var.access_log_format}"
+
+    datadog_enabled       = "${var.datadog_enabled}"
+    datadog_address       = "${var.datadog_address}"
+    datadog_push_interval = "${var.datadog_push_interval}"
+
+    statsd_enabled       = "${var.statsd_enabled}"
+    statsd_address       = "${var.statsd_address}"
+    statsd_push_interval = "${var.statsd_push_interval}"
+
+    tracing_enabled      = "${var.tracing_enabled}"
+    tracing_service_name = "${var.tracing_service_name}"
+    tracing_settings     = "${var.tracing_enabled == "true" ? "${var.tracing_backend}: ${jsonencode(var.tracing_settings)}" : ""}"
+
+    # Disabled for now because of https://github.com/hashicorp/terraform/issues/17033
+    # prometheus_buckets         = "${jsonencode(var.prometheus_buckets)}"
   }
 }
 
@@ -150,32 +178,3 @@ resource "google_compute_address" "internal" {
   address_type = "INTERNAL"
   subnetwork   = "${var.internal_static_ip_subnetwork}"
 }
-
-resource "consul_keys" "acme_storage" {
-  count = "${local.consul_enabled && local.acme_enabled ? 1 : 0}"
-
-  key {
-    path   = "${var.consul_kv_prefix}/acme/storage"
-    value  = "${var.consul_kv_prefix}/acme/account"
-    delete = true
-  }
-}
-
-resource "consul_keys" "acme_key_type" {
-  count = "${local.consul_enabled && local.acme_enabled ? 1 : 0}"
-
-  key {
-    path   = "${var.consul_kv_prefix}/acme/keytype"
-    value  = "EC384"
-    delete = true
-  }
-}
-
-# resource "consul_keys" "strict_sni" {
-#   key {
-#     path = "${var.consul_kv_prefix}/entrypoints/https/tls/snistrict"
-#     value = "true"
-#     delete = true
-#   }
-# }
-
