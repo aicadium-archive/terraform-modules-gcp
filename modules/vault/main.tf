@@ -14,10 +14,26 @@ locals {
   vault_listener_adderss = "${var.vault_listener_address}:${var.service_port}"
   vault_cluster_address  = "${var.vault_listener_address}:${var.service_port + 1}"
 
+  tls_secret_name = "${var.release_name}-tls"
+  tls_secret_path = "/vault/tls"
+
+  tls_secret_cert_key = "cert"
+  tls_secret_key_key  = "key"
+
+  tls_cert_mounts = [
+    {
+      secretName = "${kubernetes_secret.tls_cert.metadata.name}"
+      mountPath  = "${local.tls_secret_path}"
+    },
+  ]
+
   base_vault_config {
     listener "tcp" {
       address = "${local.vault_listener_adderss}"
       cluster = "${local.vault_cluster_address}"
+
+      tls_cert_file = "${local.tls_secret_path}/${local.tls_secret_cert_key}"
+      tls_key_file  = "${local.tls_secret_path}/${local.tls_secret_key_key}"
 
       tls_prefer_server_cipher_suites = true
       tls_cipher_suites               = "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA"
@@ -65,11 +81,27 @@ data "template_file" "values" {
     lifecycle       = "${jsonencode(var.lifecycle)}"
 
     vault_dev              = "${var.vault_dev}"
-    vault_secret_volumes   = "${jsonencode(var.vault_secret_volumes)}"
+    vault_secret_volumes   = "${jsonencode(concat(local.tls_cert_mounts, var.vault_secret_volumes))}"
     vault_env              = "${jsonencode(var.vault_env)}"
     vault_extra_containers = "${jsonencode(var.vault_extra_containers)}"
     vault_extra_volumes    = "${jsonencode(var.vault_extra_volumes)}"
     vault_log_level        = "${var.vault_log_level}"
     vault_config           = "${jsonencode(merge(local.base_vault_config, var.vault_config))}"
+  }
+}
+
+resource "kubernetes_secret" "tls_cert" {
+  type = "Opaque"
+
+  metadata {
+    name        = "${local.tls_cert_name}"
+    namespace   = "${var.chart_namespace}"
+    labels      = "${var.secrets_labels}"
+    annotations = "${var.secrets_annotations}"
+  }
+
+  data {
+    "${local.tls_secret_cert_key}" = "${var.tls_cert_pem}"
+    "${local.tls_secret_key_key}"  = "${var.tls_cert_key}"
   }
 }

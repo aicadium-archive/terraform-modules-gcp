@@ -209,3 +209,21 @@ variable "consul_gossip_secret_key_name" {
   description = "Kubernetes Secret Key holding Consul gossip key"
   default     = ""
 }
+
+variable "secrets_labels" {
+  description = "Labels for secrets"
+  default     = {}
+}
+
+variable "secrets_annotations" {
+  description = "Annotations for secrets"
+  default     = {}
+}
+
+variable "tls_cert_pem" {
+  description = "PEM encoded certificate for Vault"
+}
+
+variable "tls_cert_key" {
+  description = "PEM encoded private key for Vault"
+}
