@@ -34,8 +34,6 @@ kubectl create clusterrolebinding cluster-admin-binding \
 
 where `[USER_ACCOUNT]` is your email address.
 
-## Provisioned Resources
-
 ## Usage
 
 ### Consul Server Persistent Volumes
