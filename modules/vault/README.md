@@ -1,6 +1,7 @@
 # Vault
 
-Deploys a [Vault](https://www.vaultproject.io/) cluster on Kubernetes running on GCP.
+Deploys a [Vault](https://www.vaultproject.io/) cluster on Kubernetes running on GCP in an
+opinionated fashion.
 
 This module makes use of the this
 [incubator Helm Chart](https://github.com/helm/charts/tree/master/incubator/vault).
@@ -38,6 +39,16 @@ where `[USER_ACCOUNT]` is your email address.
 
 ## Usage
 
+This module uses the [Helm Chart](https://github.com/helm/charts/tree/master/incubator/vault) for
+Vault to deploy Vault running on a Kubernetes Cluster.
+
+In addition, for (opinionated) operational reasons, this module additionally provisions the
+following additional resources:
+
+- A Google Cloud Storage (GCS) Bucket for storing Vault State and to provide High Availability
+- A Google KMS key for auto unsealing Vault
+- (Optional) A separate GKE Node pool purely for running Vault
+
 ### Operational Considerations
 
 It might be useful to refer to Hashicorp's
@@ -47,19 +58,19 @@ Vault cluster.
 The sections below would detail additional considerations that are specific to the setup
 that this module provides.
 
-#### Storage
+#### Separate GCP Project
 
-You should consider using either using
-[Google Cloud Storage](https://www.vaultproject.io/docs/configuration/storage/google-cloud-storage.html)
-or [Google Cloud Spanner](https://www.vaultproject.io/docs/configuration/storage/google-cloud-spanner.html)
-for storage.
+The most granular permissions that you can assign to most GCP resources is at the project level.
+Therefore, you should provision the resources for Vault, wherever possible, in their own separate
+GCP project. You could use Google's
+[Project Factory module](https://github.com/terraform-google-modules/terraform-google-project-factory)
+to Terraform a new project specifically for Vault.
 
 #### High Availability Mode (HA)
 
-You should enable [HA](https://www.vaultproject.io/docs/concepts/ha.html) for Vault. This can be
-accomplished by several means. We recommend that you use a [Consul](https://www.consul.io/))
-cluster, running on the Kubernetes Cluster or not. If you use any of the storage recommended above,
-they already come with HA support.
+HA is enabled "for free" by our use of the GCS bucket for storage. Optionally, you can choose to use
+a [Consul](https://www.consul.io/)) cluster, running on the Kubernetes Cluster or not for
+HashiCorp HA only.
 
 #### TLS
 
@@ -93,11 +104,12 @@ to control access to pod tolerations using
 and nodes from modifying their own taints using
 [`NodeRestriction`](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#noderestriction).
 
-### Configuration
+### Vault Configuration
 
 The basic configuration provided in this module only configures a default
-[`listener` stanza](https://www.vaultproject.io/docs/configuration/listener/index.html). Other
-configuration (for e.g. a
+[`listener` stanza](https://www.vaultproject.io/docs/configuration/listener/index.html) and a
+[`seal` stanza](https://www.vaultproject.io/docs/configuration/seal/gcpckms.html) for auto-unsealing
+via GCP KMS. Other configuration (for e.g. a
 [`storage` stanza](https://www.vaultproject.io/docs/configuration/storage/index.html)) are needed.
 
 You should refer to [Vault's documentation](https://www.vaultproject.io/docs/configuration/) on
