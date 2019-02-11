@@ -1,6 +1,6 @@
 variable "release_name" {
-  description = "Helm release name for Traefik"
-  default     = "traefik"
+  description = "Helm release name for Vault"
+  default     = "vault"
 }
 
 variable "chart_name" {

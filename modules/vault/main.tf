@@ -36,7 +36,6 @@ locals {
       tls_key_file  = "${local.tls_secret_path}/${local.tls_secret_key_key}"
 
       tls_prefer_server_cipher_suites = true
-      tls_cipher_suites               = "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA"
     }
   }
 }
@@ -60,7 +59,7 @@ data "template_file" "values" {
     service_port                = "${var.service_port}"
     service_cluster_ip          = "${jsonencode(var.service_cluster_ip)}"
     service_annotations         = "${jsonencode(var.service_annotations)}"
-    load_balancer_ip            = "${jsonencode(var.service_load_balancer_ip)}"
+    load_balancer_ip            = "${jsonencode(var.load_balancer_ip)}"
     load_balancer_source_ranges = "${jsonencode(var.load_balancer_source_ranges)}"
 
     ingress_enabled     = "${var.ingress_enabled}"
@@ -94,14 +93,17 @@ resource "kubernetes_secret" "tls_cert" {
   type = "Opaque"
 
   metadata {
-    name        = "${local.tls_cert_name}"
+    name        = "${local.tls_secret_name}"
     namespace   = "${var.chart_namespace}"
     labels      = "${var.secrets_labels}"
     annotations = "${var.secrets_annotations}"
   }
 
-  data {
-    "${local.tls_secret_cert_key}" = "${var.tls_cert_pem}"
-    "${local.tls_secret_key_key}"  = "${var.tls_cert_key}"
-  }
+  data = "${map("${local.tls_secret_cert_key}", "${var.tls_cert_pem}", "${local.tls_secret_key_key}", "${var.tls_cert_key}")}"
 }
+
+# Create project
+# Create key for auto unseal and configure
+# Create GCS bucket -- free HA --allow optional consul
+
+# Optional GKE node pool

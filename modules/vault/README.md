@@ -81,8 +81,8 @@ and provision all the Kubernetes resources in this namespace. Then, you can make
 [RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) to control access to resources
 in this namespace.
 
-You should consider running Vault on a separate nodes from the rest of your workload. You should
-also make use of
+You should also consider running Vault on a separate nodes from the rest of your workload. You
+should also make use of
 [taints and tolerations](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/) to
 make sure that these nodes run Vault exclusively.
 
@@ -157,4 +157,3 @@ the available options and provide them in the `vault_config` variable.
 | vault\_log\_level | Log level for Vault | string | `"info"` | no |
 | vault\_secret\_volumes | List of maps of custom volume mounts that are backed by Kubernetes secrets. The maps should contain the keys `secretName` and `mountPath`. | list | `<list>` | no |
 | vault\_tag | Vault Image Tag to run | string | `"0.11.6"` | no |
-
