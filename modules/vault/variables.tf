@@ -124,8 +124,19 @@ variable "memory_limit" {
 }
 
 variable "affinity" {
-  description = "Affinity settings for the pods in YAML"
-  default     = ""
+  description = "Affinity settings for the pods in YAML. The default has Anti affinity for other Vault pods."
+
+  default = <<EOF
+podAntiAffinity:
+  preferredDuringSchedulingIgnoredDuringExecution:
+  - weight: 100
+    podAffinityTerm:
+      topologyKey: kubernetes.io/hostname
+      labelSelector:
+        matchLabels:
+          app: {{ template "vault.fullname" . }}
+          release: {{ .Release.Name }}
+EOF
 }
 
 variable "annotations" {
@@ -226,4 +237,152 @@ variable "tls_cert_pem" {
 
 variable "tls_cert_key" {
   description = "PEM encoded private key for Vault"
+}
+
+# KMS Configuration
+
+variable "key_ring_name" {
+  description = "Name of the Keyring to create."
+  default     = "vault"
+}
+
+variable "kms_location" {
+  description = "Location of the KMS key ring. Must be in the same location as your storage bucket"
+}
+
+variable "kms_project" {
+  description = "Project ID to create the keyring in"
+}
+
+variable "unseal_key_name" {
+  description = "Name of the Vault unseal key"
+  default     = "unseal"
+}
+
+variable "unseal_key_rotation_period" {
+  description = "Rotation period of the Vault unseal key. Defaults to 6 months"
+  default     = "15780000s"
+}
+
+variable "storage_key_name" {
+  description = "Name of the Vault storage key"
+  default     = "storage"
+}
+
+variable "storage_key_rotation_period" {
+  description = "Rotation period of the Vault storage key. Defaults to 6 months"
+  default     = "15780000s"
+}
+
+# Storage bucket configuration
+variable "storage_bucket_name" {
+  description = "Name of the Storage Bucket to store Vault's state"
+}
+
+variable "storage_bucket_class" {
+  description = "Storage class of the bucket. See https://cloud.google.com/storage/docs/storage-classes"
+  default     = "REGIONAL"
+}
+
+variable "storage_bucket_location" {
+  description = "Location of the storage bucket. Defaults to the provider's region if empty. This must be in the same location as your KMS key."
+  default     = ""
+}
+
+variable "storage_bucket_project" {
+  description = "Project ID to create the storage bucket under"
+}
+
+variable "storage_bucket_labels" {
+  description = "Set of labels for the storage bucket"
+
+  default = {
+    terraform = "true"
+  }
+}
+
+variable "storage_ha_enabled" {
+  description = "Use the GCS bucket to provide HA for Vault. Set to \"false\" if you are using alternative HA storage like Consul"
+  default     = "true"
+}
+
+# Optional GKE Node pool
+variable "gke_pool_create" {
+  description = "Whether to create the GKE node pool or not"
+  default     = false
+}
+
+variable "gke_service_account_id" {
+  description = "Service Account name for the GKE Node pool"
+  default     = "vault-gke-pool"
+}
+
+variable "gke_project" {
+  description = "Project ID where the GKE cluster lives in"
+  default     = "<REQUIRED if gke_pool_create is true>"
+}
+
+variable "gke_pool_name" {
+  description = "Name of the GKE Pool name to create"
+  default     = "vault"
+}
+
+variable "gke_pool_region" {
+  description = "Region for the GKE cluster if regional"
+  default     = "<REQUIRED if cluster is regional>"
+}
+
+variable "gke_pool_zone" {
+  description = "Zone for GKE cluster if zonal"
+  default     = "<REQUIRED if cluster is zonal>"
+}
+
+variable "gke_cluster" {
+  description = "Cluster to create node pool for"
+  default     = "<REQUIRED if gke_pool_create is true>"
+}
+
+variable "gke_node_count" {
+  description = "Initial Node count. If regional, remember to divide the desired node count by the number of zones"
+  default     = 3
+}
+
+variable "gke_node_size_gb" {
+  description = "Disk size for the nodes in GB"
+  default     = "20"
+}
+
+variable "gke_disk_type" {
+  description = "Disk type for the nodes"
+  default     = "pd-standard"
+}
+
+variable "gke_machine_type" {
+  description = "Machine type for the GKE nodes. Make sure this matches the resources you are requesting"
+  default     = "n1-standard-2"
+}
+
+variable "gke_labels" {
+  description = "Labels for the GKE nodes"
+  default     = {}
+}
+
+variable "gke_metadata" {
+  description = "Metadata for the GKE nodes"
+  default     = {}
+}
+
+variable "gke_tags" {
+  description = "Network tags for the GKE nodes"
+  default     = []
+}
+
+variable "gke_taints" {
+  description = "List of map of taints for GKE nodes. It is highly recommended you do set this alongside the pods toleration. See https://www.terraform.io/docs/providers/google/r/container_cluster.html#key for the keys and the README for more information"
+  default     = []
+}
+
+variable "vault_service_account" {
+  description = "Required if you did not create a node pool. This should be the service account that is used by the nodes to run Vault workload. They will be given additional permissions to use the keys for auto unseal and to write to the storage bucket"
+  default     = "<REQUIRED if not creating GKE node pool>"
 }

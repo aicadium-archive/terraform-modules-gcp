@@ -35,7 +35,20 @@ locals {
       tls_cert_file = "${local.tls_secret_path}/${local.tls_secret_cert_key}"
       tls_key_file  = "${local.tls_secret_path}/${local.tls_secret_key_key}"
 
-      tls_prefer_server_cipher_suites = true
+      tls_prefer_server_cipher_suites = "true"
+    }
+
+    storage "gcs" {
+      bucket = "${google_storage_bucket.vault.name}"
+
+      ha_enabled = "${var.storage_ha_enabled}"
+    }
+
+    seal "gcpckms" {
+      project    = "${google_kms_key_ring.vault.project}"
+      region     = "${google_kms_key_ring.vault.location}"
+      key_ring   = "${google_kms_key_ring.vault.name}"
+      crypro_key = "${google_kms_crypto_key.unseal.name}"
     }
   }
 }
@@ -101,9 +114,3 @@ resource "kubernetes_secret" "tls_cert" {
 
   data = "${map("${local.tls_secret_cert_key}", "${var.tls_cert_pem}", "${local.tls_secret_key_key}", "${var.tls_cert_key}")}"
 }
-
-# Create project
-# Create key for auto unseal and configure
-# Create GCS bucket -- free HA --allow optional consul
-
-# Optional GKE node pool

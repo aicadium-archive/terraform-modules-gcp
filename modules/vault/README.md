@@ -49,6 +49,9 @@ following additional resources:
 - A Google KMS key for auto unsealing Vault
 - (Optional) A separate GKE Node pool purely for running Vault
 
+This module makes use of both the `google` and the `google-beta` provider. See the documentation on
+GCP [provider versions](https://www.terraform.io/docs/providers/google/provider_versions.html).
+
 ### Operational Considerations
 
 It might be useful to refer to Hashicorp's
@@ -70,7 +73,7 @@ to Terraform a new project specifically for Vault.
 
 HA is enabled "for free" by our use of the GCS bucket for storage. Optionally, you can choose to use
 a [Consul](https://www.consul.io/)) cluster, running on the Kubernetes Cluster or not for
-HashiCorp HA only.
+HashiCorp HA only. If you choose to do so, remember to set `storage_ha_enabled` to `"false"`.
 
 #### TLS
 
@@ -106,14 +109,16 @@ and nodes from modifying their own taints using
 
 ### Vault Configuration
 
-The basic configuration provided in this module only configures a default
-[`listener` stanza](https://www.vaultproject.io/docs/configuration/listener/index.html) and a
-[`seal` stanza](https://www.vaultproject.io/docs/configuration/seal/gcpckms.html) for auto-unsealing
-via GCP KMS. Other configuration (for e.g. a
-[`storage` stanza](https://www.vaultproject.io/docs/configuration/storage/index.html)) are needed.
+The basic configuration provided in this module configures the following:
+
+- [`listener` stanza](https://www.vaultproject.io/docs/configuration/listener/index.html)
+- [`seal` stanza](https://www.vaultproject.io/docs/configuration/seal/gcpckms.html) for auto-unsealing
+    via GCP KMS.
+- [`storage` stanza](https://www.vaultproject.io/docs/configuration/storage/index.html) using the
+    GCS bucket.
 
 You should refer to [Vault's documentation](https://www.vaultproject.io/docs/configuration/) on
-the available options and provide them in the `vault_config` variable.
+the additional options available and provide them in the `vault_config` variable.
 
 ### Vault Initialisation
 
