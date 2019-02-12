@@ -93,7 +93,7 @@ and let this module manage the configuration.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
-| chart\_name | Helm chart name to provision | string | `"https://github.com/basisai/consul-helm/archive/extensions.tar.gz"` | no |
+| chart\_name | Helm chart name to provision | string | `"https://github.com/basisai/consul-helm/archive/fork-enhancements.tar.gz"` | no |
 | chart\_namespace | Namespace to install the chart into | string | `"default"` | no |
 | chart\_repository | Helm repository for the chart | string | `""` | no |
 | chart\_version | Version of Chart to install. Set to empty to install the latest version | string | `""` | no |
@@ -104,18 +104,20 @@ and let this module manage the configuration.
 | client\_extra\_volumes | List of map of extra volumes specification. See https://www.consul.io/docs/platform/k8s/helm.html#v-client-extravolumes for the keys | list | `<list>` | no |
 | client\_memory\_limit | Memory limit for client agent pods | string | `"2Gi"` | no |
 | client\_memory\_request | Memory request for client agent pods | string | `"1Gi"` | no |
+| client\_tolerations | A YAML string that can be templated via helm specifying the tolerations for client pods | string | `""` | no |
 | configure\_kube\_dns | Configure kube-dns and OVERWRITE it to resolve .consul domains with Consul DNS | string | `"false"` | no |
 | connect\_inject\_by\_default | If true, the injector will inject the Connect sidecar into all pods by default. Otherwise, pods must specify the injection annotation to opt-in to Connect injection. If this is true, pods can use the same annotation to explicitly opt-out of injection. | string | `"false"` | no |
 | connect\_inject\_namespace\_selector | A selector for restricting injection to only matching namespaces. By default all namespaces except the system namespace will have injection enabled. | string | `""` | no |
 | consul\_domain | Top level Consul domain for DNS queries | string | `"consul"` | no |
 | consul\_image\_name | Docker Image of Consul to run | string | `"consul"` | no |
-| consul\_image\_tag | Docker image tag of Consul to run | string | `"1.4.1"` | no |
+| consul\_image\_tag | Docker image tag of Consul to run | string | `"1.4.2"` | no |
 | consul\_k8s\_image | Docker image of the consul-k8s binary to run | string | `"hashicorp/consul-k8s"` | no |
-| consul\_k8s\_tag | Image tag of the consul-k8s binary to run | string | `"0.4.0"` | no |
+| consul\_k8s\_tag | Image tag of the consul-k8s binary to run | string | `"0.5.0"` | no |
 | enable\_connect\_inject | Enable Connect Injector process | string | `"false"` | no |
 | enable\_sync\_catalog | Enable Service catalog sync: https://www.consul.io/docs/platform/k8s/service-sync.html | string | `"true"` | no |
 | enable\_ui | Enable Consul UI | string | `"false"` | no |
 | release\_name | Helm release name for Consul | string | `"consul"` | no |
+| server\_affinity | A YAML string that can be templated via helm specifying the affinity for server pods | string | `""` | no |
 | server\_cpu\_limit | CPU limit for server pods | string | `"2000m"` | no |
 | server\_cpu\_request | CPU request for server pods | string | `"500m"` | no |
 | server\_extra\_config | Raw string of additional configuration to include for servers in JSON/HCL | string | `"{}"` | no |
@@ -125,6 +127,7 @@ and let this module manage the configuration.
 | server\_replicas | Number of server replicas to run | string | `"5"` | no |
 | server\_storage | This defines the disk size for configuring the servers' StatefulSet storage. For dynamically provisioned storage classes, this is the desired size. For manually defined persistent volumes, this should be set to the disk size of the attached volume. | string | `"10Gi"` | no |
 | server\_storage\_class | The StorageClass to use for the servers' StatefulSet storage. It must be able to be dynamically provisioned if you want the storage to be automatically created. For example, to use Local storage classes, the PersistentVolumeClaims would need to be manually created. An empty value will use the Kubernetes cluster's default StorageClass. | string | `""` | no |
+| server\_tolerations | A YAML string that can be templated via helm specifying the tolerations for server pods | string | `""` | no |
 | sync\_by\_default | If true, all valid services in K8S are synced by default. If false, the service must be annotated properly to sync. In either case an annotation can override the default. | string | `"true"` | no |
 | sync\_cluster\_ip\_services | If true, will sync Kubernetes ClusterIP services to Consul. This can be disabled to have the sync ignore ClusterIP-type services. | string | `"true"` | no |
 | sync\_k8s\_prefix | A prefix to prepend to all services registered in Kubernetes from Consul. This defaults to '' where no prefix is prepended; Consul services are synced with the same name to Kubernetes. (Consul -> Kubernetes sync only) | string | `""` | no |

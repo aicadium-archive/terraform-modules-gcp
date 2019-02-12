@@ -179,6 +179,7 @@ unsealing Vault if the nodes have access to the keys.
 | consul\_tag | Consul Agent image tag to run | string | `"1.4.2"` | no |
 | cpu\_limit | CPU limit for pods | string | `"2000m"` | no |
 | cpu\_request | CPU request for pods | string | `"500m"` | no |
+| fullname\_override | Full name of resources | string | `"vault"` | no |
 | gke\_cluster | Cluster to create node pool for | string | `"\u003cREQUIRED if gke_pool_create is true\u003e"` | no |
 | gke\_disk\_type | Disk type for the nodes | string | `"pd-standard"` | no |
 | gke\_labels | Labels for the GKE nodes | map | `<map>` | no |
@@ -208,6 +209,7 @@ unsealing Vault if the nodes have access to the keys.
 | load\_balancer\_source\_ranges | Restrict the CIDRs that can access the load balancer | list | `<list>` | no |
 | memory\_limit | Memory limit for pods | string | `"4Gi"` | no |
 | memory\_request | Memory request for pods | string | `"2Gi"` | no |
+| node\_selector | Node selectors for pods | map | `<map>` | no |
 | pod\_annotations | Annotations for pods | map | `<map>` | no |
 | release\_name | Helm release name for Vault | string | `"vault"` | no |
 | replica | Number of Replicas of Vault to run | string | `"3"` | no |
@@ -229,23 +231,26 @@ unsealing Vault if the nodes have access to the keys.
 | storage\_key\_rotation\_period | Rotation period of the Vault storage key. Defaults to 6 months | string | `"15780000s"` | no |
 | tls\_cert\_key | PEM encoded private key for Vault | string | n/a | yes |
 | tls\_cert\_pem | PEM encoded certificate for Vault | string | n/a | yes |
+| tls\_cipher\_suites | Specifies the list of supported ciphersuites as a comma-separated-list. Make sure this matches the type of key of the TLS certificate you are using. See https://golang.org/src/crypto/tls/cipher_suites.go | string | `"TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA"` | no |
+| tolerations | List of maps of tolerations for the pod. It is recommend you use this to run Vault on dedicated nodes. See the README | list | `<list>` | no |
 | unseal\_key\_name | Name of the Vault unseal key | string | `"unseal"` | no |
 | unseal\_key\_rotation\_period | Rotation period of the Vault unseal key. Defaults to 6 months | string | `"15780000s"` | no |
 | vault\_config | Additional Vault configuration. See https://www.vaultproject.io/docs/configuration/. This is requried. The only configuration provided from this module is the listener. | map | n/a | yes |
 | vault\_dev | Run Vault in dev mode | string | `"false"` | no |
-| vault\_env | Extra environment variables for Vault | map | `<map>` | no |
-| vault\_extra\_containers | Extra containers for Vault | map | `<map>` | no |
+| vault\_env | Extra environment variables for Vault | list | `<list>` | no |
+| vault\_extra\_containers | Extra containers for Vault | list | `<list>` | no |
 | vault\_extra\_volumes | Additional volumes for Vault | map | `<map>` | no |
 | vault\_image | Vault Image to run | string | `"vault"` | no |
 | vault\_listener\_address | Address for the Default Vault listener to bind to | string | `"[::]"` | no |
 | vault\_log\_level | Log level for Vault | string | `"info"` | no |
 | vault\_secret\_volumes | List of maps of custom volume mounts that are backed by Kubernetes secrets. The maps should contain the keys `secretName` and `mountPath`. | list | `<list>` | no |
 | vault\_service\_account | Required if you did not create a node pool. This should be the service account that is used by the nodes to run Vault workload. They will be given additional permissions to use the keys for auto unseal and to write to the storage bucket | string | `"\u003cREQUIRED if not creating GKE node pool\u003e"` | no |
-| vault\_tag | Vault Image Tag to run | string | `"0.11.6"` | no |
+| vault\_tag | Vault Image Tag to run | string | `"1.0.2"` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
 | gke\_service\_account | Email ID of the GKE node pool if created |
+| release\_name | Release name of the Helm chart |
 | values | Values from the Vault Helm chart |
