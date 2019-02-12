@@ -117,12 +117,51 @@ The basic configuration provided in this module configures the following:
 - [`storage` stanza](https://www.vaultproject.io/docs/configuration/storage/index.html) using the
     GCS bucket.
 
+Not all required parameters are automatically configured. For example, the
+[`api_addr`](https://www.vaultproject.io/docs/configuration/#api_addr) field is not automatically
+configured.
+
 You should refer to [Vault's documentation](https://www.vaultproject.io/docs/configuration/) on
 the additional options available and provide them in the `vault_config` variable.
 
 ### Vault Initialisation
 
+The first time you deploy Vault, you need to initialise Vault. You can do this by `kubectl exec`
+into one of the pods.
+
+Assuming you have deployed the Helm chart using the release name `vault` in the `default` namespace,
+you can find the list of pods using
+
+```bash
+kubectl get pods --namespace default --selector=release=vault
+```
+
+Choose one of the pods and `exec` into the pod:
+
+```bash
+kubectl exec --namespace default -it vault-xxxx-xxxx -c vault sh
+
+# Once inside the pod, we can run
+vault operator init -tls-skip-verify
+```
+
+**Make sure you take note of the recovery keys and the intial root token!**
+
+If you lose the recovery key, you will lose all your data.
+
+You should then `exec` into the remaining pods and force a restart of the container
+
+```bash
+kill -15 1
+```
+
+You will only need to do this for the first time.
+
 ### Vault Unsealing
+
+Vault is set up to [auto unseal](https://www.vaultproject.io/docs/concepts/seal.html#auto-unseal)
+using the KMS key provisioned by this module. You will generally not have to worry about manually
+unsealing Vault if the nodes have access to the keys.
 
 ## Inputs
 

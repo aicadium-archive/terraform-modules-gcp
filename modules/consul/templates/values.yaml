@@ -22,6 +22,8 @@ server:
     extraConfig: ${server_extra_config}
     extraVolumes: ${server_extra_volumes}
     connect: false
+    affinity: ${server_affinity}
+    tolerations: ${server_tolerations}
 
 client:
     enabled: ${client_enabled}
@@ -35,6 +37,7 @@ client:
             memory: "${client_memory_limit}"
     extraConfig: ${client_extra_config}
     extraVolumes: ${client_extra_volumes}
+    tolerations: ${client_tolerations}
 
 syncCatalog:
     enabled: ${enable_sync_catalog}

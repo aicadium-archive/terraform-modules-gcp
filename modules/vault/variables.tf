@@ -28,6 +28,11 @@ variable "replica" {
   default     = 3
 }
 
+variable "fullname_override" {
+  description = "Full name of resources"
+  default     = "vault"
+}
+
 variable "vault_image" {
   description = "Vault Image to run"
   default     = "vault"
@@ -35,7 +40,7 @@ variable "vault_image" {
 
 variable "vault_tag" {
   description = "Vault Image Tag to run"
-  default     = "0.11.6"
+  default     = "1.0.2"
 }
 
 variable "service_name" {
@@ -139,6 +144,16 @@ podAntiAffinity:
 EOF
 }
 
+variable "tolerations" {
+  description = "List of maps of tolerations for the pod. It is recommend you use this to run Vault on dedicated nodes. See the README"
+  default     = []
+}
+
+variable "node_selector" {
+  description = "Node selectors for pods"
+  default     = {}
+}
+
 variable "annotations" {
   description = "Deployment annotations"
   default     = {}
@@ -172,12 +187,12 @@ variable "vault_secret_volumes" {
 
 variable "vault_env" {
   description = "Extra environment variables for Vault"
-  default     = {}
+  default     = []
 }
 
 variable "vault_extra_containers" {
   description = "Extra containers for Vault"
-  default     = {}
+  default     = []
 }
 
 variable "vault_extra_volumes" {
@@ -237,6 +252,11 @@ variable "tls_cert_pem" {
 
 variable "tls_cert_key" {
   description = "PEM encoded private key for Vault"
+}
+
+variable "tls_cipher_suites" {
+  description = "Specifies the list of supported ciphersuites as a comma-separated-list. Make sure this matches the type of key of the TLS certificate you are using. See https://golang.org/src/crypto/tls/cipher_suites.go"
+  default     = "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA"
 }
 
 # KMS Configuration

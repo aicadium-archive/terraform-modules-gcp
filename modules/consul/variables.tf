@@ -5,7 +5,7 @@ variable "release_name" {
 
 variable "chart_name" {
   description = "Helm chart name to provision"
-  default     = "https://github.com/basisai/consul-helm/archive/extensions.tar.gz"
+  default     = "https://github.com/basisai/consul-helm/archive/fork-enhancements.tar.gz"
 }
 
 variable "chart_repository" {
@@ -30,7 +30,7 @@ variable "consul_image_name" {
 
 variable "consul_image_tag" {
   description = "Docker image tag of Consul to run"
-  default     = "1.4.1"
+  default     = "1.4.2"
 }
 
 variable "consul_k8s_image" {
@@ -40,7 +40,7 @@ variable "consul_k8s_image" {
 
 variable "consul_k8s_tag" {
   description = "Image tag of the consul-k8s binary to run"
-  default     = "0.4.0"
+  default     = "0.5.0"
 }
 
 variable "consul_domain" {
@@ -93,6 +93,16 @@ variable "server_extra_volumes" {
   default     = []
 }
 
+variable "server_affinity" {
+  description = "A YAML string that can be templated via helm specifying the affinity for server pods"
+  default     = ""
+}
+
+variable "server_tolerations" {
+  description = "A YAML string that can be templated via helm specifying the tolerations for server pods"
+  default     = ""
+}
+
 variable "client_enabled" {
   description = "Enable running Consul client agents on every Kubernetes node"
   default     = "true"
@@ -126,6 +136,11 @@ variable "client_extra_config" {
 variable "client_extra_volumes" {
   description = "List of map of extra volumes specification. See https://www.consul.io/docs/platform/k8s/helm.html#v-client-extravolumes for the keys"
   default     = []
+}
+
+variable "client_tolerations" {
+  description = "A YAML string that can be templated via helm specifying the tolerations for client pods"
+  default     = ""
 }
 
 variable "enable_sync_catalog" {

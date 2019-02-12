@@ -1,4 +1,6 @@
 resource "helm_release" "vault" {
+  depends_on = ["google_container_node_pool.vault"]
+
   name       = "${var.release_name}"
   chart      = "${var.chart_name}"
   repository = "${var.chart_repository}"
@@ -7,12 +9,14 @@ resource "helm_release" "vault" {
 
   values = [
     "${data.template_file.values.rendered}",
+    "${local.vault_config_overwrite}",
   ]
 }
 
 locals {
+  cluster_port           = "8201"                                                # Fixed by the chart
   vault_listener_adderss = "${var.vault_listener_address}:${var.service_port}"
-  vault_cluster_address  = "${var.vault_listener_address}:${var.service_port + 1}"
+  vault_cluster_address  = "${var.vault_listener_address}:${local.cluster_port}"
 
   tls_secret_name = "${var.release_name}-tls"
   tls_secret_path = "/vault/tls"
@@ -22,10 +26,12 @@ locals {
 
   tls_cert_mounts = [
     {
-      secretName = "${kubernetes_secret.tls_cert.metadata.name}"
+      secretName = "${kubernetes_secret.tls_cert.metadata.0.name}"
       mountPath  = "${local.tls_secret_path}"
     },
   ]
+
+  vault_env = [] # None at the moment
 
   base_vault_config {
     listener "tcp" {
@@ -34,6 +40,8 @@ locals {
 
       tls_cert_file = "${local.tls_secret_path}/${local.tls_secret_cert_key}"
       tls_key_file  = "${local.tls_secret_path}/${local.tls_secret_key_key}"
+
+      tls_cipher_suites = "${var.tls_cipher_suites}"
 
       tls_prefer_server_cipher_suites = "true"
     }
@@ -48,9 +56,20 @@ locals {
       project    = "${google_kms_key_ring.vault.project}"
       region     = "${google_kms_key_ring.vault.location}"
       key_ring   = "${google_kms_key_ring.vault.name}"
-      crypro_key = "${google_kms_crypto_key.unseal.name}"
+      crypto_key = "${google_kms_crypto_key.unseal.name}"
     }
   }
+
+  # Overwrite dumb defaults from chart
+  vault_config_overwrite = <<EOF
+vault:
+  config:
+    listener:
+      tcp:
+        tls_disable: false
+EOF
+
+  vault_config = "${jsonencode(merge(local.base_vault_config, var.vault_config))}"
 }
 
 data "template_file" "values" {
@@ -60,6 +79,8 @@ data "template_file" "values" {
     replica     = "${var.replica}"
     vault_image = "${var.vault_image}"
     vault_tag   = "${var.vault_tag}"
+
+    fullname_override = "${var.fullname_override}"
 
     consul_image                  = "${var.consul_image}"
     consul_tag                    = "${var.consul_tag}"
@@ -90,15 +111,17 @@ data "template_file" "values" {
     annotations     = "${jsonencode(var.annotations)}"
     labels          = "${jsonencode(var.labels)}"
     pod_annotations = "${jsonencode(var.pod_annotations)}"
+    tolerations     = "${jsonencode(var.tolerations)}"
+    node_selector   = "${jsonencode(var.node_selector)}"
     lifecycle       = "${jsonencode(var.lifecycle)}"
 
     vault_dev              = "${var.vault_dev}"
     vault_secret_volumes   = "${jsonencode(concat(local.tls_cert_mounts, var.vault_secret_volumes))}"
-    vault_env              = "${jsonencode(var.vault_env)}"
+    vault_env              = "${jsonencode(concat(local.vault_env, var.vault_env))}"
     vault_extra_containers = "${jsonencode(var.vault_extra_containers)}"
     vault_extra_volumes    = "${jsonencode(var.vault_extra_volumes)}"
     vault_log_level        = "${var.vault_log_level}"
-    vault_config           = "${jsonencode(merge(local.base_vault_config, var.vault_config))}"
+    vault_config           = "${local.vault_config}"
   }
 }
 

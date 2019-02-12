@@ -32,6 +32,8 @@ data "template_file" "values" {
     server_memory_limit   = "${var.server_memory_limit}"
     server_extra_config   = "${jsonencode(var.server_extra_config)}"
     server_extra_volumes  = "${jsonencode(var.server_extra_volumes)}"
+    server_affinity       = "${jsonencode(var.server_affinity)}"
+    server_tolerations    = "${jsonencode(var.server_tolerations)}"
 
     client_enabled        = "${var.client_enabled}"
     client_cpu_request    = "${var.client_cpu_request}"
@@ -40,6 +42,7 @@ data "template_file" "values" {
     client_memory_limit   = "${var.client_memory_limit}"
     client_extra_config   = "${jsonencode(var.client_extra_config)}"
     client_extra_volumes  = "${jsonencode(var.client_extra_volumes)}"
+    client_tolerations    = "${jsonencode(var.client_tolerations)}"
 
     enable_sync_catalog      = "${var.enable_sync_catalog}"
     sync_by_default          = "${var.sync_by_default}"

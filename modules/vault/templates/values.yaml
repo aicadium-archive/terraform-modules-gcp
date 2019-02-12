@@ -1,3 +1,5 @@
+fullnameOverride: ${fullname_override}
+
 replicaCount: ${replica}
 
 image:
@@ -46,6 +48,8 @@ resources:
     memory: ${memory_limit}
 
 affinity: ${affinity}
+nodeSelector: ${node_selector}
+tolerations: ${tolerations}
 annotations: ${annotations}
 labels: ${labels}
 podAnnotations: ${pod_annotations}

@@ -5,6 +5,11 @@ locals {
     "roles/logging.logWriter",       # Write logs
     "roles/monitoring.metricWriter", # Write metrics
   ]
+
+  api_services = [
+    "cloudkms.googleapis.com",
+    "storage-api.googleapis.com",
+  ]
 }
 
 resource "google_service_account" "vault_gke" {
@@ -20,14 +25,18 @@ resource "google_container_node_pool" "vault" {
   provider = "google-beta"
   count    = "${local.gke_pool_create ? 1 : 0}"
 
+  depends_on = [
+    "google_project_iam_member.vault",
+    "google_project_service.services",
+  ]
+
   name    = "${var.gke_pool_name}"
   region  = "${var.gke_pool_region}"
   zone    = "${var.gke_pool_zone}"
   cluster = "${var.gke_cluster}"
   project = "${var.gke_project}"
 
-  initial_node_count = "${var.gke_node_count}"
-  node_count         = "${var.gke_node_count}"
+  node_count = "${var.gke_node_count}"
 
   management {
     auto_repair  = true
@@ -45,21 +54,33 @@ resource "google_container_node_pool" "vault" {
     taint           = ["${var.gke_taints}"]
     service_account = "${google_service_account.vault_gke.email}"
 
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform",
+      "https://www.googleapis.com/auth/devstorage.read_write",
+      "https://www.googleapis.com/auth/cloud-platform",
+    ]
+
     # See https://cloud.google.com/kubernetes-engine/docs/how-to/protecting-cluster-metadata#concealment
     workload_metadata_config {
       node_metadata = "SECURE"
     }
   }
-
-  lifecycle {
-    ignore_changes = ["initial_node_count"]
-  }
 }
 
 resource "google_project_iam_member" "vault" {
-  count = "${length(local.gke_service_account_roles)}"
+  count = "${local.gke_pool_create ? length(local.gke_service_account_roles) : 0}"
 
   member  = "serviceAccount:${google_service_account.vault_gke.email}"
   role    = "${element(local.gke_service_account_roles, count.index)}"
   project = "${var.gke_project}"
+}
+
+# We need to enable the KMS and GCS APIs on the GKE cluster project
+resource "google_project_service" "services" {
+  count = "${local.gke_pool_create ? length(local.api_services) : 0}"
+
+  project = "${var.gke_project}"
+  service = "${element(local.api_services, count.index)}"
+
+  disable_on_destroy = false
 }
