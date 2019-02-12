@@ -1,0 +1,96 @@
+fullnameOverride: ${fullname_override}
+
+replicaCount: ${replica}
+
+image:
+  repository: ${vault_image}
+  tag: ${vault_tag}
+
+consulAgent:
+  repository: ${consul_image}
+  tag: ${consul_tag}
+  join: ${consul_join}
+  gossipKeySecretName: ${consul_gossip_secret_key_name}
+
+service:
+  name: ${service_name}
+  type: ${service_type}
+  # Assign a static LB IP
+  loadBalancerIP: ${load_balancer_ip}
+  loadBalancerSourceRanges: ${load_balancer_source_ranges}
+  externalPort: ${service_external_port}
+  port: ${service_port}
+  clusterIP: ${service_cluster_ip}
+  annotations: ${service_annotations}
+
+ingress:
+  enabled: ${ingress_enabled}
+  labels: ${ingress_labels}
+  hosts: ${ingress_hosts}
+  # Used to create Ingress record (should used with service.type: ClusterIP).
+  # hosts:
+  #  - chart-example.local
+  # annotations:
+  #   kubernetes.io/ingress.class: nginx
+  #   kubernetes.io/tls-acme: "true"
+  # tls:
+  #   Secrets must be manually created in the namespace.
+  #   - secretName: chart-example-tls
+  #     hosts:
+#       - chart-example.local
+
+resources:
+  requests:
+    cpu: ${cpu_request}
+    memory: ${memory_request}
+  limits:
+    cpu: ${cpu_limit}
+    memory: ${memory_limit}
+
+affinity: ${affinity}
+nodeSelector: ${node_selector}
+tolerations: ${tolerations}
+annotations: ${annotations}
+labels: ${labels}
+podAnnotations: ${pod_annotations}
+lifecycle: ${lifecycle}
+
+vault:
+  # Only used to enable dev mode. When in dev mode, the rest of this config
+  # section below is not used to configure Vault. See
+  # https://www.vaultproject.io/intro/getting-started/dev-server.html for more
+  # information.
+  dev: ${vault_dev}
+  # Allows the mounting of various custom secrets th enable production vault
+  # configurations. The comments show an example usage for mounting a TLS
+  # secret. The two fields required are a secretName indicating the name of
+  # the Kubernetes secret (created outside of this chart), and the mountPath
+  # at which it should be mounted in the Vault container.
+  customSecrets: ${vault_secret_volumes}
+    # - secretName: vault-tls
+    #   mountPath: /vault/tls
+  #
+  # Configure additional environment variables for the Vault containers
+  extraEnv: ${vault_env}
+  #   - name: VAULT_API_ADDR
+  #     value: "https://vault.internal.domain.name:8200"
+  extraContainers: ${vault_extra_containers}
+  ## Additional containers to be added to the Vault pod
+  # - name: vault-sidecar
+  #   image: vault-sidecar:latest
+  #   volumeMounts:
+  #   - name: some-mount
+  #     mountPath: /some/path
+  extraVolumes: ${vault_extra_volumes}
+  # Log level
+  # https://www.vaultproject.io/docs/commands/server.html#log-level
+  logLevel: ${vault_log_level}
+  ## Additional volumes to the vault pod.
+  # - name: extra-volume
+  #   secret:
+  #     secretName: some-secret
+  readiness:
+    readyIfSealed: false
+    readyIfStandby: true
+    readyIfUninitialized: true
+  config: ${vault_config}

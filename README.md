@@ -7,7 +7,11 @@ might depend on others in this repository or otherwise.
 
 ### Consul
 
-Deploys a [Consul](https://www.consul.io/) cluster on Kubernetes cluster running on GCP.
+Deploys a [Consul](https://www.consul.io/) cluster on Kubernetes running on GCP.
+
+### Vault
+
+Deploys a [Vault](https://www.vaultproject.io/) cluster on Kubernetes running on GCP.
 
 ### Traefik
 
