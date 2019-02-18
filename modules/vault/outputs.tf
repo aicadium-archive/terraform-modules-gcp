@@ -12,3 +12,8 @@ output "gke_service_account" {
   description = "Email ID of the GKE node pool if created"
   value       = "${google_service_account.vault_gke.*.email}"
 }
+
+output "gke_service_account_name" {
+  description = "Name of the GKE node pool if created"
+  value       = "${google_service_account.vault_gke.*.name}"
+}
