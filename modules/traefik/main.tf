@@ -159,6 +159,8 @@ data "template_file" "values" {
     tracing_service_name = "${var.tracing_service_name}"
     tracing_settings     = "${var.tracing_enabled == "true" ? "${var.tracing_backend}: ${jsonencode(var.tracing_settings)}" : ""}"
 
+    secret_files = "${var.secret_files}"
+
     # Disabled for now because of https://github.com/hashicorp/terraform/issues/17033
     # prometheus_buckets         = "${jsonencode(var.prometheus_buckets)}"
   }

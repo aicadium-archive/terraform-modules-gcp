@@ -207,4 +207,6 @@ tracing:
   #   debug: false
   #   globalTag: ""
 
+secretFiles: ${secret_files}
+
 sendAnonymousUsage: false

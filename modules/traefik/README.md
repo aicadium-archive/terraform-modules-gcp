@@ -81,10 +81,10 @@ For more information, read the guide on [Traefik Documentation](https://docs.tra
 | acme\_on\_host\_rule | Enable certificate generation on frontend Host rules. See https://docs.traefik.io/configuration/acme/#onhostrule | string | `"true"` | no |
 | acme\_staging | Issue certificates from Let's Encrypt staging server | string | `"false"` | no |
 | affinity | Affinity settings | map | `<map>` | no |
-| chart\_name | Helm chart name to provision | string | `"stable/traefik"` | no |
+| chart\_name | Helm chart name to provision | string | `"https://github.com/basisai/charts/releases/download/traefik-env/traefik-1.59.3.tgz"` | no |
 | chart\_namespace | Namespace to install the chart into | string | `"kube-system"` | no |
 | chart\_repository | Helm repository for the chart | string | `""` | no |
-| chart\_version | Version of Chart to install. Set to empty to install the latest version | string | `"1.59.2"` | no |
+| chart\_version | Version of Chart to install. Set to empty to install the latest version | string | `""` | no |
 | consul\_kv\_prefix | Consul KV configuration store prefix | string | `"traefik"` | no |
 | cpu\_limit | CPU limit per Traefik pod | string | `"100m"` | no |
 | cpu\_request | Initial share of CPU requested per Traefik pod | string | `"100m"` | no |
@@ -128,6 +128,7 @@ For more information, read the guide on [Traefik Documentation](https://docs.tra
 | release\_name | Helm release name for Traefik | string | `"traefik"` | no |
 | replicas | Number of replias to run | string | `"1"` | no |
 | root\_ca | List of Root CAs for Traefik to trust when encountering backends. Put the contents into the variable | list | `<list>` | no |
+| secret\_files | KV Map of secret files and their contents | map | `<map>` | no |
 | service\_annotations | Annotations for the Traefik Service definition, specified as a map | map | `<map>` | no |
 | service\_labels | Additional labels for the Traefik Service definition, specified as a map. | map | `<map>` | no |
 | service\_type | Kubernetes service type to run as. `NodePort` or `LoadBalancer`. | string | `"LoadBalancer"` | no |

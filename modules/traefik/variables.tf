@@ -420,3 +420,8 @@ variable "tracing_settings" {
   description = "Map of settings for the tracing backend. See `templates/values.yaml` for information"
   default     = {}
 }
+
+variable "secret_files" {
+  description = "KV Map of secret files and their contents"
+  default     = {}
+}
