@@ -1,0 +1,21 @@
+---
+- name: Backup Consul Snapshot
+  hosts: all
+  vars:
+    # Environment variables to pass to Consul CLI
+    # See https://www.consul.io/docs/commands/index.html#environment-variables
+    consul_environment: {}
+    # Name of gcs bucket
+    gcs_bucket: ""
+    # Object name prefix
+    gcs_prefix: "backup/consul/"
+  tasks:
+    - name: Get temporary file to save gcs
+      tempfile:
+        state: file
+      register: snapshot_temp
+    - name: Download Consul Snapshot
+      shell: "consul snapshot save {{ snapshot_temp.path }}"
+      environment: "{{ consul_environment }}"
+    - name: Copy to gcs
+      shell: "gsutil cp {{ snapshot_temp.path }} gs://{{ gcs_bucket }}/{{ gcs_prefix }}{{ ansible_date_time.iso8601 }}"
