@@ -1,3 +1,31 @@
+variable "release_name" {
+  description = "Helm release name for Vault"
+  default     = "consul-backup"
+}
+
+variable "chart_name" {
+  description = "Helm chart name to provision"
+  default     = "consul-backup-gcs"
+}
+
+variable "chart_repository" {
+  description = "Helm repository for the chart"
+  default     = "amoy"
+}
+
+variable "chart_version" {
+  description = "Version of Chart to install. Set to empty to install the latest version"
+  default     = ""
+}
+
+variable "vault_address" {
+  description = "Address for Vault"
+}
+
+variable "vault_ca" {
+  description = "PEM encoded Vault CA certificate"
+}
+
 variable "gcp_secrets_path" {
   description = "Path to the GCP Secrets Engine in Vault"
   default     = "gcp"
@@ -16,9 +44,14 @@ variable "gcp_bucket_name" {
   description = "GCS Storage bucket name"
 }
 
+variable "gcs_prefix" {
+  description = "Prefix for backup snapshots in the GCS bucket"
+  default     = "backup/consul/"
+}
+
 variable "gcp_role_id" {
   description = "Name of the custom role to allow only creator access to bucket"
-  default     = "object-creator"
+  default     = "objectCreator"
 }
 
 variable "gcp_role_title" {
@@ -33,7 +66,7 @@ variable "gcp_role_description" {
 
 variable "gcp_vault_role_id" {
   description = "Name of the custom role to allow Vault to manage bucket IAM permissions"
-  default     = "vault-bucket-iam"
+  default     = "vaultBucketIam"
 }
 
 variable "gcp_vault_role_title" {
@@ -72,10 +105,60 @@ variable "namespace" {
 
 variable "vault_ttl" {
   description = "TTL for the Vault Token"
-  default     = "300"
+  default     = "600"
 }
 
 variable "vault_policy" {
   description = "Name of the policy for Vault"
   default     = "consul_backup"
+}
+
+variable "schedule" {
+  description = "Cron schedule of job in UTC"
+  default     = "0 3 * * *"
+}
+
+variable "image" {
+  description = "Docker image of the backup job"
+  default     = "basisai/consul-backup-gcs"
+}
+
+variable "tag" {
+  description = "Docker image tag of the backup job"
+  default     = "0.1.0"
+}
+
+variable "pull_policy" {
+  description = "Image pull policy of the backup job"
+  default     = "IfNotPresent"
+}
+
+variable "consul_address" {
+  description = "Address of Consul server"
+  default     = "consul-server.service.consul:8500"
+}
+
+variable "node_selector" {
+  description = "Node selector for the job"
+  default     = {}
+}
+
+variable "tolerations" {
+  description = "Tolerations for the job"
+  default     = []
+}
+
+variable "affinity" {
+  description = "Affinity for the job"
+  default     = {}
+}
+
+variable "ttl_seconds" {
+  description = "TTL of jobs in seconds. Set to an empty string to disable"
+  default     = ""
+}
+
+variable "env" {
+  description = "Additional environment variables for the Ansible playbook"
+  default     = []
 }

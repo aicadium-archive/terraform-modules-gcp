@@ -1,3 +1,7 @@
+locals {
+  gcp_secret_path = "${vault_gcp_secret_roleset.bucket.backend}/key/${vault_gcp_secret_roleset.bucket.roleset}"
+}
+
 resource "vault_kubernetes_auth_backend_role" "job" {
   backend   = "${var.kubernetes_auth_path}"
   role_name = "${var.kubernetes_auth_role_name}"
@@ -12,7 +16,7 @@ resource "vault_kubernetes_auth_backend_role" "job" {
 
 data "vault_policy_document" "job" {
   rule {
-    path         = "${vault_gcp_secret_roleset.bucket.backend}/key/${vault_gcp_secret_roleset.bucket.roleset}"
+    path         = "${local.gcp_secret_path}"
     capabilities = ["read"]
   }
 }

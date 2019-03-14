@@ -1,0 +1,38 @@
+# See https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs/#schedule
+schedule: "${schedule}"
+
+${ttl_seconds != "" ? "ttlSecondsAfterFinished: ${ttl_seconds}" : "ttlSecondsAfterFinished: null"}
+
+serviceAccount: ${service_account}
+
+image:
+  repository: ${image}
+  tag: ${tag}
+  pullPolicy: ${pull_policy}
+
+consul:
+  address: ${consul_address}
+
+nodeSelector: ${node_selector}
+
+tolerations: ${tolerations}
+
+affinity: ${affinity}
+
+gcs:
+  bucket: ${gcs_bucket}
+  prefix: ${gcs_prefix}
+
+vault:
+  pullPolicy: IfNotPresent
+  address: ${vault_address}
+  # PEM encoded CA used to issue Vault's Certificate
+  ca: ${vault_ca}
+  auth:
+    path: ${vault_auth_path}
+    role: ${vault_auth_role}
+  gcp:
+    path: ${vault_gcp_path}
+  env: []
+
+env: ${env}

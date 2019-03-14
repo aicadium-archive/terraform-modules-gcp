@@ -1,4 +1,13 @@
 # Configure a GCP Secrets Engine Roleset
+
+locals {
+  vault_iam_roles = [
+    "roles/iam.serviceAccountAdmin",
+    "roles/iam.serviceAccountKeyAdmin",
+    "projects/${var.gcp_bucket_project}/roles/${google_project_iam_custom_role.vault.role_id}",
+  ]
+}
+
 resource "vault_gcp_secret_roleset" "bucket" {
   depends_on = [
     "google_project_iam_member.vault",
@@ -26,6 +35,7 @@ resource "google_project_iam_custom_role" "object_writer" {
 
   permissions = [
     "storage.objects.create",
+    "storage.objects.list",
   ]
 
   project = "${var.gcp_bucket_project}"
@@ -45,7 +55,9 @@ resource "google_project_iam_custom_role" "vault" {
 }
 
 resource "google_project_iam_member" "vault" {
+  count = "${length(local.vault_iam_roles)}"
+
   project = "${var.gcp_bucket_project}"
-  role    = "projects/${var.gcp_bucket_project}/roles/${google_project_iam_custom_role.vault.role_id}"
+  role    = "${element(local.vault_iam_roles, count.index)}"
   member  = "serviceAccount:${var.gcp_vault_service_account}"
 }
