@@ -89,6 +89,8 @@ vault:
   # - name: extra-volume
   #   secret:
   #     secretName: some-secret
+  liveness:
+    aliveIfUninitialized: true
   readiness:
     readyIfSealed: false
     readyIfStandby: true
