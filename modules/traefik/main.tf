@@ -54,7 +54,10 @@ EOF
     "cloud.google.com/load-balancer-type" = "${var.internal_static_ip ? "Internal" : "External"}"
   }
 
-  acme_enabled = "${var.acme_enabled == "true"}"
+  acme_enabled                = "${var.acme_enabled == "true"}"
+  acme_dns_provider_variables = "${var.acme_dns_provider}: ${jsonencode(var.acme_dns_provider_variables)}"
+
+  pod_annotations = "${merge(map("checksum/acme_vars", "${sha256(local.acme_dns_provider_variables)}"), var.pod_annotations)}"
 }
 
 data "template_file" "values" {
@@ -77,7 +80,7 @@ data "template_file" "values" {
     service_annotations = "${jsonencode(merge(local.internal_service_annotation, var.service_annotations))}"
     service_labels      = "${jsonencode(var.service_labels)}"
 
-    pod_annotations       = "${jsonencode(var.pod_annotations)}"
+    pod_annotations       = "${jsonencode(local.pod_annotations)}"
     pod_labels            = "${jsonencode(var.pod_labels)}"
     pod_disruption_budget = "${jsonencode(var.pod_disruption_budget)}"
     pod_priority_class    = "${var.pod_priority_class}"
@@ -125,7 +128,7 @@ data "template_file" "values" {
     acme_challenge              = "${var.acme_challenge}"
     acme_delay_before_check     = "${var.acme_delay_before_check}"
     acme_dns_provider           = "${var.acme_dns_provider}"
-    acme_dns_provider_variables = "${var.acme_dns_provider}: ${jsonencode(var.acme_dns_provider_variables)}"
+    acme_dns_provider_variables = "${local.acme_dns_provider_variables}"
 
     dashboard_enabled             = "${var.dashboard_enabled}"
     dashboard_domain              = "${var.dashboard_domain}"
