@@ -1,11 +1,11 @@
 variable "release_name" {
   description = "Helm release name for Vault"
-  default     = "consul-backup"
+  default     = "cloudsql-backup"
 }
 
 variable "chart_name" {
   description = "Helm chart name to provision"
-  default     = "consul-backup-gcs"
+  default     = "gcloud-cron"
 }
 
 variable "chart_repository" {
@@ -38,50 +38,30 @@ variable "gcp_secrets_path" {
 
 variable "gcp_secrets_roleset" {
   description = "Name of the GCP Secrets Roleset to create"
-  default     = "consul_backup"
+  default     = "cloudsql_backup"
 }
 
-variable "gcp_bucket_project" {
-  description = "Project where the backup bucket is stored in"
+variable "cloudsql_project" {
+  description = "Project where the CloudSQL instance is in"
 }
 
-variable "gcp_bucket_name" {
-  description = "GCS Storage bucket name"
-}
-
-variable "gcs_prefix" {
-  description = "Prefix for backup snapshots in the GCS bucket"
-  default     = "backup/consul/"
+variable "cloudsql_instance" {
+  description = "Name of the Cloud SQL Instance"
 }
 
 variable "gcp_role_id" {
   description = "Name of the custom role to allow only creator access to bucket"
-  default     = "objectCreator"
+  default     = "cloudSqlBackup"
 }
 
 variable "gcp_role_title" {
   description = "Title of the custom role to allow only creator access to bucket"
-  default     = "Bucket Object Creator"
+  default     = "Cloud SQL Backup Creator"
 }
 
 variable "gcp_role_description" {
   description = "Description for the custom role to allow only creator access to bucket"
-  default     = "Create objects in buckets."
-}
-
-variable "gcp_vault_role_id" {
-  description = "Name of the custom role to allow Vault to manage bucket IAM permissions"
-  default     = "vaultBucketIam"
-}
-
-variable "gcp_vault_role_title" {
-  description = "Title of the custom role to allow Vault to manage bucket IAM permissions"
-  default     = "Vault Bucket IAM Manager"
-}
-
-variable "gcp_vault_role_description" {
-  description = "Description for the custom role to allow Vault to manage bucket IAM permissions"
-  default     = "Allow Vault to manage bucket IAM permissions"
+  default     = "Create backup runs for Cloud SQL instances."
 }
 
 variable "gcp_vault_service_account" {
@@ -95,12 +75,12 @@ variable "kubernetes_auth_path" {
 
 variable "kubernetes_auth_role_name" {
   description = "Name of the Kubernetes Auth Backend Role"
-  default     = "consul_backup"
+  default     = "cloudsql_backup"
 }
 
 variable "service_account_name" {
   description = "Name of the service account for the backup job"
-  default     = "consul-backup"
+  default     = "cloudsql-backup"
 }
 
 variable "namespace" {
@@ -115,7 +95,7 @@ variable "vault_ttl" {
 
 variable "vault_policy" {
   description = "Name of the policy for Vault"
-  default     = "consul_backup"
+  default     = "cloudsql_backup"
 }
 
 variable "schedule" {
@@ -125,12 +105,12 @@ variable "schedule" {
 
 variable "image" {
   description = "Docker image of the backup job"
-  default     = "basisai/consul-backup-gcs"
+  default     = "google/cloud-sdk"
 }
 
 variable "tag" {
   description = "Docker image tag of the backup job"
-  default     = "0.1.0"
+  default     = "239.0.0-alpine"
 }
 
 variable "pull_policy" {
@@ -164,6 +144,6 @@ variable "ttl_seconds" {
 }
 
 variable "env" {
-  description = "Additional environment variables for the Ansible playbook"
+  description = "Additional environment variables for the Gcloud Job"
   default     = []
 }
