@@ -30,7 +30,7 @@ variable "consul_image_name" {
 
 variable "consul_image_tag" {
   description = "Docker image tag of Consul to run"
-  default     = "1.4.2"
+  default     = "1.4.4"
 }
 
 variable "consul_k8s_image" {
@@ -40,7 +40,7 @@ variable "consul_k8s_image" {
 
 variable "consul_k8s_tag" {
   description = "Image tag of the consul-k8s binary to run"
-  default     = "0.5.0"
+  default     = "0.7.0"
 }
 
 variable "consul_domain" {
@@ -95,7 +95,16 @@ variable "server_extra_volumes" {
 
 variable "server_affinity" {
   description = "A YAML string that can be templated via helm specifying the affinity for server pods"
-  default     = ""
+  default     = <<EOF
+podAntiAffinity:
+  requiredDuringSchedulingIgnoredDuringExecution:
+    - labelSelector:
+        matchLabels:
+          app: {{ template "consul.name" . }}
+          release: "{{ .Release.Name }}"
+          component: server
+      topologyKey: kubernetes.io/hostname
+EOF
 }
 
 variable "server_tolerations" {
