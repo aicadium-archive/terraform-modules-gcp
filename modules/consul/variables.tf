@@ -95,7 +95,8 @@ variable "server_extra_volumes" {
 
 variable "server_affinity" {
   description = "A YAML string that can be templated via helm specifying the affinity for server pods"
-  default     = <<EOF
+
+  default = <<EOF
 podAntiAffinity:
   requiredDuringSchedulingIgnoredDuringExecution:
     - labelSelector:
