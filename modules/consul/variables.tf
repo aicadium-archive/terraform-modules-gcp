@@ -163,16 +163,6 @@ variable "client_priority_class" {
   default     = ""
 }
 
-variable "min_available" {
-  description = "Minimum available for Traefik. Disabled if empty."
-  default     = "1"
-}
-
-variable "max_unavailable" {
-  description = "Maximum unavailablility for Traefik. If set, overrides min_available. Disabled if empty."
-  default     = ""
-}
-
 variable "enable_sync_catalog" {
   description = "Enable Service catalog sync: https://www.consul.io/docs/platform/k8s/service-sync.html"
   default     = "true"
