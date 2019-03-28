@@ -131,8 +131,8 @@ variable "pod_labels" {
 }
 
 variable "pod_disruption_budget" {
-  description = "Map describing the Pod Disruption Budget. See https://kubernetes.io/docs/tasks/run-application/configure-pdb/"
-  default     = {}
+  description = "JSON string for pod disruption budget. See https://kubernetes.io/docs/tasks/run-application/configure-pdb/"
+  default     = ""
 }
 
 variable "pod_priority_class" {

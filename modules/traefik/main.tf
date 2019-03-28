@@ -82,7 +82,7 @@ data "template_file" "values" {
 
     pod_annotations       = "${jsonencode(local.pod_annotations)}"
     pod_labels            = "${jsonencode(var.pod_labels)}"
-    pod_disruption_budget = "${jsonencode(var.pod_disruption_budget)}"
+    pod_disruption_budget = "${var.pod_disruption_budget != "" ? var.pod_disruption_budget : "{}"}"
     pod_priority_class    = "${var.pod_priority_class}"
 
     deployment_strategy         = "${jsonencode(var.deployment_strategy)}"

@@ -24,6 +24,7 @@ server:
     connect: false
     affinity: ${server_affinity}
     tolerations: ${server_tolerations}
+    priorityClassName: ${server_priority_class}
 
 client:
     enabled: ${client_enabled}
@@ -38,6 +39,7 @@ client:
     extraConfig: ${client_extra_config}
     extraVolumes: ${client_extra_volumes}
     tolerations: ${client_tolerations}
+    priorityClassName: ${client_priority_class}
 
 syncCatalog:
     enabled: ${enable_sync_catalog}
