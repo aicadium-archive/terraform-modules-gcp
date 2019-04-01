@@ -29,6 +29,77 @@ variable "image_pull_secrets" {
 }
 
 ################################
+# ConfigMap Reload
+################################
+variable "configmap_name" {
+  description = "Name of the ConfigMap Reload container"
+  default     = "configmap-reload"
+}
+
+variable "configmap_image_repo" {
+  description = "Docker Image repo for ConfigMap Reload"
+  default     = "jimmidyson/configmap-reload"
+}
+
+variable "configmap_image_tag" {
+  description = "Docker image tag for ConfigMap Reload"
+  default     = "v0.2.2"
+}
+
+variable "configmap_pull_policy" {
+  description = "Image pull policy for ConfigMap reload"
+  default     = "IfNotPresent"
+}
+
+variable "configmap_extra_args" {
+  description = "Extra arguments for ConfigMap Reload"
+  default     = {}
+}
+
+variable "configmap_extra_volumes" {
+  description = "Extra volumes for ConfigMap Extra Volumes"
+  default     = []
+}
+
+variable "configmap_resources" {
+  description = "Resources for ConfigMap Reload pod"
+  default     = {}
+}
+
+################################
+# initChownData
+################################
+variable "init_chown_enabled" {
+  description = "Enable initChownData"
+  default     = "true"
+}
+
+variable "init_chown_name" {
+  description = "NAme of the initChownData container"
+  default     = "init-chown-data"
+}
+
+variable "init_chown_image_repo" {
+  description = "Docker Image repo for initChownData"
+  default     = "busybox"
+}
+
+variable "init_chown_image_tag" {
+  description = "Docker image tag for initChownData"
+  default     = "latest"
+}
+
+variable "init_chown_pull_policy" {
+  description = "Image pull policy for initChownData"
+  default     = "IfNotPresent"
+}
+
+variable "init_chown_resources" {
+  description = "Resources for initChownData"
+  default     = {}
+}
+
+################################
 # Alertmanager
 ################################
 variable "alertmanager_enable" {

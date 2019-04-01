@@ -16,6 +16,22 @@ data "template_file" "general" {
 
   vars {
     image_pull_secrets = "${jsonencode(var.image_pull_secrets)}"
+
+    configmap_name              = "${var.configmap_name}"
+    configmap_image_repo        = "${var.configmap_image_repo}"
+    configmap_image_tag         = "${var.configmap_image_tag}"
+    configmap_image_pull_policy = "${var.configmap_pull_policy}"
+
+    configmap_extra_args    = "${jsonencode(var.configmap_extra_args)}"
+    configmap_extra_volumes = "${jsonencode(var.configmap_extra_volumes)}"
+    configmap_resources     = "${jsonencode(var.configmap_resources)}"
+
+    init_chown_enabled     = "${var.init_chown_enabled}"
+    init_chown_name        = "${var.init_chown_name}"
+    init_chown_image_repo  = "${var.init_chown_image_repo}"
+    init_chown_image_tag   = "${var.init_chown_image_tag}"
+    init_chown_pull_policy = "${var.init_chown_pull_policy}"
+    init_chown_resources   = "${jsonencode(var.init_chown_resources)}"
   }
 }
 
