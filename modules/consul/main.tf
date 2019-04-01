@@ -19,7 +19,7 @@ data "template_file" "values" {
     image     = "${var.consul_image_name}:${var.consul_image_tag}"
     image_k8s = "${var.consul_k8s_image}:${var.consul_k8s_tag}"
 
-    datacenter    = "${data.google_client_config.current.region}"
+    datacenter    = "${coalesce(var.server_datacenter, data.google_client_config.current.region)}"
     consul_domain = "${var.consul_domain}"
 
     server_replicas      = "${var.server_replicas}"

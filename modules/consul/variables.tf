@@ -5,7 +5,7 @@ variable "release_name" {
 
 variable "chart_name" {
   description = "Helm chart name to provision"
-  default     = "https://github.com/basisai/consul-helm/archive/fork-enhancements.tar.gz"
+  default     = ""
 }
 
 variable "chart_repository" {
@@ -51,6 +51,11 @@ variable "consul_domain" {
 variable "server_replicas" {
   description = "Number of server replicas to run"
   default     = 5
+}
+
+variable "server_datacenter" {
+  description = "Datacenter to configure Consul as. Defaults to Region name"
+  default     = ""
 }
 
 variable "server_storage" {

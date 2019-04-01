@@ -1,0 +1,213 @@
+alertmanager:
+  ## If false, alertmanager will not be installed
+  ##
+  enabled: ${enable}
+
+  ## alertmanager container name
+  ##
+  name: alertmanager
+
+  ## alertmanager container image
+  ##
+  image:
+    repository: ${repository}
+    tag: ${tag}
+    pullPolicy: ${pull_policy}
+
+  ## alertmanager priorityClassName
+  ##
+  priorityClassName: ${priority_class_name}
+
+  ## Additional alertmanager container arguments
+  ##
+  extraArgs: ${extra_args}
+
+  ## The URL prefix at which the container can be accessed. Useful in the case the '-web.external-url' includes a slug
+  ## so that the various internal URLs are still able to access as they are in the default case.
+  ## (Optional)
+  prefixURL: ${prefix_url}
+
+  ## External URL which can access alertmanager
+  ## Maybe same with Ingress host name
+  baseURL: ${base_url}
+
+  ## Additional alertmanager container environment variable
+  ## For instance to add a http_proxy
+  ##
+  extraEnv: ${extra_env}
+
+  ## ConfigMap override where fullname is {{.Release.Name}}-{{.Values.alertmanager.configMapOverrideName}}
+  ## Defining configMapOverrideName will cause templates/alertmanager-configmap.yaml
+  ## to NOT generate a ConfigMap resource
+  ##
+  configMapOverrideName: ${config_map_override_name}
+
+  ## The name of a secret in the same kubernetes namespace which contains the Alertmanager config
+  ## Defining configFromSecret will cause templates/alertmanager-configmap.yaml
+  ## to NOT generate a ConfigMap resource
+  ##
+  configFromSecret: ${config_from_secret}
+
+  ## The configuration file name to be loaded to alertmanager
+  ## Must match the key within configuration loaded from ConfigMap/Secret
+  ##
+  configFileName: ${config_file_name}
+
+  ingress:
+    ## If true, alertmanager Ingress will be created
+    ##
+    enabled: ${ingress_enabled}
+
+    ## alertmanager Ingress annotations
+    ##
+    annotations: ${ingress_annotations}
+    #   kubernetes.io/ingress.class: nginx
+    #   kubernetes.io/tls-acme: 'true'
+
+    ## alertmanager Ingress additional labels
+    ##
+    extraLabels: ${ingress_extra_labels}
+
+    ## alertmanager Ingress hostnames with optional path
+    ## Must be provided if Ingress is enabled
+    ##
+    hosts: ${ingress_hosts}
+    #   - alertmanager.domain.com
+    #   - domain.com/alertmanager
+
+    ## alertmanager Ingress TLS configuration
+    ## Secrets must be manually created in the namespace
+    ##
+    tls: ${ingress_tls}
+    #   - secretName: prometheus-alerts-tls
+    #     hosts:
+    #       - alertmanager.domain.com
+
+  ## Alertmanager Deployment Strategy type
+  # strategy:
+  #   type: Recreate
+
+  ## Node tolerations for alertmanager scheduling to nodes with taints
+  ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
+  ##
+  tolerations: ${tolerations}
+    # - key: "key"
+    #   operator: "Equal|Exists"
+    #   value: "value"
+    #   effect: "NoSchedule|PreferNoSchedule|NoExecute(1.6 only)"
+
+  ## Node labels for alertmanager pod assignment
+  ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
+  ##
+  nodeSelector: ${node_selector}
+
+  ## Pod affinity
+  ##
+  affinity: ${affinity}
+
+  ## Use an alternate scheduler, e.g. "stork".
+  ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
+  ##
+  # schedulerName:
+
+  persistentVolume:
+    ## If true, alertmanager will create/use a Persistent Volume Claim
+    ## If false, use emptyDir
+    ##
+    enabled: ${pv_enabled}
+
+    ## alertmanager data Persistent Volume access modes
+    ## Must match those of existing PV or dynamic provisioner
+    ## Ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
+    ##
+    accessModes: ${pv_access_modes}
+
+    ## alertmanager data Persistent Volume Claim annotations
+    ##
+    annotations: ${pv_annotations}
+
+    ## alertmanager data Persistent Volume existing claim name
+    ## Requires alertmanager.persistentVolume.enabled: true
+    ## If defined, PVC must be created manually before volume will be bound
+    existingClaim: ${pv_existing_claim}
+
+    ## alertmanager data Persistent Volume mount root path
+    ##
+    mountPath: /data
+
+    ## alertmanager data Persistent Volume size
+    ##
+    size: ${pv_size}
+
+    ## alertmanager data Persistent Volume Storage Class
+    ## If defined, storageClassName: <storageClass>
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If undefined (the default) or set to null, no storageClassName spec is
+    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+    ##   GKE, AWS & OpenStack)
+    ##
+    # storageClass: "-"
+
+    ## Subdirectory of alertmanager data Persistent Volume to mount
+    ## Useful if the volume's root directory is not empty
+    ##
+    subPath: ""
+
+  ## Annotations to be added to alertmanager pods
+  ##
+  podAnnotations: ${annotations}
+
+  ## Use a StatefulSet if replicaCount needs to be greater than 1 (see below)
+  ##
+  replicaCount: ${replica}
+
+  statefulSet:
+    ## If true, use a statefulset instead of a deployment for pod management.
+    ## This allows to scale replicas to more than 1 pod
+    ##
+    enabled: true
+
+    podManagementPolicy: OrderedReady
+
+    ## Alertmanager headless service to use for the statefulset
+    ##
+    headless:
+      annotations: ${headless_annotations}
+      labels: ${headless_labels}
+
+      ## Enabling peer mesh service end points for enabling the HA alert manager
+      ## Ref: https://github.com/prometheus/alertmanager/blob/master/README.md
+      enableMeshPeer: ${replica > 0 ? "true" : "false"}
+
+      servicePort: 80
+
+  ## alertmanager resource requests and limits
+  ## Ref: http://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources: ${resources}
+    # limits:
+    #   cpu: 10m
+    #   memory: 32Mi
+    # requests:
+    #   cpu: 10m
+    #   memory: 32Mi
+
+  ## Security context to be added to alertmanager pods
+  ##
+  securityContext: ${security_context}
+
+  service:
+    annotations: ${service_annotations}
+    labels: ${service_labels}
+    clusterIP: ${service_cluster_ip}
+
+    ## List of IP addresses at which the alertmanager service is available
+    ## Ref: https://kubernetes.io/docs/user-guide/services/#external-ips
+    ##
+    externalIPs: ${service_external_ips}
+
+    loadBalancerIP: ${service_lb_ip}
+    loadBalancerSourceRanges: ${service_lb_source_ranges}
+    servicePort: ${service_port}
+    # nodePort: 30000
+    type: ${service_type}
