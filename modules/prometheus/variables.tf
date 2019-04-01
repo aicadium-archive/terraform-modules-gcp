@@ -265,7 +265,7 @@ variable "alertmanager_resources" {
   default     = {}
 }
 
-variable "alertmanger_security_context" {
+variable "alertmanager_security_context" {
   description = "Security context for alertmanager pods"
   default     = {}
 }
@@ -502,11 +502,6 @@ variable "node_exporter_extra_args" {
   default     = {}
 }
 
-variable "node_exporter_extra_env" {
-  description = "Extra environment variables for Node Exporter container"
-  default     = {}
-}
-
 variable "node_exporter_annotations" {
   description = "Annotations for Node Exporter pods"
   default     = {}
@@ -593,4 +588,172 @@ variable "node_exporter_host_path_mounts" {
 variable "node_exporter_config_map_mounts" {
   description = "ConfigMap Mounts for Node Exporter"
   default     = []
+}
+
+################################
+# Pushgateway
+################################
+variable "pushgateway_enable" {
+  description = "Enable Pushgateway"
+  default     = "true"
+}
+
+variable "pushgateway_repository" {
+  description = "Docker repository for Pushgateway"
+  default     = "prom/pushgateway"
+}
+
+variable "pushgateway_tag" {
+  description = "Tag for Pushgateway Docker Image"
+  default     = "v0.6.0"
+}
+
+variable "pushgateway_pull_policy" {
+  description = "Image pull policy for Pushgateway"
+  default     = "IfNotPresent"
+}
+
+variable "pushgateway_priority_class_name" {
+  description = "Priority Class Name for Pushgateway pods"
+  default     = ""
+}
+
+variable "pushgateway_extra_args" {
+  description = "Extra arguments for Pushgateway container"
+  default     = {}
+}
+
+variable "pushgateway_extra_env" {
+  description = "Extra environment variables for Pushgateway container"
+  default     = {}
+}
+
+variable "pushgateway_ingress_enabled" {
+  description = "Enable ingress for Pushgateway"
+  default     = "false"
+}
+
+variable "pushgateway_ingress_annotations" {
+  description = "Annotations for Pushgateway ingress"
+  default     = {}
+}
+
+variable "pushgateway_ingress_extra_labels" {
+  description = "Additional labels for Pushgateway ingress"
+  default     = {}
+}
+
+variable "pushgateway_ingress_hosts" {
+  description = "List of Hosts for Pushgateway ingress"
+  default     = []
+}
+
+variable "pushgateway_ingress_tls" {
+  description = "TLS configurationf or Pushgateway ingress"
+  default     = []
+}
+
+variable "pushgateway_annotations" {
+  description = "Annotations for Pushgateway pods"
+  default     = {}
+}
+
+variable "pushgateway_tolerations" {
+  description = "Tolerations for Pushgateway"
+  default     = []
+}
+
+variable "pushgateway_node_selector" {
+  description = "Node selector for pushgateway pods"
+  default     = {}
+}
+
+variable "pushgateway_affinity" {
+  description = "Affinity for pushgateway pods"
+  default     = {}
+}
+
+variable "pushgateway_pv_enabled" {
+  description = "Enable persistent volume on Pushgateway"
+  default     = "true"
+}
+
+variable "pushgateway_pv_access_modes" {
+  description = "pushgateway data Persistent Volume access modes"
+
+  default = [
+    "ReadWriteOnce",
+  ]
+}
+
+variable "pushgateway_pv_annotations" {
+  description = "Annotations for Pushgateway PV"
+  default     = {}
+}
+
+variable "pushgateway_pv_existing_claim" {
+  description = "Use an existing PV claim for pushgateway"
+  default     = ""
+}
+
+variable "pushgateway_pv_size" {
+  description = "pushgateway data Persistent Volume size"
+  default     = "2Gi"
+}
+
+variable "pushgateway_replica" {
+  description = "Number of replicas for AlertManager"
+  default     = 1
+}
+
+variable "pushgateway_resources" {
+  description = "Resources for pushgateway"
+  default     = {}
+}
+
+variable "pushgateway_security_context" {
+  description = "Security context for pushgateway pods"
+  default     = {}
+}
+
+variable "pushgateway_service_annotations" {
+  description = "Annotations for Pushgateway service"
+  default     = {
+    "prometheus.io/probe" = "pushgateway"
+  }
+}
+
+variable "pushgateway_service_labels" {
+  description = "Labels for Pushgateway service"
+  default     = {}
+}
+
+variable "pushgateway_service_cluster_ip" {
+  description = "Cluster IP for Pushgateway Service"
+  default     = ""
+}
+
+variable "pushgateway_service_external_ips" {
+  description = "External IPs for Pushgateway service"
+  default     = []
+}
+
+variable "pushgateway_service_lb_ip" {
+  description = "Load Balancer IP for Pushgateway service"
+  default     = ""
+}
+
+variable "pushgateway_service_lb_source_ranges" {
+  description = "List of source CIDRs allowed to access the Pushgateway LB"
+  default     = []
+}
+
+variable "pushgateway_service_port" {
+  description = "Service port for Pushgateway"
+  default     = 9091
+}
+
+variable "pushgateway_service_type" {
+  description = "Type of service for Pushgateway"
+  default     = "ClusterIP"
 }

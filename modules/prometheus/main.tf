@@ -57,7 +57,7 @@ data "template_file" "alertmanager" {
     tolerations      = "${jsonencode(var.alertmanager_tolerations)}"
     node_selector    = "${var.alertmanager_node_selector}"
     affinity         = "${var.alertmanager_affinity}"
-    security_context = "${jsonencode(var.alertmanger_security_context)}"
+    security_context = "${jsonencode(var.alertmanager_security_context)}"
 
     priority_class_name = "${var.alertmanager_priority_class_name}"
     extra_args          = "${jsonencode(var.alertmanager_extra_args)}"
@@ -119,7 +119,6 @@ data "template_file" "kube_state_metrics" {
 
     priority_class_name = "${var.kube_state_metrics_priority_class_name}"
     extra_args          = "${jsonencode(var.kube_state_metrics_extra_args)}"
-    extra_env           = "${jsonencode(var.kube_state_metrics_extra_env)}"
 
     service_annotations      = "${jsonencode(var.kube_state_metrics_service_annotations)}"
     service_labels           = "${jsonencode(var.kube_state_metrics_service_labels)}"
@@ -162,7 +161,6 @@ data "template_file" "node_exporter" {
 
     priority_class_name = "${var.node_exporter_priority_class_name}"
     extra_args          = "${jsonencode(var.node_exporter_extra_args)}"
-    extra_env           = "${jsonencode(var.node_exporter_extra_env)}"
 
     service_annotations      = "${jsonencode(var.node_exporter_service_annotations)}"
     service_labels           = "${jsonencode(var.node_exporter_service_labels)}"
@@ -172,5 +170,51 @@ data "template_file" "node_exporter" {
     service_lb_source_ranges = "${jsonencode(var.node_exporter_service_lb_source_ranges)}"
     service_port             = "${var.node_exporter_service_port}"
     service_type             = "${var.node_exporter_service_type}"
+  }
+}
+
+data "template_file" "pushgateway" {
+  template = "${file("${path.module}/templates/pushgateway.yaml")}"
+
+  vars {
+    enable = "${var.pushgateway_enable}"
+
+    repository  = "${var.pushgateway_repository}"
+    tag         = "${var.pushgateway_tag}"
+    pull_policy = "${var.pushgateway_pull_policy}"
+
+    replica   = "${var.pushgateway_replica}"
+    resources = "${jsonencode(var.pushgateway_resources)}"
+
+    annotations      = "${jsonencode(var.pushgateway_annotations)}"
+    tolerations      = "${jsonencode(var.pushgateway_tolerations)}"
+    node_selector    = "${var.pushgateway_node_selector}"
+    affinity         = "${var.pushgateway_affinity}"
+    security_context = "${jsonencode(var.pushgateway_security_context)}"
+
+    priority_class_name = "${var.pushgateway_priority_class_name}"
+    extra_args          = "${jsonencode(var.pushgateway_extra_args)}"
+    extra_env           = "${jsonencode(var.pushgateway_extra_env)}"
+
+    service_annotations      = "${jsonencode(var.pushgateway_service_annotations)}"
+    service_labels           = "${jsonencode(var.pushgateway_service_labels)}"
+    service_cluster_ip       = "${jsonencode(var.pushgateway_service_cluster_ip)}"
+    service_external_ips     = "${jsonencode(var.pushgateway_service_external_ips)}"
+    service_lb_ip            = "${jsonencode(var.pushgateway_service_lb_ip)}"
+    service_lb_source_ranges = "${jsonencode(var.pushgateway_service_lb_source_ranges)}"
+    service_port             = "${var.pushgateway_service_port}"
+    service_type             = "${var.pushgateway_service_type}"
+
+    ingress_enabled      = "${var.pushgateway_ingress_enabled}"
+    ingress_annotations  = "${jsonencode(var.pushgateway_ingress_annotations)}"
+    ingress_extra_labels = "${jsonencode(var.pushgateway_ingress_extra_labels)}"
+    ingress_hosts        = "${jsonencode(var.pushgateway_ingress_hosts)}"
+    ingress_tls          = "${jsonencode(var.pushgateway_ingress_tls)}"
+
+    pv_enabled        = "${var.pushgateway_pv_enabled}"
+    pv_access_modes   = "${jsonencode(var.pushgateway_pv_access_modes)}"
+    pv_annotations    = "${jsonencode(var.pushgateway_pv_annotations)}"
+    pv_existing_claim = "${var.pushgateway_pv_existing_claim}"
+    pv_size           = "${var.pushgateway_pv_size}"
   }
 }
