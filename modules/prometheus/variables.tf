@@ -147,12 +147,12 @@ variable "alertmanager_extra_env" {
   default     = {}
 }
 
-variable "prefix_url" {
+variable "alertmanager_prefix_url" {
   description = "The URL prefix at which the container can be accessed. Useful in the case the '-web.external-url' includes a slug so that the various internal URLs are still able to access as they are in the default case."
   default     = ""
 }
 
-variable "base_url" {
+variable "alertmanager_base_url" {
   description = "External URL which can access alertmanager"
   default     = "/"
 }
@@ -668,11 +668,6 @@ variable "pushgateway_node_selector" {
   default     = {}
 }
 
-variable "pushgateway_affinity" {
-  description = "Affinity for pushgateway pods"
-  default     = {}
-}
-
 variable "pushgateway_pv_enabled" {
   description = "Enable persistent volume on Pushgateway"
   default     = "true"
@@ -718,7 +713,8 @@ variable "pushgateway_security_context" {
 
 variable "pushgateway_service_annotations" {
   description = "Annotations for Pushgateway service"
-  default     = {
+
+  default = {
     "prometheus.io/probe" = "pushgateway"
   }
 }
@@ -756,4 +752,605 @@ variable "pushgateway_service_port" {
 variable "pushgateway_service_type" {
   description = "Type of service for Pushgateway"
   default     = "ClusterIP"
+}
+
+################################
+# Server
+################################
+variable "server_repository" {
+  description = "Docker repository for server"
+  default     = "prom/prometheus"
+}
+
+variable "server_tag" {
+  description = "Tag for server Docker Image"
+  default     = "v2.8.0"
+}
+
+variable "server_pull_policy" {
+  description = "Image pull policy for server"
+  default     = "IfNotPresent"
+}
+
+variable "server_sidecar_containers" {
+  description = "Sidecar containers for server"
+  default     = []
+}
+
+variable "server_priority_class_name" {
+  description = "Priority Class Name for server pods"
+  default     = ""
+}
+
+variable "server_extra_args" {
+  description = "Extra arguments for server container"
+  default     = {}
+}
+
+variable "server_extra_env" {
+  description = "Extra environment variables for server container"
+  default     = {}
+}
+
+variable "server_ingress_enabled" {
+  description = "Enable ingress for server"
+  default     = "false"
+}
+
+variable "server_ingress_annotations" {
+  description = "Annotations for server ingress"
+  default     = {}
+}
+
+variable "server_ingress_extra_labels" {
+  description = "Additional labels for server ingress"
+  default     = {}
+}
+
+variable "server_ingress_hosts" {
+  description = "List of Hosts for server ingress"
+  default     = []
+}
+
+variable "server_ingress_tls" {
+  description = "TLS configurationf or server ingress"
+  default     = []
+}
+
+variable "server_annotations" {
+  description = "Annotations for server pods"
+  default     = {}
+}
+
+variable "server_tolerations" {
+  description = "Tolerations for server"
+  default     = []
+}
+
+variable "server_node_selector" {
+  description = "Node selector for server pods"
+  default     = {}
+}
+
+variable "server_affinity" {
+  description = "Affinity for server pods"
+  default     = {}
+}
+
+variable "server_pv_enabled" {
+  description = "Enable persistent volume on server"
+  default     = "true"
+}
+
+variable "server_pv_access_modes" {
+  description = "server data Persistent Volume access modes"
+
+  default = [
+    "ReadWriteOnce",
+  ]
+}
+
+variable "server_pv_annotations" {
+  description = "Annotations for server PV"
+  default     = {}
+}
+
+variable "server_pv_existing_claim" {
+  description = "Use an existing PV claim for server"
+  default     = ""
+}
+
+variable "server_pv_size" {
+  description = "server data Persistent Volume size"
+  default     = "8Gi"
+}
+
+variable "server_replica" {
+  description = "Number of replicas for AlertManager"
+  default     = 1
+}
+
+variable "server_resources" {
+  description = "Resources for server"
+  default     = {}
+}
+
+variable "server_security_context" {
+  description = "Security context for server pods"
+  default     = {}
+}
+
+variable "server_service_annotations" {
+  description = "Annotations for server service"
+
+  default = {
+    "prometheus.io/probe" = "server"
+  }
+}
+
+variable "server_service_labels" {
+  description = "Labels for server service"
+  default     = {}
+}
+
+variable "server_service_cluster_ip" {
+  description = "Cluster IP for server Service"
+  default     = ""
+}
+
+variable "server_service_external_ips" {
+  description = "External IPs for server service"
+  default     = []
+}
+
+variable "server_service_lb_ip" {
+  description = "Load Balancer IP for server service"
+  default     = ""
+}
+
+variable "server_service_lb_source_ranges" {
+  description = "List of source CIDRs allowed to access the server LB"
+  default     = []
+}
+
+variable "server_service_port" {
+  description = "Service port for server"
+  default     = 9091
+}
+
+variable "server_service_type" {
+  description = "Type of service for server"
+  default     = "ClusterIP"
+}
+
+variable "server_prefix_url" {
+  description = "The URL prefix at which the container can be accessed. Useful in the case the '-web.external-url' includes a slug so that the various internal URLs are still able to access as they are in the default case."
+  default     = ""
+}
+
+variable "server_base_url" {
+  description = "External URL which can access alertmanager"
+  default     = ""
+}
+
+variable "server_enable_admin_api" {
+  description = "Enable Admin API for server"
+  default     = "false"
+}
+
+variable "server_skip_tsdb_lock" {
+  description = "Disable TSDB locking for the server"
+  default     = "false"
+}
+
+variable "server_scrape_interval" {
+  description = "How frequently to scrape targets by default"
+  default     = "1m"
+}
+
+variable "server_scrape_timeout" {
+  description = "How long until a scrape request times out"
+  default     = "10s"
+}
+
+variable "server_evaluation_interval" {
+  description = "How frequently to evaluate rules"
+  default     = "1m"
+}
+
+variable "server_extra_volume_mounts" {
+  description = "Additional Prometheus server Volume mounts"
+  default     = []
+}
+
+variable "server_extra_volumes" {
+  description = "Additional Prometheus server Volumes"
+  default     = []
+}
+
+variable "server_extra_host_path_mounts" {
+  description = "Additional Prometheus server hostPath mounts"
+  default     = []
+}
+
+variable "server_extra_configmap_mounts" {
+  description = "Additional Prometheus server ConfigMap mounts"
+  default     = []
+}
+
+variable "server_extra_secret_mounts" {
+  description = "Extra secret mounts for server"
+  default     = []
+}
+
+variable "server_statefulset_annotations" {
+  description = "Annotations for server StatefulSet"
+  default     = {}
+}
+
+variable "server_data_retention" {
+  description = "Prometheus data retention period (i.e 360h)"
+  default     = ""
+}
+
+variable "server_termination_grace_seconds" {
+  description = "Prometheus server pod termination grace period"
+  default     = "300"
+}
+
+variable "server_files" {
+  description = "Prometheus server ConfigMap entries"
+
+  default = {
+    "alerts" = {}
+
+    "rules" = {}
+
+    "prometheus.yml" = {
+      "rule_files" = [
+        "/etc/config/rules",
+        "/etc/config/alerts",
+      ]
+
+      "scrape_configs" = [
+        {
+          "job_name" = "prometheus"
+
+          "static_configs" = [
+            {
+              "targets" = [
+                "localhost=9090",
+              ]
+            },
+          ]
+        },
+        {
+          "job_name" = "kubernetes-apiservers"
+
+          "kubernetes_sd_configs" = [
+            {
+              "role" = "endpoints"
+            },
+          ]
+
+          "scheme" = "https"
+
+          "tls_config" = {
+            "ca_file"              = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+            "insecure_skip_verify" = true
+          }
+
+          "bearer_token_file" = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+
+          "relabel_configs" = [
+            {
+              "source_labels" = [
+                "__meta_kubernetes_namespace",
+                "__meta_kubernetes_service_name",
+                "__meta_kubernetes_endpoint_port_name",
+              ]
+
+              "action" = "keep"
+              "regex"  = "default;kubernetes;https"
+            },
+          ]
+        },
+        {
+          "job_name" = "kubernetes-nodes"
+          "scheme"   = "https"
+
+          "tls_config" = {
+            "ca_file"              = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+            "insecure_skip_verify" = true
+          }
+
+          "bearer_token_file" = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+
+          "kubernetes_sd_configs" = [
+            {
+              "role" = "node"
+            },
+          ]
+
+          "relabel_configs" = [
+            {
+              "action" = "labelmap"
+              "regex"  = "__meta_kubernetes_node_label_(.+)"
+            },
+            {
+              "target_label" = "__address__"
+              "replacement"  = "kubernetes.default.svc=443"
+            },
+            {
+              "source_labels" = [
+                "__meta_kubernetes_node_name",
+              ]
+
+              "regex"        = "(.+)"
+              "target_label" = "__metrics_path__"
+              "replacement"  = "/api/v1/nodes/$1/proxy/metrics"
+            },
+          ]
+        },
+        {
+          "job_name" = "kubernetes-nodes-cadvisor"
+          "scheme"   = "https"
+
+          "tls_config" = {
+            "ca_file"              = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+            "insecure_skip_verify" = true
+          }
+
+          "bearer_token_file" = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+
+          "kubernetes_sd_configs" = [
+            {
+              "role" = "node"
+            },
+          ]
+
+          "relabel_configs" = [
+            {
+              "action" = "labelmap"
+              "regex"  = "__meta_kubernetes_node_label_(.+)"
+            },
+            {
+              "target_label" = "__address__"
+              "replacement"  = "kubernetes.default.svc=443"
+            },
+            {
+              "source_labels" = [
+                "__meta_kubernetes_node_name",
+              ]
+
+              "regex"        = "(.+)"
+              "target_label" = "__metrics_path__"
+              "replacement"  = "/api/v1/nodes/$1/proxy/metrics/cadvisor"
+            },
+          ]
+        },
+        {
+          "job_name" = "kubernetes-service-endpoints"
+
+          "kubernetes_sd_configs" = [
+            {
+              "role" = "endpoints"
+            },
+          ]
+
+          "relabel_configs" = [
+            {
+              "source_labels" = [
+                "__meta_kubernetes_service_annotation_prometheus_io_scrape",
+              ]
+
+              "action" = "keep"
+              "regex"  = true
+            },
+            {
+              "source_labels" = [
+                "__meta_kubernetes_service_annotation_prometheus_io_scheme",
+              ]
+
+              "action"       = "replace"
+              "target_label" = "__scheme__"
+              "regex"        = "(https?)"
+            },
+            {
+              "source_labels" = [
+                "__meta_kubernetes_service_annotation_prometheus_io_path",
+              ]
+
+              "action"       = "replace"
+              "target_label" = "__metrics_path__"
+              "regex"        = "(.+)"
+            },
+            {
+              "source_labels" = [
+                "__address__",
+                "__meta_kubernetes_service_annotation_prometheus_io_port",
+              ]
+
+              "action"       = "replace"
+              "target_label" = "__address__"
+              "regex"        = "([^=]+)(?==\\d+)?;(\\d+)"
+              "replacement"  = "$1=$2"
+            },
+            {
+              "action" = "labelmap"
+              "regex"  = "__meta_kubernetes_service_label_(.+)"
+            },
+            {
+              "source_labels" = [
+                "__meta_kubernetes_namespace",
+              ]
+
+              "action"       = "replace"
+              "target_label" = "kubernetes_namespace"
+            },
+            {
+              "source_labels" = [
+                "__meta_kubernetes_service_name",
+              ]
+
+              "action"       = "replace"
+              "target_label" = "kubernetes_name"
+            },
+            {
+              "source_labels" = [
+                "__meta_kubernetes_pod_node_name",
+              ]
+
+              "action"       = "replace"
+              "target_label" = "kubernetes_node"
+            },
+          ]
+        },
+        {
+          "job_name"     = "prometheus-pushgateway"
+          "honor_labels" = true
+
+          "kubernetes_sd_configs" = [
+            {
+              "role" = "service"
+            },
+          ]
+
+          "relabel_configs" = [
+            {
+              "source_labels" = [
+                "__meta_kubernetes_service_annotation_prometheus_io_probe",
+              ]
+
+              "action" = "keep"
+              "regex"  = "pushgateway"
+            },
+          ]
+        },
+        {
+          "job_name"     = "kubernetes-services"
+          "metrics_path" = "/probe"
+
+          "params" = {
+            "module" = [
+              "http_2xx",
+            ]
+          }
+
+          "kubernetes_sd_configs" = [
+            {
+              "role" = "service"
+            },
+          ]
+
+          "relabel_configs" = [
+            {
+              "source_labels" = [
+                "__meta_kubernetes_service_annotation_prometheus_io_probe",
+              ]
+
+              "action" = "keep"
+              "regex"  = true
+            },
+            {
+              "source_labels" = [
+                "__address__",
+              ]
+
+              "target_label" = "__param_target"
+            },
+            {
+              "target_label" = "__address__"
+              "replacement"  = "blackbox"
+            },
+            {
+              "source_labels" = [
+                "__param_target",
+              ]
+
+              "target_label" = "instance"
+            },
+            {
+              "action" = "labelmap"
+              "regex"  = "__meta_kubernetes_service_label_(.+)"
+            },
+            {
+              "source_labels" = [
+                "__meta_kubernetes_namespace",
+              ]
+
+              "target_label" = "kubernetes_namespace"
+            },
+            {
+              "source_labels" = [
+                "__meta_kubernetes_service_name",
+              ]
+
+              "target_label" = "kubernetes_name"
+            },
+          ]
+        },
+        {
+          "job_name" = "kubernetes-pods"
+
+          "kubernetes_sd_configs" = [
+            {
+              "role" = "pod"
+            },
+          ]
+
+          "relabel_configs" = [
+            {
+              "source_labels" = [
+                "__meta_kubernetes_pod_annotation_prometheus_io_scrape",
+              ]
+
+              "action" = "keep"
+              "regex"  = true
+            },
+            {
+              "source_labels" = [
+                "__meta_kubernetes_pod_annotation_prometheus_io_path",
+              ]
+
+              "action"       = "replace"
+              "target_label" = "__metrics_path__"
+              "regex"        = "(.+)"
+            },
+            {
+              "source_labels" = [
+                "__address__",
+                "__meta_kubernetes_pod_annotation_prometheus_io_port",
+              ]
+
+              "action"       = "replace"
+              "regex"        = "([^=]+)(?==\\d+)?;(\\d+)"
+              "replacement"  = "$1=$2"
+              "target_label" = "__address__"
+            },
+            {
+              "action" = "labelmap"
+              "regex"  = "__meta_kubernetes_pod_label_(.+)"
+            },
+            {
+              "source_labels" = [
+                "__meta_kubernetes_namespace",
+              ]
+
+              "action"       = "replace"
+              "target_label" = "kubernetes_namespace"
+            },
+            {
+              "source_labels" = [
+                "__meta_kubernetes_pod_name",
+              ]
+
+              "action"       = "replace"
+              "target_label" = "kubernetes_pod_name"
+            },
+          ]
+        },
+      ]
+    }
+  }
 }

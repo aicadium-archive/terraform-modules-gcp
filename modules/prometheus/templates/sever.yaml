@@ -1,0 +1,271 @@
+server:
+  ## Prometheus server container name
+  ##
+  name: server
+  sidecarContainers: ${sidecar_containers}
+
+  ## Prometheus server container image
+  ##
+  image:
+    repository: ${repository}
+    tag: ${tag}
+    pullPolicy: ${pull_policy}
+
+  ## prometheus server priorityClassName
+  ##
+  priorityClassName: ${priority_class_name}
+
+  ## The URL prefix at which the container can be accessed. Useful in the case the '-web.external-url' includes a slug
+  ## so that the various internal URLs are still able to access as they are in the default case.
+  ## (Optional)
+  prefixURL: ${prefix_url}
+
+  ## External URL which can access alertmanager
+  ## Maybe same with Ingress host name
+  baseURL: ${base_url}
+
+  ## Additional server container environment variables
+  ##
+  ## You specify this manually like you would a raw deployment manifest.
+  ## This means you can bind in environment variables from secrets.
+  ##
+  ## e.g. static environment variable:
+  ##  - name: DEMO_GREETING
+  ##    value: "Hello from the environment"
+  ##
+  ## e.g. secret environment variable:
+  ## - name: USERNAME
+  ##   valueFrom:
+  ##     secretKeyRef:
+  ##       name: mysecret
+  ##       key: username
+  env: ${extra_env}
+
+  ## This flag controls access to the administrative HTTP API which includes functionality such as deleting time
+  ## series. This is disabled by default.
+  enableAdminApi: ${enable_admin_api}
+
+  ## This flag controls BD locking
+  skipTSDBLock: ${skip_tsdb_lock}
+
+  ## Path to a configuration file on prometheus server container FS
+  configPath: /etc/config/prometheus.yml
+
+  global:
+    ## How frequently to scrape targets by default
+    ##
+    scrape_interval: ${scrape_interval}
+    ## How long until a scrape request times out
+    ##
+    scrape_timeout: ${scrape_timeout}
+    ## How frequently to evaluate rules
+    ##
+    evaluation_interval: ${evaluation_interval}
+
+  ## Additional Prometheus server container arguments
+  ##
+  extraArgs: ${extra_args}
+
+  ## Additional Prometheus server Volume mounts
+  ##
+  extraVolumeMounts: ${extra_volume_mounts}
+
+  ## Additional Prometheus server Volumes
+  ##
+  extraVolumes: ${extra_volumes}
+
+  ## Additional Prometheus server hostPath mounts
+  ##
+  extraHostPathMounts: ${extra_host_path_mounts}
+    # - name: certs-dir
+    #   mountPath: /etc/kubernetes/certs
+    #   subPath: ""
+    #   hostPath: /etc/kubernetes/certs
+    #   readOnly: true
+
+  extraConfigmapMounts: ${extra_configmap_mounts}
+    # - name: certs-configmap
+    #   mountPath: /prometheus
+    #   subPath: ""
+    #   configMap: certs-configmap
+    #   readOnly: true
+
+  ## Additional Prometheus server Secret mounts
+  # Defines additional mounts with secrets. Secrets must be manually created in the namespace.
+  extraSecretMounts: ${extra_secret_mounts}
+    # - name: secret-files
+    #   mountPath: /etc/secrets
+    #   subPath: ""
+    #   secretName: prom-secret-files
+    #   readOnly: true
+
+  ## ConfigMap override where fullname is {{.Release.Name}}-{{.Values.server.configMapOverrideName}}
+  ## Defining configMapOverrideName will cause templates/server-configmap.yaml
+  ## to NOT generate a ConfigMap resource
+  ##
+  configMapOverrideName: ""
+
+  ingress:
+    ## If true, Prometheus server Ingress will be created
+    ##
+    enabled: ${ingress_enabled}
+
+    ## Prometheus server Ingress annotations
+    ##
+    annotations: ${ingress_annotations}
+    #   kubernetes.io/ingress.class: nginx
+    #   kubernetes.io/tls-acme: 'true'
+
+    ## Prometheus server Ingress additional labels
+    ##
+    extraLabels: ${ingress_extra_labels}
+
+    ## Prometheus server Ingress hostnames with optional path
+    ## Must be provided if Ingress is enabled
+    ##
+    hosts: ${ingress_hosts}
+    #   - prometheus.domain.com
+    #   - domain.com/prometheus
+
+    ## Prometheus server Ingress TLS configuration
+    ## Secrets must be manually created in the namespace
+    ##
+    tls: ${ingress_tls}
+    #   - secretName: prometheus-server-tls
+    #     hosts:
+    #       - prometheus.domain.com
+
+  ## Server Deployment Strategy type
+  # strategy:
+  #   type: Recreate
+
+  ## Node tolerations for server scheduling to nodes with taints
+  ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
+  ##
+  tolerations: ${tolerations}
+    # - key: "key"
+    #   operator: "Equal|Exists"
+    #   value: "value"
+    #   effect: "NoSchedule|PreferNoSchedule|NoExecute(1.6 only)"
+
+  ## Node labels for Prometheus server pod assignment
+  ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
+  ##
+  nodeSelector: ${node_selector}
+
+  ## Pod affinity
+  ##
+  affinity: ${affinity}
+
+  ## Use an alternate scheduler, e.g. "stork".
+  ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
+  ##
+  # schedulerName:
+
+  persistentVolume:
+    ## If true, Prometheus server will create/use a Persistent Volume Claim
+    ## If false, use emptyDir
+    ##
+    enabled: ${server_pv_enabled}
+
+    ## Prometheus server data Persistent Volume access modes
+    ## Must match those of existing PV or dynamic provisioner
+    ## Ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
+    ##
+    accessModes: ${pv_access_modes}
+
+    ## Prometheus server data Persistent Volume annotations
+    ##
+    annotations: ${pv_annotations}
+
+    ## Prometheus server data Persistent Volume existing claim name
+    ## Requires server.persistentVolume.enabled: true
+    ## If defined, PVC must be created manually before volume will be bound
+    existingClaim: ${pv_existing_claim}
+
+    ## Prometheus server data Persistent Volume mount root path
+    ##
+    mountPath: /data
+
+    ## Prometheus server data Persistent Volume size
+    ##
+    size: ${pv_size}
+
+    ## Prometheus server data Persistent Volume Storage Class
+    ## If defined, storageClassName: <storageClass>
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If undefined (the default) or set to null, no storageClassName spec is
+    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+    ##   GKE, AWS & OpenStack)
+    ##
+    # storageClass: "-"
+
+    ## Subdirectory of Prometheus server data Persistent Volume to mount
+    ## Useful if the volume's root directory is not empty
+    ##
+    subPath: ""
+
+  ## Annotations to be added to Prometheus server pods
+  ##
+  podAnnotations: ${annotations}
+    # iam.amazonaws.com/role: prometheus
+
+  ## Use a StatefulSet if replicaCount needs to be greater than 1 (see below)
+  ##
+  replicaCount: ${replica}
+
+  statefulSet:
+    ## If true, use a statefulset instead of a deployment for pod management.
+    ## This allows to scale replicas to more than 1 pod
+    ##
+    enabled: true
+
+    annotations: ${statefulset_annotations}
+    podManagementPolicy: OrderedReady
+
+    ## Alertmanager headless service to use for the statefulset
+    ##
+    headless:
+      annotations: ${headless_annotations}
+      labels: ${headless_labels}
+      servicePort: 80
+
+  ## Prometheus server resource requests and limits
+  ## Ref: http://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources: ${resources}
+    # limits:
+    #   cpu: 500m
+    #   memory: 512Mi
+    # requests:
+    #   cpu: 500m
+    #   memory: 512Mi
+
+  ## Security context to be added to server pods
+  ##
+  securityContext: ${security_context}
+
+  service:
+    annotations: ${service_annotations}
+    labels: ${service_labels}
+    clusterIP: ${service_cluster_ip}
+
+    ## List of IP addresses at which the Prometheus server service is available
+    ## Ref: https://kubernetes.io/docs/user-guide/services/#external-ips
+    ##
+    externalIPs: ${service_external_ips}
+
+    loadBalancerIP: ${service_lb_ip}
+    loadBalancerSourceRanges: 4{service_lb_source_ranges}
+    servicePort: ${service_port}
+    type: ${service_type}
+
+  ## Prometheus server pod termination grace period
+  ##
+  terminationGracePeriodSeconds: ${termination_grace_seconds}
+
+  ## Prometheus data retention period (i.e 360h)
+  ##
+  retention: ${retention}
+
+serverFiles = "${server_files}"

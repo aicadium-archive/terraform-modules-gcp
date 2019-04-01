@@ -10,6 +10,8 @@ resource "helm_release" "consul" {
     "${data.template_file.alertmanager.rendered}",
     "${data.template_file.kube_state_metrics.rendered}",
     "${data.template_file.node_exporter.rendered}",
+    "${data.template_file.pushgateway.rendered}",
+    "${data.template_file.server.rendered}",
   ]
 }
 
@@ -55,8 +57,8 @@ data "template_file" "alertmanager" {
 
     annotations      = "${jsonencode(var.alertmanager_annotations)}"
     tolerations      = "${jsonencode(var.alertmanager_tolerations)}"
-    node_selector    = "${var.alertmanager_node_selector}"
-    affinity         = "${var.alertmanager_affinity}"
+    node_selector    = "${jsonencode(var.alertmanager_node_selector)}"
+    affinity         = "${jsonencode(var.alertmanager_affinity)}"
     security_context = "${jsonencode(var.alertmanager_security_context)}"
 
     priority_class_name = "${var.alertmanager_priority_class_name}"
@@ -114,7 +116,7 @@ data "template_file" "kube_state_metrics" {
     annotations      = "${jsonencode(var.kube_state_metrics_annotations)}"
     tolerations      = "${jsonencode(var.kube_state_metrics_tolerations)}"
     labels           = "${jsonencode(var.kube_state_metrics_labels)}"
-    node_selector    = "${var.kube_state_metrics_node_selector}"
+    node_selector    = "${jsonencode(var.kube_state_metrics_node_selector)}"
     security_context = "${jsonencode(var.kube_state_metrics_security_context)}"
 
     priority_class_name = "${var.kube_state_metrics_priority_class_name}"
@@ -153,7 +155,7 @@ data "template_file" "node_exporter" {
     annotations      = "${jsonencode(var.node_exporter_annotations)}"
     tolerations      = "${jsonencode(var.node_exporter_tolerations)}"
     labels           = "${jsonencode(var.node_exporter_labels)}"
-    node_selector    = "${var.node_exporter_node_selector}"
+    node_selector    = "${jsonencode(var.node_exporter_node_selector)}"
     security_context = "${jsonencode(var.node_exporter_security_context)}"
 
     host_path_mounts  = "${jsonencode(var.node_exporter_host_path_mounts)}"
@@ -188,8 +190,7 @@ data "template_file" "pushgateway" {
 
     annotations      = "${jsonencode(var.pushgateway_annotations)}"
     tolerations      = "${jsonencode(var.pushgateway_tolerations)}"
-    node_selector    = "${var.pushgateway_node_selector}"
-    affinity         = "${var.pushgateway_affinity}"
+    node_selector    = "${jsonencode(var.pushgateway_node_selector)}"
     security_context = "${jsonencode(var.pushgateway_security_context)}"
 
     priority_class_name = "${var.pushgateway_priority_class_name}"
@@ -216,5 +217,72 @@ data "template_file" "pushgateway" {
     pv_annotations    = "${jsonencode(var.pushgateway_pv_annotations)}"
     pv_existing_claim = "${var.pushgateway_pv_existing_claim}"
     pv_size           = "${var.pushgateway_pv_size}"
+  }
+}
+
+data "template_file" "server" {
+  template = "${file("${path.module}/templates/server.yaml")}"
+
+  vars {
+    repository  = "${var.server_repository}"
+    tag         = "${var.server_tag}"
+    pull_policy = "${var.server_pull_policy}"
+
+    sidecar_containers = "${jsonencode(var.server_sidecar_containers)}"
+
+    replica   = "${var.server_replica}"
+    resources = "${jsonencode(var.server_resources)}"
+
+    annotations      = "${jsonencode(var.server_annotations)}"
+    tolerations      = "${jsonencode(var.server_tolerations)}"
+    node_selector    = "${jsonencode(var.server_node_selector)}"
+    affinity         = "${jsonencode(var.server_affinity)}"
+    security_context = "${jsonencode(var.server_security_context)}"
+
+    statefulset_annotations   = "${jsonencode(var.server_statefulset_annotations)}"
+    termination_grace_seconds = "${var.server_termination_grace_seconds}"
+
+    prefix_url = "${var.server_prefix_url}"
+    base_url   = "${var.server_base_url}"
+
+    priority_class_name = "${var.server_priority_class_name}"
+    extra_args          = "${jsonencode(var.server_extra_args)}"
+    extra_env           = "${jsonencode(var.server_extra_env)}"
+
+    extra_volume_mounts    = "${jsonencode(var.server_extra_volume_mounts)}"
+    extra_volumes          = "${jsonencode(var.server_extra_volumes)}"
+    extra_host_path_mounts = "${jsonencode(var.server_extra_host_path_mounts)}"
+    extra_configmap_mounts = "${jsonencode(var.server_extra_configmap_mounts)}"
+    extra_secret_mounts    = "${jsonencode(var.server_extra_secret_mounts)}"
+
+    service_annotations      = "${jsonencode(var.server_service_annotations)}"
+    service_labels           = "${jsonencode(var.server_service_labels)}"
+    service_cluster_ip       = "${jsonencode(var.server_service_cluster_ip)}"
+    service_external_ips     = "${jsonencode(var.server_service_external_ips)}"
+    service_lb_ip            = "${jsonencode(var.server_service_lb_ip)}"
+    service_lb_source_ranges = "${jsonencode(var.server_service_lb_source_ranges)}"
+    service_port             = "${var.server_service_port}"
+    service_type             = "${var.server_service_type}"
+
+    ingress_enabled      = "${var.server_ingress_enabled}"
+    ingress_annotations  = "${jsonencode(var.server_ingress_annotations)}"
+    ingress_extra_labels = "${jsonencode(var.server_ingress_extra_labels)}"
+    ingress_hosts        = "${jsonencode(var.server_ingress_hosts)}"
+    ingress_tls          = "${jsonencode(var.server_ingress_tls)}"
+
+    pv_enabled        = "${var.server_pv_enabled}"
+    pv_access_modes   = "${jsonencode(var.server_pv_access_modes)}"
+    pv_annotations    = "${jsonencode(var.server_pv_annotations)}"
+    pv_existing_claim = "${var.server_pv_existing_claim}"
+    pv_size           = "${var.server_pv_size}"
+
+    enable_admin_api    = "${var.server_enable_admin_api}"
+    skip_tsdb_lock      = "${var.server_skip_tsdb_lock}"
+    scrape_interval     = "${var.server_scrape_interval}"
+    scrape_timeout      = "${var.server_scrape_timeout}"
+    evaluation_interval = "${var.server_evaluation_interval}"
+    retention           = "${jsonencode(var.server_data_retention)}"
+
+    server_files = "${jsonencode(var.server_files)}"
   }
 }
