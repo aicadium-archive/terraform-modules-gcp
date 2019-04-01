@@ -28,6 +28,16 @@ variable "image_pull_secrets" {
   default     = {}
 }
 
+variable "extra_scrape_configs" {
+  description = "YAML String for extra scrape configs"
+  default     = ""
+}
+
+variable "enable_network_policy" {
+  description = "Create a NetworkPolicy resource"
+  default     = "false"
+}
+
 ################################
 # ConfigMap Reload
 ################################
@@ -298,6 +308,29 @@ variable "alertmanager_service_port" {
 variable "alertmanager_service_type" {
   description = "Type of service for Alertmanager"
   default     = "ClusterIP"
+}
+
+variable "alertmanager_files" {
+  description = "Additional ConfigMap entries for Alertmanager"
+
+  default {
+    "alertmanager.yml" = {
+      global = {}
+
+      receivers = [
+        {
+          name = "default-receiver"
+        },
+      ]
+
+      route = {
+        group_wait      = "10s"
+        group_interval  = "5m"
+        receiver        = "default-receiver"
+        repeat_interval = "3h"
+      }
+    }
+  }
 }
 
 ################################

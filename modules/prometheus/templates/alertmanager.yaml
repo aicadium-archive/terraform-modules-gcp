@@ -211,3 +211,5 @@ alertmanager:
     servicePort: ${service_port}
     # nodePort: 30000
     type: ${service_type}
+
+alertmanagerFiles: = "${alertmanager_files}"

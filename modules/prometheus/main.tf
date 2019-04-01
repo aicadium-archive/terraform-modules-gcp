@@ -34,6 +34,9 @@ data "template_file" "general" {
     init_chown_image_tag   = "${var.init_chown_image_tag}"
     init_chown_pull_policy = "${var.init_chown_pull_policy}"
     init_chown_resources   = "${jsonencode(var.init_chown_resources)}"
+
+    extra_scrape_configs  = "${jsonencode(var.extra_scrape_configs)}"
+    enable_network_policy = "${var.enable_network_policy}"
   }
 }
 
@@ -90,6 +93,8 @@ data "template_file" "alertmanager" {
     pv_annotations    = "${jsonencode(var.alertmanager_pv_annotations)}"
     pv_existing_claim = "${var.alertmanager_pv_existing_claim}"
     pv_size           = "${var.alertmanager_pv_size}"
+
+    alertmanager_files = "${jsonencode(var.alertmanager_files)}"
   }
 }
 
