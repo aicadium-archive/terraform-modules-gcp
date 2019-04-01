@@ -415,3 +415,149 @@ variable "kube_state_metrics_service_type" {
   description = "Type of service for Kube State Metrics"
   default     = "ClusterIP"
 }
+
+################################
+# Node Exporter
+################################
+variable "node_exporter_enable" {
+  description = "Enable Node Exporter"
+  default     = "true"
+}
+
+variable "node_exporter_host_network" {
+  description = "Use the Host network namespace for Node Exporter"
+  default     = "true"
+}
+
+variable "node_exporter_host_pid" {
+  description = "Use the Network PID namespace for Node Exporter"
+  default     = "true"
+}
+
+variable "node_exporter_repository" {
+  description = "Docker repository for Node Exporter"
+  default     = "prom/node-exporter"
+}
+
+variable "node_exporter_tag" {
+  description = "Tag for Node Exporter Docker Image"
+  default     = "v0.17.0"
+}
+
+variable "node_exporter_pull_policy" {
+  description = "Image pull policy for Node Exporter"
+  default     = "IfNotPresent"
+}
+
+variable "node_exporter_enable_pod_security_policy" {
+  description = "Create PodSecurityPolicy for Node Exporter"
+  default     = "false"
+}
+
+variable "node_exporter_pod_security_policy_annotations" {
+  description = "Annotations for the PodSecurityPolicy for Node Exporter"
+  default     = {}
+}
+
+variable "node_exporter_priority_class_name" {
+  description = "Priority Class Name for Node Exporter pods"
+  default     = ""
+}
+
+variable "node_exporter_extra_args" {
+  description = "Extra arguments for Node Exporter container"
+  default     = {}
+}
+
+variable "node_exporter_extra_env" {
+  description = "Extra environment variables for Node Exporter container"
+  default     = {}
+}
+
+variable "node_exporter_annotations" {
+  description = "Annotations for Node Exporter pods"
+  default     = {}
+}
+
+variable "node_exporter_tolerations" {
+  description = "Tolerations for Node Exporter"
+  default     = []
+}
+
+variable "node_exporter_labels" {
+  description = "Labels for Node Exporter"
+  default     = {}
+}
+
+variable "node_exporter_node_selector" {
+  description = "Node selector for node_exporter pods"
+  default     = {}
+}
+
+variable "node_exporter_replica" {
+  description = "Number of replicas for AlertManager"
+  default     = 1
+}
+
+variable "node_exporter_resources" {
+  description = "Resources for node_exporter"
+  default     = {}
+}
+
+variable "node_exporter_security_context" {
+  description = "Security context for node_exporter pods"
+  default     = {}
+}
+
+variable "node_exporter_service_annotations" {
+  description = "Annotations for Node Exporter service"
+
+  default = {
+    "prometheus.io/scrape" = "true"
+  }
+}
+
+variable "node_exporter_service_labels" {
+  description = "Labels for Node Exporter service"
+  default     = {}
+}
+
+variable "node_exporter_service_cluster_ip" {
+  description = "Cluster IP for Node Exporter Service"
+  default     = "None"
+}
+
+variable "node_exporter_service_external_ips" {
+  description = "External IPs for Node Exporter service"
+  default     = []
+}
+
+variable "node_exporter_service_lb_ip" {
+  description = "Load Balancer IP for Node Exporter service"
+  default     = ""
+}
+
+variable "node_exporter_service_lb_source_ranges" {
+  description = "List of source CIDRs allowed to access the Node Exporter LB"
+  default     = []
+}
+
+variable "node_exporter_service_port" {
+  description = "Service port for Node Exporter"
+  default     = 9100
+}
+
+variable "node_exporter_service_type" {
+  description = "Type of service for Node Exporter"
+  default     = "ClusterIP"
+}
+
+variable "node_exporter_host_path_mounts" {
+  description = "Host Path Mounts for Node Exporter"
+  default     = []
+}
+
+variable "node_exporter_config_map_mounts" {
+  description = "ConfigMap Mounts for Node Exporter"
+  default     = []
+}
