@@ -299,3 +299,119 @@ variable "alertmanager_service_type" {
   description = "Type of service for Alertmanager"
   default     = "ClusterIP"
 }
+
+################################
+# Kube State Metrics
+################################
+variable "kube_state_metrics_enable" {
+  description = "Enable Kube State Metrics"
+  default     = "true"
+}
+
+variable "kube_state_metrics_repository" {
+  description = "Docker repository for Kube State Metrics"
+  default     = "quay.io/coreos/kube-state-metrics"
+}
+
+variable "kube_state_metrics_tag" {
+  description = "Tag for Kube State Metrics Docker Image"
+  default     = "v1.5.0"
+}
+
+variable "kube_state_metrics_pull_policy" {
+  description = "Image pull policy for Kube State Metrics"
+  default     = "IfNotPresent"
+}
+
+variable "kube_state_metrics_priority_class_name" {
+  description = "Priority Class Name for Kube State Metrics pods"
+  default     = ""
+}
+
+variable "kube_state_metrics_extra_args" {
+  description = "Extra arguments for Kube State Metrics container"
+  default     = {}
+}
+
+variable "kube_state_metrics_extra_env" {
+  description = "Extra environment variables for Kube State Metrics container"
+  default     = {}
+}
+
+variable "kube_state_metrics_annotations" {
+  description = "Annotations for Kube State Metrics pods"
+  default     = {}
+}
+
+variable "kube_state_metrics_tolerations" {
+  description = "Tolerations for Kube State Metrics"
+  default     = []
+}
+
+variable "kube_state_metrics_labels" {
+  description = "Labels for Kube State Metrics"
+  default     = {}
+}
+
+variable "kube_state_metrics_node_selector" {
+  description = "Node selector for kube_state_metrics pods"
+  default     = {}
+}
+
+variable "kube_state_metrics_replica" {
+  description = "Number of replicas for AlertManager"
+  default     = 1
+}
+
+variable "kube_state_metrics_resources" {
+  description = "Resources for kube_state_metrics"
+  default     = {}
+}
+
+variable "kube_state_metrics_security_context" {
+  description = "Security context for kube_state_metrics pods"
+  default     = {}
+}
+
+variable "kube_state_metrics_service_annotations" {
+  description = "Annotations for Kube State Metrics service"
+
+  default = {
+    "prometheus.io/scrape" = "true"
+  }
+}
+
+variable "kube_state_metrics_service_labels" {
+  description = "Labels for Kube State Metrics service"
+  default     = {}
+}
+
+variable "kube_state_metrics_service_cluster_ip" {
+  description = "Cluster IP for Kube State Metrics Service"
+  default     = "None"
+}
+
+variable "kube_state_metrics_service_external_ips" {
+  description = "External IPs for Kube State Metrics service"
+  default     = []
+}
+
+variable "kube_state_metrics_service_lb_ip" {
+  description = "Load Balancer IP for Kube State Metrics service"
+  default     = ""
+}
+
+variable "kube_state_metrics_service_lb_source_ranges" {
+  description = "List of source CIDRs allowed to access the Kube State Metrics LB"
+  default     = []
+}
+
+variable "kube_state_metrics_service_port" {
+  description = "Service port for Kube State Metrics"
+  default     = 80
+}
+
+variable "kube_state_metrics_service_type" {
+  description = "Type of service for Kube State Metrics"
+  default     = "ClusterIP"
+}

@@ -8,6 +8,7 @@ resource "helm_release" "consul" {
   values = [
     "${data.template_file.general.rendered}",
     "${data.template_file.alertmanager.rendered}",
+    "${data.template_file.kube_state_metrics.rendered}",
   ]
 }
 
@@ -88,5 +89,39 @@ data "template_file" "alertmanager" {
     pv_annotations    = "${jsonencode(var.alertmanager_pv_annotations)}"
     pv_existing_claim = "${var.alertmanager_pv_existing_claim}"
     pv_size           = "${var.alertmanager_pv_size}"
+  }
+}
+
+data "template_file" "kube_state_metrics" {
+  template = "${file("${path.module}/templates/kube_state_metrics.yaml")}"
+
+  vars {
+    enable = "${var.kube_state_metrics_enable}"
+
+    repository  = "${var.kube_state_metrics_repository}"
+    tag         = "${var.kube_state_metrics_tag}"
+    pull_policy = "${var.kube_state_metrics_pull_policy}"
+
+    replica   = "${var.kube_state_metrics_replica}"
+    resources = "${jsonencode(var.kube_state_metrics_resources)}"
+
+    annotations      = "${jsonencode(var.kube_state_metrics_annotations)}"
+    tolerations      = "${jsonencode(var.kube_state_metrics_tolerations)}"
+    labels           = "${jsonencode(var.kube_state_metrics_labels)}"
+    node_selector    = "${var.kube_state_metrics_node_selector}"
+    security_context = "${jsonencode(var.kube_state_metrics_security_context)}"
+
+    priority_class_name = "${var.kube_state_metrics_priority_class_name}"
+    extra_args          = "${jsonencode(var.kube_state_metrics_extra_args)}"
+    extra_env           = "${jsonencode(var.kube_state_metrics_extra_env)}"
+
+    service_annotations      = "${jsonencode(var.kube_state_metrics_service_annotations)}"
+    service_labels           = "${jsonencode(var.kube_state_metrics_service_labels)}"
+    service_cluster_ip       = "${jsonencode(var.kube_state_metrics_service_cluster_ip)}"
+    service_external_ips     = "${jsonencode(var.kube_state_metrics_service_external_ips)}"
+    service_lb_ip            = "${jsonencode(var.kube_state_metrics_service_lb_ip)}"
+    service_lb_source_ranges = "${jsonencode(var.kube_state_metrics_service_lb_source_ranges)}"
+    service_port             = "${var.kube_state_metrics_service_port}"
+    service_type             = "${var.kube_state_metrics_service_type}"
   }
 }
