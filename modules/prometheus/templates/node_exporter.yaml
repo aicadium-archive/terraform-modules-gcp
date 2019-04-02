@@ -1,0 +1,123 @@
+nodeExporter:
+  ## If false, node-exporter will not be installed
+  ##
+  enabled: ${enable}
+
+  ## If true, node-exporter pods share the host network namespace
+  ##
+  hostNetwork: ${host_network}
+
+  ## If true, node-exporter pods share the host PID namespace
+  ##
+  hostPID: ${host_pid}
+
+  ## node-exporter container name
+  ##
+  name: node-exporter
+
+  ## node-exporter container image
+  ##
+  image:
+    repository: ${repository}
+    tag: ${tag}
+    pullPolicy: ${pull_policy}
+
+  ## Specify if a Pod Security Policy for node-exporter must be created
+  ## Ref: https://kubernetes.io/docs/concepts/policy/pod-security-policy/
+  ##
+  podSecurityPolicy:
+    enabled: ${enable_pod_security_policy}
+    annotations: ${pod_security_policy_annotations}
+      ## Specify pod annotations
+      ## Ref: https://kubernetes.io/docs/concepts/policy/pod-security-policy/#apparmor
+      ## Ref: https://kubernetes.io/docs/concepts/policy/pod-security-policy/#seccomp
+      ## Ref: https://kubernetes.io/docs/concepts/policy/pod-security-policy/#sysctl
+      ##
+      # seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
+      # seccomp.security.alpha.kubernetes.io/defaultProfileName: 'docker/default'
+      # apparmor.security.beta.kubernetes.io/defaultProfileName: 'runtime/default'
+
+  ## node-exporter priorityClassName
+  ##
+  priorityClassName: ${priority_class_name}
+
+  ## Custom Update Strategy
+  ##
+  updateStrategy:
+    type: RollingUpdate
+
+  ## Additional node-exporter container arguments
+  ##
+  extraArgs: ${extra_args}
+
+  ## Additional node-exporter hostPath mounts
+  ##
+  extraHostPathMounts: ${host_path_mounts}
+    # - name: textfile-dir
+    #   mountPath: /srv/txt_collector
+    #   hostPath: /var/lib/node-exporter
+    #   readOnly: true
+
+  extraConfigmapMounts: ${config_map_mounts}
+    # - name: certs-configmap
+    #   mountPath: /prometheus
+    #   configMap: certs-configmap
+    #   readOnly: true
+
+  ## Node tolerations for node-exporter scheduling to nodes with taints
+  ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
+  ##
+  tolerations: ${tolerations}
+    # - key: "key"
+    #   operator: "Equal|Exists"
+    #   value: "value"
+    #   effect: "NoSchedule|PreferNoSchedule|NoExecute(1.6 only)"
+
+  ## Node labels for node-exporter pod assignment
+  ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
+  ##
+  nodeSelector: ${node_selector}
+
+  ## Annotations to be added to node-exporter pods
+  ##
+  podAnnotations: ${annotations}
+
+  ## Labels to be added to node-exporter pods
+  ##
+  pod:
+    labels: ${labels}
+
+  ## node-exporter resource limits & requests
+  ## Ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources: ${resources}
+    # limits:
+    #   cpu: 200m
+    #   memory: 50Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 30Mi
+
+  ## Security context to be added to node-exporter pods
+  ##
+  securityContext: ${security_context}
+    # runAsUser: 0
+
+  service:
+    annotations: ${service_annotations}
+    labels: ${service_labels}
+
+    # Exposed as a headless service:
+    # https://kubernetes.io/docs/concepts/services-networking/service/#headless-services
+    clusterIP: ${service_cluster_ip}
+
+    ## List of IP addresses at which the node-exporter service is available
+    ## Ref: https://kubernetes.io/docs/user-guide/services/#external-ips
+    ##
+    externalIPs: ${service_external_ips}
+
+    hostPort: 9100
+    loadBalancerIP: ${service_lb_ip}
+    loadBalancerSourceRanges: ${service_lb_source_ranges}
+    servicePort: ${service_port}
+    type: ${service_type}

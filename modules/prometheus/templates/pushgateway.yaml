@@ -1,0 +1,143 @@
+pushgateway:
+  ## If false, pushgateway will not be installed
+  ##
+  enabled: ${enable}
+
+  ## pushgateway container name
+  ##
+  name: pushgateway
+
+  ## pushgateway container image
+  ##
+  image:
+    repository: ${repository}
+    tag: ${tag}
+    pullPolicy: ${pull_policy}
+
+  ## pushgateway priorityClassName
+  ##
+  priorityClassName: ${priority_class_name}
+
+  ## Additional pushgateway container arguments
+  ##
+  ## for example: persistence.file: /data/pushgateway.data
+  extraArgs: ${extra_args}
+
+  ingress:
+    ## If true, pushgateway Ingress will be created
+    ##
+    enabled: ${ingress_enabled}
+
+    ## pushgateway Ingress annotations
+    ##
+    annotations: ${ingress_annotations}
+    #   kubernetes.io/ingress.class: nginx
+    #   kubernetes.io/tls-acme: 'true'
+
+    ## pushgateway Ingress hostnames with optional path
+    ## Must be provided if Ingress is enabled
+    ##
+    hosts: ${ingress_hosts}
+    #   - pushgateway.domain.com
+    #   - domain.com/pushgateway
+
+    ## pushgateway Ingress TLS configuration
+    ## Secrets must be manually created in the namespace
+    ##
+    tls: ${ingress_tls}
+    #   - secretName: prometheus-alerts-tls
+    #     hosts:
+    #       - pushgateway.domain.com
+
+  ## Node tolerations for pushgateway scheduling to nodes with taints
+  ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
+  ##
+  tolerations: ${tolerations}
+    # - key: "key"
+    #   operator: "Equal|Exists"
+    #   value: "value"
+    #   effect: "NoSchedule|PreferNoSchedule|NoExecute(1.6 only)"
+
+  ## Node labels for pushgateway pod assignment
+  ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
+  ##
+  nodeSelector: ${node_selector}
+
+  ## Annotations to be added to pushgateway pods
+  ##
+  podAnnotations: ${annotations}
+
+  replicaCount: ${replica}
+
+  ## pushgateway resource requests and limits
+  ## Ref: http://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources: ${resources}
+    # limits:
+    #   cpu: 10m
+    #   memory: 32Mi
+    # requests:
+    #   cpu: 10m
+    #   memory: 32Mi
+
+  ## Security context to be added to push-gateway pods
+  ##
+  securityContext: ${security_context}
+
+  service:
+    annotations: ${service_annotations}
+    labels: ${service_labels}
+    clusterIP: ${service_cluster_ip}
+
+    ## List of IP addresses at which the pushgateway service is available
+    ## Ref: https://kubernetes.io/docs/user-guide/services/#external-ips
+    ##
+    externalIPs: ${service_external_ips}
+
+    loadBalancerIP: ${service_lb_ip}
+    loadBalancerSourceRanges: ${service_lb_source_ranges}
+    servicePort: ${service_port}
+    type: ${service_type}
+
+  persistentVolume:
+    ## If true, pushgateway will create/use a Persistent Volume Claim
+    ## If false, use emptyDir
+    ##
+    enabled: ${pv_enabled}
+
+    ## pushgateway data Persistent Volume access modes
+    ## Must match those of existing PV or dynamic provisioner
+    ## Ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
+    ##
+    accessModes: ${pv_access_modes}
+
+    ## pushgateway data Persistent Volume Claim annotations
+    ##
+    annotations: ${pv_annotations}
+
+    ## pushgateway data Persistent Volume existing claim name
+    ## Requires pushgateway.persistentVolume.enabled: true
+    ## If defined, PVC must be created manually before volume will be bound
+    existingClaim: ${pv_existing_claim}
+
+    ## pushgateway data Persistent Volume mount root path
+    ##
+    mountPath: /data
+
+    ## pushgateway data Persistent Volume size
+    ##
+    size: ${pv_size}
+
+    ## alertmanager data Persistent Volume Storage Class
+    ## If defined, storageClassName: <storageClass>
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If undefined (the default) or set to null, no storageClassName spec is
+    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+    ##   GKE, AWS & OpenStack)
+    ##
+    # storageClass: "-"
+
+    ## Subdirectory of alertmanager data Persistent Volume to mount
+    ## Useful if the volume's root directory is not empty
+    ##
+    subPath: ""

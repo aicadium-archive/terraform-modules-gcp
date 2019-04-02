@@ -1,0 +1,85 @@
+imagePullSecrets: ${image_pull_secrets}
+
+## Monitors ConfigMap changes and POSTs to a URL
+## Ref: https://github.com/jimmidyson/configmap-reload
+##
+configmapReload:
+  ## configmap-reload container name
+  ##
+  name: ${configmap_name}
+
+  ## configmap-reload container image
+  ##
+  image:
+    repository: ${configmap_image_repo}
+    tag: ${configmap_image_tag}
+    pullPolicy: ${configmap_image_pull_policy}
+
+  ## Additional configmap-reload container arguments
+  ##
+  extraArgs: ${configmap_extra_args}
+  ## Additional configmap-reload volume directories
+  ##
+  extraVolumeDirs: ${configmap_extra_args}
+
+
+  ## Additional configmap-reload mounts
+  ##
+  extraConfigmapMounts: ${configmap_extra_volumes}
+    # - name: prometheus-alerts
+    #   mountPath: /etc/alerts.d
+    #   subPath: ""
+    #   configMap: prometheus-alerts
+    #   readOnly: true
+
+
+  ## configmap-reload resource requests and limits
+  ## Ref: http://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources: ${configmap_resources}
+
+initChownData:
+  ## If false, data ownership will not be reset at startup
+  ## This allows the prometheus-server to be run with an arbitrary user
+  ##
+  enabled: ${init_chown_enabled}
+
+  ## initChownData container name
+  ##
+  name: ${init_chown_name}
+
+  ## initChownData container image
+  ##
+  image:
+    repository: ${init_chown_image_repo}
+    tag: ${init_chown_image_tag}
+    pullPolicy: ${init_chown_pull_policy}
+
+  ## initChownData resource requests and limits
+  ## Ref: http://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources: ${init_chown_resources}
+
+# adds additional scrape configs to prometheus.yml
+# must be a string so you have to add a | after extraScrapeConfigs:
+# example adds prometheus-blackbox-exporter scrape config
+extraScrapeConfigs: ${extra_scrape_configs}
+  # - job_name: 'prometheus-blackbox-exporter'
+  #   metrics_path: /probe
+  #   params:
+  #     module: [http_2xx]
+  #   static_configs:
+  #     - targets:
+  #       - https://example.com
+  #   relabel_configs:
+  #     - source_labels: [__address__]
+  #       target_label: __param_target
+  #     - source_labels: [__param_target]
+  #       target_label: instance
+  #     - target_label: __address__
+  #       replacement: prometheus-blackbox-exporter:9115
+
+networkPolicy:
+  ## Enable creation of NetworkPolicy resources.
+  ##
+  enabled: ${enable_network_policy}
