@@ -25,6 +25,7 @@ server:
     affinity: ${server_affinity}
     tolerations: ${server_tolerations}
     priorityClassName: ${server_priority_class}
+    annotations: ${server_annotations}
 
 client:
     enabled: ${client_enabled}
@@ -40,6 +41,7 @@ client:
     extraVolumes: ${client_extra_volumes}
     tolerations: ${client_tolerations}
     priorityClassName: ${client_priority_class}
+    annotations: ${client_annotations}
 
 syncCatalog:
     enabled: ${enable_sync_catalog}

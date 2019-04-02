@@ -35,6 +35,7 @@ data "template_file" "values" {
     server_affinity       = "${jsonencode(var.server_affinity)}"
     server_tolerations    = "${jsonencode(var.server_tolerations)}"
     server_priority_class = "${var.server_priority_class}"
+    server_annotations    = "${jsonencode(var.server_annotations)}"
 
     client_enabled        = "${var.client_enabled}"
     client_cpu_request    = "${var.client_cpu_request}"
@@ -45,6 +46,7 @@ data "template_file" "values" {
     client_extra_volumes  = "${jsonencode(var.client_extra_volumes)}"
     client_tolerations    = "${jsonencode(var.client_tolerations)}"
     client_priority_class = "${var.client_priority_class}"
+    client_annotations    = "${jsonencode(var.client_annotations)}"
 
     enable_sync_catalog      = "${var.enable_sync_catalog}"
     sync_by_default          = "${var.sync_by_default}"

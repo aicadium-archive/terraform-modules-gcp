@@ -123,6 +123,11 @@ variable "server_priority_class" {
   default     = ""
 }
 
+variable "server_annotations" {
+  description = "A YAML string for server pods"
+  default     = ""
+}
+
 variable "client_enabled" {
   description = "Enable running Consul client agents on every Kubernetes node"
   default     = "true"
@@ -160,6 +165,11 @@ variable "client_extra_volumes" {
 
 variable "client_tolerations" {
   description = "A YAML string that can be templated via helm specifying the tolerations for client pods"
+  default     = ""
+}
+
+variable "client_annotations" {
+  description = "A YAML string for client pods"
   default     = ""
 }
 
