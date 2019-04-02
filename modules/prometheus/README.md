@@ -74,13 +74,13 @@ This module makes use of the
 | kube\_state\_metrics\_extra\_args | Extra arguments for Kube State Metrics container | map | `<map>` | no |
 | kube\_state\_metrics\_extra\_env | Extra environment variables for Kube State Metrics container | map | `<map>` | no |
 | kube\_state\_metrics\_labels | Labels for Kube State Metrics | map | `<map>` | no |
-| kube\_state\_metrics\_node\_selector | Node selector for kube_state_metrics pods | map | `<map>` | no |
+| kube\_state\_metrics\_node\_selector | Node selector for Kube State Metrics pods | map | `<map>` | no |
 | kube\_state\_metrics\_priority\_class\_name | Priority Class Name for Kube State Metrics pods | string | `""` | no |
 | kube\_state\_metrics\_pull\_policy | Image pull policy for Kube State Metrics | string | `"IfNotPresent"` | no |
-| kube\_state\_metrics\_replica | Number of replicas for AlertManager | string | `"1"` | no |
+| kube\_state\_metrics\_replica | Number of replicas for Kube State Metrics | string | `"1"` | no |
 | kube\_state\_metrics\_repository | Docker repository for Kube State Metrics | string | `"quay.io/coreos/kube-state-metrics"` | no |
-| kube\_state\_metrics\_resources | Resources for kube_state_metrics | map | `<map>` | no |
-| kube\_state\_metrics\_security\_context | Security context for kube_state_metrics pods | map | `<map>` | no |
+| kube\_state\_metrics\_resources | Resources for Kube State Metrics | map | `<map>` | no |
+| kube\_state\_metrics\_security\_context | Security context for Kube State Metrics pods | map | `<map>` | no |
 | kube\_state\_metrics\_service\_annotations | Annotations for Kube State Metrics service | map | `<map>` | no |
 | kube\_state\_metrics\_service\_cluster\_ip | Cluster IP for Kube State Metrics Service | string | `"None"` | no |
 | kube\_state\_metrics\_service\_external\_ips | External IPs for Kube State Metrics service | list | `<list>` | no |

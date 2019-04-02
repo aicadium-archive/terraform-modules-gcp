@@ -1,4 +1,4 @@
-resource "helm_release" "consul" {
+resource "helm_release" "prometheus" {
   name       = "${var.release_name}"
   chart      = "${var.chart_name}"
   repository = "${var.chart_repository}"
@@ -96,7 +96,7 @@ data "template_file" "alertmanager" {
     pv_existing_claim = "${var.alertmanager_pv_existing_claim}"
     pv_size           = "${var.alertmanager_pv_size}"
 
-    alertmanager_files = "${jsonencode(var.alertmanager_files)}"
+    alertmanager_files = "${indent(2, var.alertmanager_files)}"
   }
 }
 
@@ -255,6 +255,9 @@ data "template_file" "server" {
     extra_configmap_mounts = "${jsonencode(var.server_extra_configmap_mounts)}"
     extra_secret_mounts    = "${jsonencode(var.server_extra_secret_mounts)}"
 
+    headless_annotations = "${jsonencode(var.server_headless_annotations)}"
+    headless_labels      = "${jsonencode(var.server_headless_labels)}"
+
     service_annotations      = "${jsonencode(var.server_service_annotations)}"
     service_labels           = "${jsonencode(var.server_service_labels)}"
     service_cluster_ip       = "${jsonencode(var.server_service_cluster_ip)}"
@@ -283,6 +286,6 @@ data "template_file" "server" {
     evaluation_interval = "${var.server_evaluation_interval}"
     retention           = "${jsonencode(var.server_data_retention)}"
 
-    server_files = "${jsonencode(var.server_files)}"
+    server_files = "${indent(2, var.server_files)}"
   }
 }

@@ -166,7 +166,7 @@ server:
     ## If true, Prometheus server will create/use a Persistent Volume Claim
     ## If false, use emptyDir
     ##
-    enabled: ${server_pv_enabled}
+    enabled: ${pv_enabled}
 
     ## Prometheus server data Persistent Volume access modes
     ## Must match those of existing PV or dynamic provisioner
@@ -256,7 +256,7 @@ server:
     externalIPs: ${service_external_ips}
 
     loadBalancerIP: ${service_lb_ip}
-    loadBalancerSourceRanges: 4{service_lb_source_ranges}
+    loadBalancerSourceRanges: ${service_lb_source_ranges}
     servicePort: ${service_port}
     type: ${service_type}
 
@@ -268,4 +268,5 @@ server:
   ##
   retention: ${retention}
 
-serverFiles = "${server_files}"
+serverFiles:
+${server_files}
