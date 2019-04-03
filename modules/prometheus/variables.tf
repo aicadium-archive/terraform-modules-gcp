@@ -1176,6 +1176,8 @@ prometheus.yml:
     # * `prometheus.io/path`: If the metrics path is not `/metrics` override this.
     # * `prometheus.io/port`: If the metrics are exposed on a different port to the
     # service then set this appropriately.
+    # * `prometheus.io/param-<NAME>`: Sets the HTTP URL parameters <NAME> to the value
+    # of the annotation
     - job_name: 'kubernetes-service-endpoints'
 
       kubernetes_sd_configs:
@@ -1198,6 +1200,9 @@ prometheus.yml:
           target_label: __address__
           regex: ([^:]+)(?::\d+)?;(\d+)
           replacement: $1:$2
+        - action: labelmap
+          regex: __meta_kubernetes_service_annotation_prometheus_io_param_(.+)
+          replacement: __param_$1
         - action: labelmap
           regex: __meta_kubernetes_service_label_(.+)
         - source_labels: [__meta_kubernetes_namespace]
@@ -1261,6 +1266,8 @@ prometheus.yml:
     # * `prometheus.io/scrape`: Only scrape pods that have a value of `true`
     # * `prometheus.io/path`: If the metrics path is not `/metrics` override this.
     # * `prometheus.io/port`: Scrape the pod on the indicated port instead of the default of `9102`.
+    # * `prometheus.io/param-<NAME>`: Sets the HTTP URL parameters <NAME> to the value
+    # of the annotation
     - job_name: 'kubernetes-pods'
 
       kubernetes_sd_configs:
@@ -1279,6 +1286,9 @@ prometheus.yml:
           regex: ([^:]+)(?::\d+)?;(\d+)
           replacement: $1:$2
           target_label: __address__
+        - action: labelmap
+          regex: __meta_kubernetes_pod_annotation_prometheus_io_param_(.+)
+          replacement: __param_$1
         - action: labelmap
           regex: __meta_kubernetes_pod_label_(.+)
         - source_labels: [__meta_kubernetes_namespace]
