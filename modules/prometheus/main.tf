@@ -39,6 +39,12 @@ data "template_file" "general" {
 
     extra_scrape_configs  = "${jsonencode(var.extra_scrape_configs)}"
     enable_network_policy = "${var.enable_network_policy}"
+
+    alertmanager_service_account       = "${var.alertmanager_service_account}"
+    kube_state_metrics_service_account = "${var.kube_state_metrics_service_account}"
+    node_exporter_service_account      = "${var.node_exporter_service_account}"
+    pushgateway_service_account        = "${var.pushgateway_service_account}"
+    server_service_account             = "${var.server_service_account}"
   }
 }
 
@@ -59,7 +65,7 @@ data "template_file" "alertmanager" {
     tolerations      = "${jsonencode(var.alertmanager_tolerations)}"
     node_selector    = "${jsonencode(var.alertmanager_node_selector)}"
     affinity         = "${jsonencode(var.alertmanager_affinity)}"
-    security_context = "${jsonencode(var.alertmanager_security_context)}"
+    security_context = "${coalesce(var.alertmanager_security_context_json, jsonencode(var.alertmanager_security_context))}"
 
     priority_class_name = "${var.alertmanager_priority_class_name}"
     extra_args          = "${jsonencode(var.alertmanager_extra_args)}"
@@ -117,7 +123,7 @@ data "template_file" "kube_state_metrics" {
     tolerations      = "${jsonencode(var.kube_state_metrics_tolerations)}"
     labels           = "${jsonencode(var.kube_state_metrics_labels)}"
     node_selector    = "${jsonencode(var.kube_state_metrics_node_selector)}"
-    security_context = "${jsonencode(var.kube_state_metrics_security_context)}"
+    security_context = "${coalesce(var.kube_state_metrics_security_context_json, jsonencode(var.kube_state_metrics_security_context))}"
 
     priority_class_name = "${var.kube_state_metrics_priority_class_name}"
     extra_args          = "${jsonencode(var.kube_state_metrics_extra_args)}"
@@ -156,7 +162,7 @@ data "template_file" "node_exporter" {
     tolerations      = "${jsonencode(var.node_exporter_tolerations)}"
     labels           = "${jsonencode(var.node_exporter_labels)}"
     node_selector    = "${jsonencode(var.node_exporter_node_selector)}"
-    security_context = "${jsonencode(var.node_exporter_security_context)}"
+    security_context = "${coalesce(var.node_exporter_security_context_json, jsonencode(var.node_exporter_security_context))}"
 
     host_path_mounts  = "${jsonencode(var.node_exporter_host_path_mounts)}"
     config_map_mounts = "${jsonencode(var.node_exporter_config_map_mounts)}"
@@ -191,7 +197,7 @@ data "template_file" "pushgateway" {
     annotations      = "${jsonencode(var.pushgateway_annotations)}"
     tolerations      = "${jsonencode(var.pushgateway_tolerations)}"
     node_selector    = "${jsonencode(var.pushgateway_node_selector)}"
-    security_context = "${jsonencode(var.pushgateway_security_context)}"
+    security_context = "${coalesce(var.pushgateway_security_context_json, jsonencode(var.pushgateway_security_context))}"
 
     priority_class_name = "${var.pushgateway_priority_class_name}"
     extra_args          = "${jsonencode(var.pushgateway_extra_args)}"
@@ -237,7 +243,7 @@ data "template_file" "server" {
     tolerations      = "${jsonencode(var.server_tolerations)}"
     node_selector    = "${jsonencode(var.server_node_selector)}"
     affinity         = "${jsonencode(var.server_affinity)}"
-    security_context = "${jsonencode(var.server_security_context)}"
+    security_context = "${coalesce(var.server_security_context_json, jsonencode(var.server_security_context))}"
 
     statefulset_annotations   = "${jsonencode(var.server_statefulset_annotations)}"
     termination_grace_seconds = "${var.server_termination_grace_seconds}"

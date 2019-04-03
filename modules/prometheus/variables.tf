@@ -1,5 +1,5 @@
 variable "release_name" {
-  description = "Helm release name for Consul"
+  description = "Helm release name for Prometheus"
   default     = "prometheus"
 }
 
@@ -36,6 +36,31 @@ variable "extra_scrape_configs" {
 variable "enable_network_policy" {
   description = "Create a NetworkPolicy resource"
   default     = "false"
+}
+
+variable "alertmanager_service_account" {
+  description = "Name of the service account for AlertManager. Defaults to component's fully qualified name."
+  default     = ""
+}
+
+variable "kube_state_metrics_service_account" {
+  description = "Name of the service account for kubeStateMetrics. Defaults to component's fully qualified name."
+  default     = ""
+}
+
+variable "node_exporter_service_account" {
+  description = "Name of the service account for nodeExporter. Defaults to component's fully qualified name."
+  default     = ""
+}
+
+variable "pushgateway_service_account" {
+  description = "Name of the service account for pushgateway. Defaults to component's fully qualified name."
+  default     = ""
+}
+
+variable "server_service_account" {
+  description = "Name of the service account for server. Defaults to component's fully qualified name."
+  default     = ""
 }
 
 ################################
@@ -85,7 +110,7 @@ variable "init_chown_enabled" {
 }
 
 variable "init_chown_name" {
-  description = "NAme of the initChownData container"
+  description = "Name of the initChownData container"
   default     = "init-chown-data"
 }
 
@@ -266,8 +291,19 @@ variable "alertmanager_resources" {
 }
 
 variable "alertmanager_security_context" {
-  description = "Security context for alertmanager pods"
-  default     = {}
+  description = <<EOF
+  Security context for alertmanager pods defined as a map which will be serialized to JSON.
+  Due to limitations with Terraform 0.11 and below, integers are serialized as strings in JSON and
+  this will not work for fields like `runAsUser`. Specify a JSON string with
+  `alertmanager_security_context_json` instead
+EOF
+
+  default = {}
+}
+
+variable "alertmanager_security_context_json" {
+  description = "JSON string for security context for alertmanager pods"
+  default     = ""
 }
 
 variable "alertmanager_service_annotations" {
@@ -401,8 +437,19 @@ variable "kube_state_metrics_resources" {
 }
 
 variable "kube_state_metrics_security_context" {
-  description = "Security context for Kube State Metrics pods"
-  default     = {}
+  description = <<EOF
+  Security context for kube_state_metrics pods defined as a map which will be serialized to JSON.
+  Due to limitations with Terraform 0.11 and below, integers are serialized as strings in JSON and
+  this will not work for fields like `runAsUser`. Specify a JSON string with
+  `kube_state_metrics_security_context_json` instead
+EOF
+
+  default = {}
+}
+
+variable "kube_state_metrics_security_context_json" {
+  description = "JSON string for security context for kube_state_metrics pods"
+  default     = ""
 }
 
 variable "kube_state_metrics_service_annotations" {
@@ -532,8 +579,19 @@ variable "node_exporter_resources" {
 }
 
 variable "node_exporter_security_context" {
-  description = "Security context for node_exporter pods"
-  default     = {}
+  description = <<EOF
+  Security context for node_exporter pods defined as a map which will be serialized to JSON.
+  Due to limitations with Terraform 0.11 and below, integers are serialized as strings in JSON and
+  this will not work for fields like `runAsUser`. Specify a JSON string with
+  `node_exporter_security_context_json` instead
+EOF
+
+  default = {}
+}
+
+variable "node_exporter_security_context_json" {
+  description = "JSON string for security context for node_exporter pods"
+  default     = ""
 }
 
 variable "node_exporter_service_annotations" {
@@ -706,8 +764,19 @@ variable "pushgateway_resources" {
 }
 
 variable "pushgateway_security_context" {
-  description = "Security context for pushgateway pods"
-  default     = {}
+  description = <<EOF
+  Security context for pushgateway pods defined as a map which will be serialized to JSON.
+  Due to limitations with Terraform 0.11 and below, integers are serialized as strings in JSON and
+  this will not work for fields like `runAsUser`. Specify a JSON string with
+  `pushgateway_security_context_json` instead
+EOF
+
+  default = {}
+}
+
+variable "pushgateway_security_context_json" {
+  description = "JSON string for security context for pushgateway pods"
+  default     = ""
 }
 
 variable "pushgateway_service_annotations" {
@@ -763,7 +832,7 @@ variable "server_repository" {
 
 variable "server_tag" {
   description = "Tag for server Docker Image"
-  default     = "v2.8.0"
+  default     = "v2.8.1"
 }
 
 variable "server_pull_policy" {
@@ -875,8 +944,19 @@ variable "server_resources" {
 }
 
 variable "server_security_context" {
-  description = "Security context for server pods"
-  default     = {}
+  description = <<EOF
+  Security context for server pods defined as a map which will be serialized to JSON.
+  Due to limitations with Terraform 0.11 and below, integers are serialized as strings in JSON and
+  this will not work for fields like `runAsUser`. Specify a JSON string with
+  `server_security_context_json` instead
+EOF
+
+  default = {}
+}
+
+variable "server_security_context_json" {
+  description = "JSON string for security context for server pods"
+  default     = ""
 }
 
 variable "server_service_annotations" {
