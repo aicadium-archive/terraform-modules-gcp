@@ -15,7 +15,7 @@ data "template_file" "general" {
 
   vars {
     service_account = "${var.service_account}"
-    replias         = "${var.replicas}"
+    replicas        = "${var.replicas}"
 
     image             = "${var.image}"
     tag               = "${var.tag}"
@@ -55,7 +55,7 @@ data "template_file" "general" {
     ingress_tls         = "${jsonencode(var.ingress_tls)}"
 
     extra_init_containers = "${jsonencode(var.extra_init_containers)}"
-    extra_containers      = "${jsonencode(var.extra_containers)}"
+    extra_containers      = "${indent(2, var.extra_containers)}"
 
     persistence_enabled            = "${var.persistence_enabled}"
     persistence_size               = "${var.persistence_size}"
@@ -80,7 +80,7 @@ data "template_file" "general" {
     ldap_config          = "${jsonencode(var.ldap_config)}"
 
     smtp_existing_secret = "${var.smtp_existing_secret}"
-    smtp_user_key = "${var.smtp_user_key}"
-    smtp_password_key = "${var.smtp_password_key}"
+    smtp_user_key        = "${var.smtp_user_key}"
+    smtp_password_key    = "${var.smtp_password_key}"
   }
 }

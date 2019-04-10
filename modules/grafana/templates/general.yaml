@@ -1,8 +1,8 @@
 rbac:
   create: true
+  namespaced: true
   pspEnabled: false
   pspUseAppArmor: false
-  namespaced: true
 
 serviceAccount:
   create: true
@@ -105,7 +105,8 @@ affinity: ${affinity}
 extraInitContainers: ${extra_init_containers}
 
 ## Enable an Specify container in extraContainers. This is meant to allow adding an authentication proxy to a grafana pod
-extraContainers: ${extra_containers}
+extraContainers:
+  ${extra_containers}
 # - name: proxy
 #   image: quay.io/gambol99/keycloak-proxy:latest
 #   args:
@@ -214,7 +215,7 @@ plugins: ${plugins}
 ## ref: http://docs.grafana.org/administration/provisioning/#datasources
 ##
 datasources:
-${datasources}
+  ${datasources}
 #  datasources.yaml:
 #    apiVersion: 1
 #    datasources:
@@ -228,7 +229,7 @@ ${datasources}
 ## ref: http://docs.grafana.org/administration/provisioning/#alert-notification-channels
 ##
 notifiers:
-${notifiers}
+  ${notifiers}
 #  notifiers.yaml:
 #    notifiers:
 #    - name: email-notifier
@@ -249,7 +250,7 @@ ${notifiers}
 ## `path` must be /var/lib/grafana/dashboards/<provider_name>
 ##
 dashboardProviders:
-${dashboard_providers}
+  ${dashboard_providers}
 #  dashboardproviders.yaml:
 #    apiVersion: 1
 #    providers:
@@ -269,7 +270,7 @@ ${dashboard_providers}
 ## dashboards per provider, use provider name as key.
 ##
 dashboards:
-${dashboards}
+  ${dashboards}
   # default:
   #   some-dashboard:
   #     json: |
@@ -295,7 +296,7 @@ ${dashboards}
 ##     RAW_JSON
 ##
 dashboardsConfigMaps:
-${dashboards_config_maps}
+  ${dashboards_config_maps}
 #  default: ""
 
 ## Grafana's primary configuration
@@ -303,7 +304,7 @@ ${dashboards_config_maps}
 ## ref: http://docs.grafana.org/installation/configuration/
 ##
 grafana.ini:
-${main_config}
+  ${main_config}
 ## LDAP Authentication can be enabled with the following values on grafana.ini
 ## NOTE: Grafana will fail to start if the value for ldap.toml is invalid
   # auth.ldap:

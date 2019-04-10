@@ -283,15 +283,15 @@ variable "ldap_config" {
 
 variable "smtp_existing_secret" {
   description = "Existing secret containing the SMTP credentials"
-  default = ""
+  default     = ""
 }
 
 variable "smtp_user_key" {
   description = "Key in the secret containing the SMTP username"
-  default = "user"
+  default     = "user"
 }
 
-variable "passwordKey" {
+variable "smtp_password_key" {
   description = "Key in the secret containing the SMTP password"
-  default = "password"
+  default     = "password"
 }
