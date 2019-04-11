@@ -73,9 +73,7 @@ ssl:
   cipherSuites: ${ssl_ciphersuites}
 
 kvprovider:
-  # We don't support the PV ACME store and we don't want the chart's `storeconfig` job to run
-  # We will manually configure this outside of the chart.
-  storeAcme: false
+  storeAcme: ${kv_store_acme}
   ${consul_kv}
 
 acme:

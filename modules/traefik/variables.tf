@@ -180,6 +180,11 @@ variable "ingress_class" {
   default     = "traefik"
 }
 
+variable "kv_store_acme" {
+  description = "Use the chart to configure Traefik to Store ACME certificates on Consul KV"
+  default     = "false"
+}
+
 variable "enable_consul_kv" {
   description = "Enable KV Store with Consul"
   default     = "false"

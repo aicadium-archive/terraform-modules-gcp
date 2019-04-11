@@ -164,6 +164,8 @@ data "template_file" "values" {
 
     secret_files = "${jsonencode(var.secret_files)}"
 
+    kv_store_acme = "${var.kv_store_acme}"
+
     # Disabled for now because of https://github.com/hashicorp/terraform/issues/17033
     # prometheus_buckets         = "${jsonencode(var.prometheus_buckets)}"
   }
