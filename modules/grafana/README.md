@@ -43,7 +43,6 @@ This module makes use of the
 | main\_config | Main Config file in YAML | string | `"paths:\n  data: /var/lib/grafana/data\n  logs: /var/log/grafana\n  plugins: /var/lib/grafana/plugins\n  provisioning: /etc/grafana/provisioning\nanalytics:\n  check_for_updates: true\nlog:\n  mode: console\ngrafana_net:\n  url: https://grafana.net\n"` | no |
 | node\_selector | Node selector for Pods | map | `<map>` | no |
 | notifiers | YAML string to configure notifiers http://docs.grafana.org/administration/provisioning/#alert-notification-channels | string | `""` | no |
-| passwordKey | Key in the secret containing the SMTP password | string | `"password"` | no |
 | persistence\_annotations | Annotations for the PV | map | `<map>` | no |
 | persistence\_enabled | Enable PV | string | `"false"` | no |
 | persistence\_existing\_claim | Use an existing PVC | string | `""` | no |
@@ -63,6 +62,7 @@ This module makes use of the
 | service\_target\_port | Port in container to expose service | string | `"3000"` | no |
 | service\_type | Service type | string | `"ClusterIP"` | no |
 | smtp\_existing\_secret | Existing secret containing the SMTP credentials | string | `""` | no |
+| smtp\_password\_key | Key in the secret containing the SMTP password | string | `"password"` | no |
 | smtp\_user\_key | Key in the secret containing the SMTP username | string | `"user"` | no |
 | tag | Docker Image tag for Grafana | string | `"6.0.2"` | no |
 | tolerations | Tolerations for pods | list | `<list>` | no |
