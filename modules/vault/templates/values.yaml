@@ -54,6 +54,8 @@ annotations: ${annotations}
 labels: ${labels}
 podAnnotations: ${pod_annotations}
 lifecycle: ${lifecycle}
+priorityClassName: ${pod_priority_class}
+minReadySeconds: ${min_ready_seconds}
 
 vault:
   # Only used to enable dev mode. When in dev mode, the rest of this config

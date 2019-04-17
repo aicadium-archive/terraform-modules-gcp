@@ -174,6 +174,16 @@ variable "lifecycle" {
   default     = ""
 }
 
+variable "pod_priority_class" {
+  description = "Pod priority class name. See https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/"
+  default     = ""
+}
+
+variable "min_ready_seconds" {
+  description = "Minimum number of seconds that newly created replicas must be ready without any containers crashing"
+  default     = "0"
+}
+
 # Vault Configuration
 variable "vault_dev" {
   description = "Run Vault in dev mode"
