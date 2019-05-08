@@ -23,6 +23,11 @@ variable "chart_namespace" {
   default     = "kube-system"
 }
 
+variable "timeout" {
+  description = "Time in seconds to wait for any individual kubernetes operation."
+  default     = 600
+}
+
 variable "replica" {
   description = "Number of Replicas of Vault to run"
   default     = 3

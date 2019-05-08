@@ -7,6 +7,8 @@ resource "helm_release" "vault" {
   version    = "${var.chart_version}"
   namespace  = "${var.chart_namespace}"
 
+  timeout = "${var.timeout}"
+
   values = [
     "${data.template_file.values.rendered}",
     "${local.vault_config_overwrite}",
