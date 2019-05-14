@@ -82,12 +82,12 @@ variable "cpu_request" {
 
 variable "memory_request" {
   description = "Initial share of memory requested per Traefik pod"
-  default     = "20Mi"
+  default     = ""
 }
 
 variable "cpu_limit" {
   description = "CPU limit per Traefik pod"
-  default     = "100m"
+  default     = ""
 }
 
 variable "memory_limit" {

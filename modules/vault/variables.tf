@@ -120,12 +120,12 @@ variable "cpu_request" {
 
 variable "memory_request" {
   description = "Memory request for pods"
-  default     = "2Gi"
+  default     = ""
 }
 
 variable "cpu_limit" {
   description = "CPU limit for pods"
-  default     = "2000m"
+  default     = ""
 }
 
 variable "memory_limit" {
@@ -212,7 +212,12 @@ variable "vault_extra_containers" {
 
 variable "vault_extra_volumes" {
   description = "Additional volumes for Vault"
-  default     = {}
+  default     = []
+}
+
+variable "vault_extra_volume_mounts" {
+  description = "Additional Volume Mounts for Vault"
+  default     = []
 }
 
 variable "vault_log_level" {
