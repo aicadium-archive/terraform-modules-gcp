@@ -26,10 +26,20 @@ locals {
   tls_secret_cert_key = "cert"
   tls_secret_key_key  = "key"
 
+  tls_volume = [
+    {
+      name = "${kubernetes_secret.tls_cert.metadata.0.name}"
+
+      secret = {
+        secretName = "${kubernetes_secret.tls_cert.metadata.0.name}"
+      }
+    },
+  ]
+
   tls_cert_mounts = [
     {
-      secretName = "${kubernetes_secret.tls_cert.metadata.0.name}"
-      mountPath  = "${local.tls_secret_path}"
+      name      = "${kubernetes_secret.tls_cert.metadata.0.name}"
+      mountPath = "${local.tls_secret_path}"
     },
   ]
 
@@ -119,13 +129,14 @@ data "template_file" "values" {
     pod_priority_class = "${var.pod_priority_class}"
     min_ready_seconds  = "${var.min_ready_seconds}"
 
-    vault_dev              = "${var.vault_dev}"
-    vault_secret_volumes   = "${jsonencode(concat(local.tls_cert_mounts, var.vault_secret_volumes))}"
-    vault_env              = "${jsonencode(concat(local.vault_env, var.vault_env))}"
-    vault_extra_containers = "${jsonencode(var.vault_extra_containers)}"
-    vault_extra_volumes    = "${jsonencode(var.vault_extra_volumes)}"
-    vault_log_level        = "${var.vault_log_level}"
-    vault_config           = "${local.vault_config}"
+    vault_dev                 = "${var.vault_dev}"
+    vault_secret_volumes      = "${jsonencode(var.vault_secret_volumes)}"
+    vault_env                 = "${jsonencode(concat(local.vault_env, var.vault_env))}"
+    vault_extra_containers    = "${jsonencode(var.vault_extra_containers)}"
+    vault_extra_volumes       = "${jsonencode(concat(local.tls_volume, var.vault_extra_volumes))}"
+    vault_extra_volume_mounts = "${jsonencode(concat(local.tls_cert_mounts, var.vault_extra_volume_mounts))}"
+    vault_log_level           = "${var.vault_log_level}"
+    vault_config              = "${local.vault_config}"
   }
 }
 

@@ -84,6 +84,7 @@ vault:
   #   - name: some-mount
   #     mountPath: /some/path
   extraVolumes: ${vault_extra_volumes}
+  extraVolumeMounts: ${vault_extra_volume_mounts}
   # Log level
   # https://www.vaultproject.io/docs/commands/server.html#log-level
   logLevel: ${vault_log_level}
