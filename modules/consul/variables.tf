@@ -70,17 +70,17 @@ variable "server_storage_class" {
 
 variable "server_cpu_request" {
   description = "CPU request for server pods"
-  default     = "500m"
+  default     = "2000m"
 }
 
 variable "server_memory_request" {
   description = "Memory request for server pods"
-  default     = "2Gi"
+  default     = ""
 }
 
 variable "server_cpu_limit" {
   description = "CPU limit for server pods"
-  default     = "2000m"
+  default     = ""
 }
 
 variable "server_memory_limit" {
@@ -140,17 +140,17 @@ variable "client_cpu_request" {
 
 variable "client_memory_request" {
   description = "Memory request for client agent pods"
-  default     = "1Gi"
+  default     = ""
 }
 
 variable "client_cpu_limit" {
   description = "CPU limit for client agent pods"
-  default     = "1000m"
+  default     = ""
 }
 
 variable "client_memory_limit" {
   description = "Memory limit for client agent pods"
-  default     = "2Gi"
+  default     = "500Mi"
 }
 
 variable "client_extra_config" {
