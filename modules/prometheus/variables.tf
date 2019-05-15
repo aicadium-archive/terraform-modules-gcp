@@ -1294,6 +1294,12 @@ prometheus.yml:
         - source_labels: [__meta_kubernetes_pod_node_name]
           action: replace
           target_label: kubernetes_node
+        - action: labelmap
+          regex: __meta_kubernetes_pod_(.+)
+          replacement: pod_$1
+        - action: labelmap
+          regex: __meta_kubernetes_service_(.+)
+          replacement: service_$1
 
     - job_name: 'prometheus-pushgateway'
       honor_labels: true
