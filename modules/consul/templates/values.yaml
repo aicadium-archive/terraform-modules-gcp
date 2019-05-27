@@ -1,3 +1,5 @@
+${fullname_override != "" ? "fullnameOverride: ${fullname_override}" : ""}
+
 # For the full suite of supported values, see https://www.consul.io/docs/platform/k8s/helm.html
 global:
     domain: ${consul_domain}

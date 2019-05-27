@@ -16,6 +16,8 @@ data "template_file" "values" {
   template = "${file("${path.module}/templates/values.yaml")}"
 
   vars {
+    fullname_override = "${var.fullname_override}"
+
     image     = "${var.consul_image_name}:${var.consul_image_tag}"
     image_k8s = "${var.consul_k8s_image}:${var.consul_k8s_tag}"
 

@@ -23,6 +23,11 @@ variable "chart_namespace" {
   default     = "default"
 }
 
+variable "fullname_override" {
+  description = "Fullname Override of Helm resources"
+  default     = ""
+}
+
 variable "consul_image_name" {
   description = "Docker Image of Consul to run"
   default     = "consul"
@@ -30,7 +35,7 @@ variable "consul_image_name" {
 
 variable "consul_image_tag" {
   description = "Docker image tag of Consul to run"
-  default     = "1.4.4"
+  default     = "1.5.1"
 }
 
 variable "consul_k8s_image" {
