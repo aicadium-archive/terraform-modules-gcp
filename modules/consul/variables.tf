@@ -262,3 +262,133 @@ variable "configure_kube_dns" {
   description = "Configure kube-dns and OVERWRITE it to resolve .consul domains with Consul DNS"
   default     = false
 }
+
+###########################
+# Consul ESM
+###########################
+variable "enable_esm" {
+  description = "Enable Consul ESM deployment"
+  default     = false
+}
+
+variable "esm_release_name" {
+  description = "Name of the ESM Chart Release"
+  default     = "consul-esm"
+}
+
+variable "esm_chart_name" {
+  description = "Name of the ESM Chart name"
+  default     = "consul-esm"
+}
+
+variable "esm_chart_repository" {
+  description = "ESM Chart repository"
+  default     = "amoy"
+}
+
+variable "esm_chart_version" {
+  description = "ESM Chart version"
+  default     = ""
+}
+
+variable "esm_replica" {
+  description = "Number of ESM replica"
+  default     = 3
+}
+
+variable "esm_image" {
+  description = "Docker image for ESM"
+  default     = "basisai/consul-esm"
+}
+
+variable "esm_tag" {
+  description = "Docker Image tag for ESM"
+  default     = "0.3.3"
+}
+
+variable "esm_resources" {
+  description = "Resources for ESM"
+
+  default = {
+    requests = {
+      cpu = "200m"
+    }
+
+    limits = {
+      memory = "256Mi"
+    }
+  }
+}
+
+variable "esm_log_level" {
+  description = "Log level for ESM"
+  default     = "INFO"
+}
+
+variable "esm_service_name" {
+  description = "ESM service name in Consul"
+  default     = "consul-esm"
+}
+
+variable "esm_service_tag" {
+  description = "Service tag for ESM"
+  default     = ""
+}
+
+variable "esm_kv_path" {
+  description = "The directory in the Consul KV store to use for storing ESM runtime data."
+  default     = "consul-esm/"
+}
+
+variable "esm_external_node_meta" {
+  description = "The node metadata values used for the ESM to qualify a node in the catalog as an \"external node\"."
+
+  default = {
+    "external-node" = "true"
+  }
+}
+
+variable "esm_node_reconnect_timeout" {
+  description = "The length of time to wait before reaping an external node due to failed pings."
+  default     = "72h"
+}
+
+variable "esm_node_probe_interval" {
+  description = "The interval to ping and update coordinates for external nodes that have 'external-probe' set to true. By default, ESM will attempt to ping and  update the coordinates for all nodes it is watching every 10 seconds."
+  default     = "10s"
+}
+
+variable "esm_http_addr" {
+  description = "HTTP address of the local Consul agent"
+  default     = ""
+}
+
+variable "esm_ping_type" {
+  description = "The method to use for pinging external nodes."
+  default     = "udp"
+}
+
+variable "esm_env" {
+  description = "Environment variables for Consul ESM"
+
+  default = [
+    {
+      name = "HOST_IP"
+
+      valueFrom = {
+        fieldRef = {
+          fieldPath = "status.hostIP"
+        }
+      }
+    },
+    {
+      name  = "CONSUL_HTTP_ADDR"
+      value = "$(HOST_IP):8500"
+    },
+  ]
+}
+
+variable "esm_init_container_set_sysctl" {
+  description = "Enable setting sysctl settings via a privileged container to allow pings"
+  default     = false
+}
