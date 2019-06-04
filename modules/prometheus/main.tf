@@ -292,6 +292,8 @@ data "template_file" "server" {
     evaluation_interval = "${var.server_evaluation_interval}"
     retention           = "${jsonencode(var.server_data_retention)}"
 
-    server_files = "${indent(2, var.server_files)}"
+    alerts        = "${indent(2, var.server_alerts)}"
+    rules         = "${indent(2, var.server_rules)}"
+    server_config = "${indent(2, var.server_config)}"
   }
 }

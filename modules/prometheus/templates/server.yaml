@@ -269,4 +269,6 @@ server:
   retention: ${retention}
 
 serverFiles:
-${server_files}
+  ${alerts}
+  ${rules}
+  ${server_config}

@@ -1087,8 +1087,8 @@ variable "server_headless_labels" {
   default     = {}
 }
 
-variable "server_files" {
-  description = "Prometheus server ConfigMap entries in YAML"
+variable "server_alerts" {
+  description = "Prometheus server alerts entries in YAML"
 
   default = <<EOF
 ## Alerts configuration
@@ -1105,9 +1105,21 @@ alerts: {}
 #         annotations:
 #           description: '{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes.'
 #           summary: 'Instance {{ $labels.instance }} down'
+EOF
+}
 
+variable "server_rules" {
+  description = "Prometheus server rules entries in YAML"
+
+  default = <<EOF
 rules: {}
+EOF
+}
 
+variable "server_config" {
+  description = "Prometheus server config file in YAML"
+
+  default = <<EOF
 prometheus.yml:
   rule_files:
     - /etc/config/rules
