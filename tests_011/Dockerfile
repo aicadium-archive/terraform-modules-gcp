@@ -8,7 +8,7 @@ RUN apk add --no-cache curl git \
     && rm -fr terraform.zip \
     && mv terraform /usr/local/bin
 
-COPY tests/lint /usr/local/bin/
+COPY tests_011/lint /usr/local/bin/
 ENTRYPOINT ["/usr/local/bin/lint"]
 
 WORKDIR /data
