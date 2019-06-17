@@ -20,12 +20,12 @@ script:
       -not -path './modules/consul/*' \
       -not -path './vendor/*' \
       -type f -iname '*.tf' \
-      -printf '%h\n' | sort | uniq | xargs -I{} bash -c "echo {} && docker run --rm -ti --entrypoint terraform ${LINT_IMAGE_011} fmt -check=true {}  && docker run --rm ${LINT_IMAGE_011} {}"
+      -printf '%h\n' | sort | uniq | xargs -I{} bash -c "echo {} && docker run --rm --entrypoint terraform ${LINT_IMAGE_011} fmt -check=true {}  && docker run --rm ${LINT_IMAGE_011} {}"
   - |
     find . \
       -path './modules/consul/*' \
       -type f -iname '*.tf' \
-      -printf '%h\n' | sort | uniq | xargs -I{} bash -c "echo {} && docker run --rm -ti --entrypoint terraform ${LINT_IMAGE} fmt -check=true {}  && docker run --rm ${LINT_IMAGE} {}"
+      -printf '%h\n' | sort | uniq | xargs -I{} bash -c "echo {} && docker run --rm --entrypoint terraform ${LINT_IMAGE} fmt -check=true {}  && docker run --rm ${LINT_IMAGE} {}"
 branches:
   only:
   - master
