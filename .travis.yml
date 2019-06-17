@@ -18,12 +18,14 @@ script:
     find . \
       -not -path '*/\.*' \
       -not -path './modules/consul/*' \
+      -not -path './modules/vault/*' \
       -not -path './vendor/*' \
       -type f -iname '*.tf' \
       -printf '%h\n' | sort | uniq | xargs -I{} bash -c "echo {} && docker run --rm --entrypoint terraform ${LINT_IMAGE_011} fmt -check=true {}  && docker run --rm ${LINT_IMAGE_011} {}"
   - |
     find . \
       -path './modules/consul/*' \
+      -path './modules/vault/*' \
       -type f -iname '*.tf' \
       -printf '%h\n' | sort | uniq | xargs -I{} bash -c "echo {} && docker run --rm --entrypoint terraform ${LINT_IMAGE} fmt -check=true {}  && docker run --rm ${LINT_IMAGE} {}"
 branches:
