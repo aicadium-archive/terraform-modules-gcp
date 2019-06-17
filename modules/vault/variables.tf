@@ -175,7 +175,7 @@ variable "labels" {
   default = {}
 }
 
-variable "lifecycle" {
+variable "container_lifecycle" {
   description = "YAML string of the Vault container lifecycle hooks"
   default = ""
 }

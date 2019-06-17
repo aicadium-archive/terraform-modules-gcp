@@ -23,11 +23,12 @@ script:
       -type f -iname '*.tf' \
       -printf '%h\n' | sort | uniq | xargs -I{} bash -c "echo {} && docker run --rm --entrypoint terraform ${LINT_IMAGE_011} fmt -check=true {}  && docker run --rm ${LINT_IMAGE_011} {}"
   - |
-    find . \
-      -path './modules/consul/*' \
-      -path './modules/vault/*' \
-      -type f -iname '*.tf' \
-      -printf '%h\n' | sort | uniq | xargs -I{} bash -c "echo {} && docker run --rm --entrypoint terraform ${LINT_IMAGE} fmt -check=true {}  && docker run --rm ${LINT_IMAGE} {}"
+    for module in "./modules/consul" "./modules/vault"; do \
+      echo "${module}" \
+      && docker run --rm --entrypoint terraform ${LINT_IMAGE} fmt -check=true "${module}" \
+      && docker run --rm ${LINT_IMAGE} "${module}"; \
+      done
+
 branches:
   only:
   - master
