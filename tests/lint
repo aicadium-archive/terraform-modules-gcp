@@ -3,7 +3,8 @@ set -xeuo pipefail
 
 main() {
     cd "$@"
-    terraform get
+    terraform init -backend=false
+    terraform validate
     tflint
 }
 
