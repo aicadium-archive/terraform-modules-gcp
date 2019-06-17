@@ -150,8 +150,8 @@ resource "kubernetes_secret" "tls_cert" {
   }
 
   data = {
-    local.tls_secret_cert_key = var.tls_cert_pem
-    local.tls_secret_key_key = var.tls_cert_key
+    "${local.tls_secret_cert_key}" = var.tls_cert_pem
+    "${local.tls_secret_key_key}" = var.tls_cert_key
   }
 }
 
