@@ -298,52 +298,53 @@ variable "alertmanager_security_context" {
   `alertmanager_security_context_json` instead
 EOF
 
+
   default = {}
 }
 
 variable "alertmanager_security_context_json" {
   description = "JSON string for security context for alertmanager pods"
-  default     = ""
+  default = ""
 }
 
 variable "alertmanager_service_annotations" {
   description = "Annotations for Alertmanager service"
-  default     = {}
+  default = {}
 }
 
 variable "alertmanager_service_labels" {
   description = "Labels for Alertmanager service"
-  default     = {}
+  default = {}
 }
 
 variable "alertmanager_service_cluster_ip" {
   description = "Cluster IP for Alertmanager Service"
-  default     = ""
+  default = ""
 }
 
 variable "alertmanager_service_external_ips" {
   description = "External IPs for Alertmanager service"
-  default     = []
+  default = []
 }
 
 variable "alertmanager_service_lb_ip" {
   description = "Load Balancer IP for Alertmanager service"
-  default     = ""
+  default = ""
 }
 
 variable "alertmanager_service_lb_source_ranges" {
   description = "List of source CIDRs allowed to access the Alertmanager LB"
-  default     = []
+  default = []
 }
 
 variable "alertmanager_service_port" {
   description = "Service port for Alertmanager"
-  default     = 80
+  default = 80
 }
 
 variable "alertmanager_service_type" {
   description = "Type of service for Alertmanager"
-  default     = "ClusterIP"
+  default = "ClusterIP"
 }
 
 variable "alertmanager_files" {
@@ -366,225 +367,228 @@ alertmanager.yml:
     receiver: default-receiver
     repeat_interval: 3h
 EOF
+
 }
 
 ################################
 # Kube State Metrics
 ################################
 variable "kube_state_metrics_enable" {
-  description = "Enable Kube State Metrics"
-  default     = "true"
+description = "Enable Kube State Metrics"
+default     = "true"
 }
 
 variable "kube_state_metrics_repository" {
-  description = "Docker repository for Kube State Metrics"
-  default     = "quay.io/coreos/kube-state-metrics"
+description = "Docker repository for Kube State Metrics"
+default     = "quay.io/coreos/kube-state-metrics"
 }
 
 variable "kube_state_metrics_tag" {
-  description = "Tag for Kube State Metrics Docker Image"
-  default     = "v1.5.0"
+description = "Tag for Kube State Metrics Docker Image"
+default     = "v1.5.0"
 }
 
 variable "kube_state_metrics_pull_policy" {
-  description = "Image pull policy for Kube State Metrics"
-  default     = "IfNotPresent"
+description = "Image pull policy for Kube State Metrics"
+default     = "IfNotPresent"
 }
 
 variable "kube_state_metrics_priority_class_name" {
-  description = "Priority Class Name for Kube State Metrics pods"
-  default     = ""
+description = "Priority Class Name for Kube State Metrics pods"
+default     = ""
 }
 
 variable "kube_state_metrics_extra_args" {
-  description = "Extra arguments for Kube State Metrics container"
-  default     = {}
+description = "Extra arguments for Kube State Metrics container"
+default     = {}
 }
 
 variable "kube_state_metrics_extra_env" {
-  description = "Extra environment variables for Kube State Metrics container"
-  default     = {}
+description = "Extra environment variables for Kube State Metrics container"
+default     = {}
 }
 
 variable "kube_state_metrics_annotations" {
-  description = "Annotations for Kube State Metrics pods"
-  default     = {}
+description = "Annotations for Kube State Metrics pods"
+default     = {}
 }
 
 variable "kube_state_metrics_tolerations" {
-  description = "Tolerations for Kube State Metrics"
-  default     = []
+description = "Tolerations for Kube State Metrics"
+default     = []
 }
 
 variable "kube_state_metrics_labels" {
-  description = "Labels for Kube State Metrics"
-  default     = {}
+description = "Labels for Kube State Metrics"
+default     = {}
 }
 
 variable "kube_state_metrics_node_selector" {
-  description = "Node selector for Kube State Metrics pods"
-  default     = {}
+description = "Node selector for Kube State Metrics pods"
+default     = {}
 }
 
 variable "kube_state_metrics_replica" {
-  description = "Number of replicas for Kube State Metrics"
-  default     = 1
+description = "Number of replicas for Kube State Metrics"
+default     = 1
 }
 
 variable "kube_state_metrics_resources" {
-  description = "Resources for Kube State Metrics"
-  default     = {}
+description = "Resources for Kube State Metrics"
+default     = {}
 }
 
 variable "kube_state_metrics_security_context" {
-  description = <<EOF
+description = <<EOF
   Security context for kube_state_metrics pods defined as a map which will be serialized to JSON.
   Due to limitations with Terraform 0.11 and below, integers are serialized as strings in JSON and
   this will not work for fields like `runAsUser`. Specify a JSON string with
   `kube_state_metrics_security_context_json` instead
 EOF
 
-  default = {}
+
+default = {}
 }
 
 variable "kube_state_metrics_security_context_json" {
-  description = "JSON string for security context for kube_state_metrics pods"
-  default     = ""
+description = "JSON string for security context for kube_state_metrics pods"
+default = ""
 }
 
 variable "kube_state_metrics_service_annotations" {
-  description = "Annotations for Kube State Metrics service"
+description = "Annotations for Kube State Metrics service"
 
-  default = {
-    "prometheus.io/scrape" = "true"
-  }
+default = {
+"prometheus.io/scrape" = "true"
+}
 }
 
 variable "kube_state_metrics_service_labels" {
-  description = "Labels for Kube State Metrics service"
-  default     = {}
+description = "Labels for Kube State Metrics service"
+default = {}
 }
 
 variable "kube_state_metrics_service_cluster_ip" {
-  description = "Cluster IP for Kube State Metrics Service"
-  default     = "None"
+description = "Cluster IP for Kube State Metrics Service"
+default = "None"
 }
 
 variable "kube_state_metrics_service_external_ips" {
-  description = "External IPs for Kube State Metrics service"
-  default     = []
+description = "External IPs for Kube State Metrics service"
+default = []
 }
 
 variable "kube_state_metrics_service_lb_ip" {
-  description = "Load Balancer IP for Kube State Metrics service"
-  default     = ""
+description = "Load Balancer IP for Kube State Metrics service"
+default = ""
 }
 
 variable "kube_state_metrics_service_lb_source_ranges" {
-  description = "List of source CIDRs allowed to access the Kube State Metrics LB"
-  default     = []
+description = "List of source CIDRs allowed to access the Kube State Metrics LB"
+default = []
 }
 
 variable "kube_state_metrics_service_port" {
-  description = "Service port for Kube State Metrics"
-  default     = 80
+description = "Service port for Kube State Metrics"
+default = 80
 }
 
 variable "kube_state_metrics_service_type" {
-  description = "Type of service for Kube State Metrics"
-  default     = "ClusterIP"
+description = "Type of service for Kube State Metrics"
+default = "ClusterIP"
 }
 
 ################################
 # Node Exporter
 ################################
 variable "node_exporter_enable" {
-  description = "Enable Node Exporter"
-  default     = "true"
+description = "Enable Node Exporter"
+default = "true"
 }
 
 variable "node_exporter_host_network" {
-  description = "Use the Host network namespace for Node Exporter"
-  default     = "true"
+description = "Use the Host network namespace for Node Exporter"
+default = "true"
 }
 
 variable "node_exporter_host_pid" {
-  description = "Use the Network PID namespace for Node Exporter"
-  default     = "true"
+description = "Use the Network PID namespace for Node Exporter"
+default = "true"
 }
 
 variable "node_exporter_repository" {
-  description = "Docker repository for Node Exporter"
-  default     = "prom/node-exporter"
+description = "Docker repository for Node Exporter"
+default = "prom/node-exporter"
 }
 
 variable "node_exporter_tag" {
-  description = "Tag for Node Exporter Docker Image"
-  default     = "v0.17.0"
+description = "Tag for Node Exporter Docker Image"
+default = "v0.17.0"
 }
 
 variable "node_exporter_pull_policy" {
-  description = "Image pull policy for Node Exporter"
-  default     = "IfNotPresent"
+description = "Image pull policy for Node Exporter"
+default = "IfNotPresent"
 }
 
 variable "node_exporter_enable_pod_security_policy" {
-  description = "Create PodSecurityPolicy for Node Exporter"
-  default     = "false"
+description = "Create PodSecurityPolicy for Node Exporter"
+default = "false"
 }
 
 variable "node_exporter_pod_security_policy_annotations" {
-  description = "Annotations for the PodSecurityPolicy for Node Exporter"
-  default     = {}
+description = "Annotations for the PodSecurityPolicy for Node Exporter"
+default = {}
 }
 
 variable "node_exporter_priority_class_name" {
-  description = "Priority Class Name for Node Exporter pods"
-  default     = ""
+description = "Priority Class Name for Node Exporter pods"
+default = ""
 }
 
 variable "node_exporter_extra_args" {
-  description = "Extra arguments for Node Exporter container"
-  default     = {}
+description = "Extra arguments for Node Exporter container"
+default = {}
 }
 
 variable "node_exporter_annotations" {
-  description = "Annotations for Node Exporter pods"
-  default     = {}
+description = "Annotations for Node Exporter pods"
+default = {}
 }
 
 variable "node_exporter_tolerations" {
-  description = "Tolerations for Node Exporter"
-  default     = []
+description = "Tolerations for Node Exporter"
+default = []
 }
 
 variable "node_exporter_labels" {
-  description = "Labels for Node Exporter"
-  default     = {}
+description = "Labels for Node Exporter"
+default = {}
 }
 
 variable "node_exporter_node_selector" {
-  description = "Node selector for node_exporter pods"
-  default     = {}
+description = "Node selector for node_exporter pods"
+default = {}
 }
 
 variable "node_exporter_replica" {
-  description = "Number of replicas for Node Exporter"
-  default     = 1
+description = "Number of replicas for Node Exporter"
+default = 1
 }
 
 variable "node_exporter_resources" {
-  description = "Resources for node_exporter"
-  default     = {}
+description = "Resources for node_exporter"
+default = {}
 }
 
 variable "node_exporter_security_context" {
-  description = <<EOF
+description = <<EOF
   Security context for node_exporter pods defined as a map which will be serialized to JSON.
   Due to limitations with Terraform 0.11 and below, integers are serialized as strings in JSON and
   this will not work for fields like `runAsUser`. Specify a JSON string with
   `node_exporter_security_context_json` instead
 EOF
+
 
   default = {}
 }
@@ -771,12 +775,13 @@ variable "pushgateway_security_context" {
   `pushgateway_security_context_json` instead
 EOF
 
+
   default = {}
 }
 
 variable "pushgateway_security_context_json" {
   description = "JSON string for security context for pushgateway pods"
-  default     = ""
+  default = ""
 }
 
 variable "pushgateway_service_annotations" {
@@ -789,37 +794,37 @@ variable "pushgateway_service_annotations" {
 
 variable "pushgateway_service_labels" {
   description = "Labels for Pushgateway service"
-  default     = {}
+  default = {}
 }
 
 variable "pushgateway_service_cluster_ip" {
   description = "Cluster IP for Pushgateway Service"
-  default     = ""
+  default = ""
 }
 
 variable "pushgateway_service_external_ips" {
   description = "External IPs for Pushgateway service"
-  default     = []
+  default = []
 }
 
 variable "pushgateway_service_lb_ip" {
   description = "Load Balancer IP for Pushgateway service"
-  default     = ""
+  default = ""
 }
 
 variable "pushgateway_service_lb_source_ranges" {
   description = "List of source CIDRs allowed to access the Pushgateway LB"
-  default     = []
+  default = []
 }
 
 variable "pushgateway_service_port" {
   description = "Service port for Pushgateway"
-  default     = 9091
+  default = 9091
 }
 
 variable "pushgateway_service_type" {
   description = "Type of service for Pushgateway"
-  default     = "ClusterIP"
+  default = "ClusterIP"
 }
 
 ################################
@@ -827,87 +832,87 @@ variable "pushgateway_service_type" {
 ################################
 variable "server_repository" {
   description = "Docker repository for server"
-  default     = "prom/prometheus"
+  default = "prom/prometheus"
 }
 
 variable "server_tag" {
   description = "Tag for server Docker Image"
-  default     = "v2.8.1"
+  default = "v2.8.1"
 }
 
 variable "server_pull_policy" {
   description = "Image pull policy for server"
-  default     = "IfNotPresent"
+  default = "IfNotPresent"
 }
 
 variable "server_sidecar_containers" {
   description = "Sidecar containers for server"
-  default     = []
+  default = []
 }
 
 variable "server_priority_class_name" {
   description = "Priority Class Name for server pods"
-  default     = ""
+  default = ""
 }
 
 variable "server_extra_args" {
   description = "Extra arguments for server container"
-  default     = {}
+  default = {}
 }
 
 variable "server_extra_env" {
   description = "Extra environment variables for server container"
-  default     = {}
+  default = {}
 }
 
 variable "server_ingress_enabled" {
   description = "Enable ingress for server"
-  default     = "false"
+  default = "false"
 }
 
 variable "server_ingress_annotations" {
   description = "Annotations for server ingress"
-  default     = {}
+  default = {}
 }
 
 variable "server_ingress_extra_labels" {
   description = "Additional labels for server ingress"
-  default     = {}
+  default = {}
 }
 
 variable "server_ingress_hosts" {
   description = "List of Hosts for server ingress"
-  default     = []
+  default = []
 }
 
 variable "server_ingress_tls" {
   description = "TLS configurationf or server ingress"
-  default     = []
+  default = []
 }
 
 variable "server_annotations" {
   description = "Annotations for server pods"
-  default     = {}
+  default = {}
 }
 
 variable "server_tolerations" {
   description = "Tolerations for server"
-  default     = []
+  default = []
 }
 
 variable "server_node_selector" {
   description = "Node selector for server pods"
-  default     = {}
+  default = {}
 }
 
 variable "server_affinity" {
   description = "Affinity for server pods"
-  default     = {}
+  default = {}
 }
 
 variable "server_pv_enabled" {
   description = "Enable persistent volume on server"
-  default     = "true"
+  default = "true"
 }
 
 variable "server_pv_access_modes" {
@@ -920,27 +925,27 @@ variable "server_pv_access_modes" {
 
 variable "server_pv_annotations" {
   description = "Annotations for server PV"
-  default     = {}
+  default = {}
 }
 
 variable "server_pv_existing_claim" {
   description = "Use an existing PV claim for server"
-  default     = ""
+  default = ""
 }
 
 variable "server_pv_size" {
   description = "server data Persistent Volume size"
-  default     = "8Gi"
+  default = "8Gi"
 }
 
 variable "server_replica" {
   description = "Number of replicas for server"
-  default     = 1
+  default = 1
 }
 
 variable "server_resources" {
   description = "Resources for server"
-  default     = {}
+  default = {}
 }
 
 variable "server_security_context" {
@@ -951,146 +956,147 @@ variable "server_security_context" {
   `server_security_context_json` instead
 EOF
 
-  default = {}
+
+default = {}
 }
 
 variable "server_security_context_json" {
-  description = "JSON string for security context for server pods"
-  default     = ""
+description = "JSON string for security context for server pods"
+default     = ""
 }
 
 variable "server_service_annotations" {
-  description = "Annotations for server service"
+description = "Annotations for server service"
 
-  default = {
-    "prometheus.io/probe" = "server"
-  }
+default = {
+"prometheus.io/probe" = "server"
+}
 }
 
 variable "server_service_labels" {
-  description = "Labels for server service"
-  default     = {}
+description = "Labels for server service"
+default     = {}
 }
 
 variable "server_service_cluster_ip" {
-  description = "Cluster IP for server Service"
-  default     = ""
+description = "Cluster IP for server Service"
+default     = ""
 }
 
 variable "server_service_external_ips" {
-  description = "External IPs for server service"
-  default     = []
+description = "External IPs for server service"
+default     = []
 }
 
 variable "server_service_lb_ip" {
-  description = "Load Balancer IP for server service"
-  default     = ""
+description = "Load Balancer IP for server service"
+default     = ""
 }
 
 variable "server_service_lb_source_ranges" {
-  description = "List of source CIDRs allowed to access the server LB"
-  default     = []
+description = "List of source CIDRs allowed to access the server LB"
+default     = []
 }
 
 variable "server_service_port" {
-  description = "Service port for server"
-  default     = 9091
+description = "Service port for server"
+default     = 9091
 }
 
 variable "server_service_type" {
-  description = "Type of service for server"
-  default     = "ClusterIP"
+description = "Type of service for server"
+default     = "ClusterIP"
 }
 
 variable "server_prefix_url" {
-  description = "The URL prefix at which the container can be accessed. Useful in the case the '-web.external-url' includes a slug so that the various internal URLs are still able to access as they are in the default case."
-  default     = ""
+description = "The URL prefix at which the container can be accessed. Useful in the case the '-web.external-url' includes a slug so that the various internal URLs are still able to access as they are in the default case."
+default     = ""
 }
 
 variable "server_base_url" {
-  description = "External URL which can access alertmanager"
-  default     = ""
+description = "External URL which can access alertmanager"
+default     = ""
 }
 
 variable "server_enable_admin_api" {
-  description = "Enable Admin API for server"
-  default     = "false"
+description = "Enable Admin API for server"
+default     = "false"
 }
 
 variable "server_skip_tsdb_lock" {
-  description = "Disable TSDB locking for the server"
-  default     = "false"
+description = "Disable TSDB locking for the server"
+default     = "false"
 }
 
 variable "server_scrape_interval" {
-  description = "How frequently to scrape targets by default"
-  default     = "1m"
+description = "How frequently to scrape targets by default"
+default     = "1m"
 }
 
 variable "server_scrape_timeout" {
-  description = "How long until a scrape request times out"
-  default     = "10s"
+description = "How long until a scrape request times out"
+default     = "10s"
 }
 
 variable "server_evaluation_interval" {
-  description = "How frequently to evaluate rules"
-  default     = "1m"
+description = "How frequently to evaluate rules"
+default     = "1m"
 }
 
 variable "server_extra_volume_mounts" {
-  description = "Additional Prometheus server Volume mounts"
-  default     = []
+description = "Additional Prometheus server Volume mounts"
+default     = []
 }
 
 variable "server_extra_volumes" {
-  description = "Additional Prometheus server Volumes"
-  default     = []
+description = "Additional Prometheus server Volumes"
+default     = []
 }
 
 variable "server_extra_host_path_mounts" {
-  description = "Additional Prometheus server hostPath mounts"
-  default     = []
+description = "Additional Prometheus server hostPath mounts"
+default     = []
 }
 
 variable "server_extra_configmap_mounts" {
-  description = "Additional Prometheus server ConfigMap mounts"
-  default     = []
+description = "Additional Prometheus server ConfigMap mounts"
+default     = []
 }
 
 variable "server_extra_secret_mounts" {
-  description = "Extra secret mounts for server"
-  default     = []
+description = "Extra secret mounts for server"
+default     = []
 }
 
 variable "server_statefulset_annotations" {
-  description = "Annotations for server StatefulSet"
-  default     = {}
+description = "Annotations for server StatefulSet"
+default     = {}
 }
 
 variable "server_data_retention" {
-  description = "Prometheus data retention period (i.e 360h)"
-  default     = ""
+description = "Prometheus data retention period (i.e 360h)"
+default     = ""
 }
 
 variable "server_termination_grace_seconds" {
-  description = "Prometheus server pod termination grace period"
-  default     = "300"
+description = "Prometheus server pod termination grace period"
+default     = "300"
 }
 
 variable "server_headless_annotations" {
-  description = "Annotations for server StatefulSet headless service"
-  default     = {}
+description = "Annotations for server StatefulSet headless service"
+default     = {}
 }
 
 variable "server_headless_labels" {
-  description = "Labels for server StatefulSet headless service"
-  default     = {}
+description = "Labels for server StatefulSet headless service"
+default     = {}
 }
 
 variable "server_alerts" {
-  description = "Prometheus server alerts entries in YAML"
+description = "Prometheus server alerts entries in YAML"
 
-  default = <<EOF
+default = <<EOF
 ## Alerts configuration
 ## Ref: https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/
 alerts: {}
@@ -1106,14 +1112,16 @@ alerts: {}
 #           description: '{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes.'
 #           summary: 'Instance {{ $labels.instance }} down'
 EOF
+
 }
 
 variable "server_rules" {
-  description = "Prometheus server rules entries in YAML"
+description = "Prometheus server rules entries in YAML"
 
-  default = <<EOF
+default = <<EOF
 rules: {}
 EOF
+
 }
 
 variable "server_config" {
@@ -1396,4 +1404,5 @@ prometheus.yml:
           action: replace
           target_label: kubernetes_pod_name
 EOF
+
 }
