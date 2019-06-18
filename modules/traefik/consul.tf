@@ -1,6 +1,6 @@
 # Additional Configuration not provided by the Helm Chart. Requires Consul KV store
 resource "consul_keys" "acme" {
-  count = "${local.consul_enabled && local.acme_enabled && var.kv_store_acme != "true" ? 1 : 0}"
+  count = local.consul_enabled && local.acme_enabled && var.kv_store_acme != "true" ? 1 : 0
 
   key {
     path   = "${var.consul_kv_prefix}/acme/storage"
@@ -10,7 +10,7 @@ resource "consul_keys" "acme" {
 
   key {
     path   = "${var.consul_kv_prefix}/acme/keytype"
-    value  = "${var.acme_key_type}"
+    value  = var.acme_key_type
     delete = true
   }
 }
