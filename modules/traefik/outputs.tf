@@ -1,9 +1,9 @@
 output "values" {
   description = "Rendered Values file"
-  value       = "${data.template_file.values.rendered}"
+  value       = data.template_file.values.rendered
 }
 
 output "static_ip" {
   description = "Address of the Traefik Load balancer static IP"
-  value       = "${local.static_ip}"
+  value       = local.static_ip
 }

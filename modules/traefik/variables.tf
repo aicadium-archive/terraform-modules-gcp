@@ -370,11 +370,10 @@ variable "prometheus_restrict_access" {
   default     = "true"
 }
 
-# Requires Terraform 0.12: https://github.com/hashicorp/terraform/issues/17033
-# variable "prometheus_buckets" {
-#   description = "A list of response times (in seconds) - for each list element, Traefik will report all response times less than the element."
-#   default     = [0.1, 0.3, 1.2, 5.0]
-# }
+variable "prometheus_buckets" {
+  description = "A list of response times (in seconds) - for each list element, Traefik will report all response times less than the element."
+  default     = [0.1, 0.3, 1.2, 5.0]
+}
 
 variable "datadog_enabled" {
   description = "Enable pushing metrics to Datadog"
@@ -430,3 +429,4 @@ variable "secret_files" {
   description = "KV Map of secret files and their contents"
   default     = {}
 }
+
