@@ -130,7 +130,7 @@ variable "image" {
 
 variable "tag" {
   description = "Docker image tag of the backup job"
-  default     = "0.1.0"
+  default     = "0.2.0"
 }
 
 variable "pull_policy" {
