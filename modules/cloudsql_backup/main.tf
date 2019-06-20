@@ -36,20 +36,28 @@ data "template_file" "values" {
   vars = {
     schedule = var.schedule
     env = jsonencode(var.env)
+
     image = var.image
     tag = var.tag
     pull_policy = var.pull_policy
+
     consul_address = var.consul_address
+
     node_selector = jsonencode(var.node_selector)
     tolerations = jsonencode(var.tolerations)
     affinity = jsonencode(var.affinity)
+
     vault_address = var.vault_address
     vault_ca = jsonencode(var.vault_ca)
+
     vault_auth_path = var.kubernetes_auth_path
     vault_auth_role = vault_kubernetes_auth_backend_role.job.role_name
     service_account = var.service_account_name
+
     vault_gcp_path = local.gcp_secret_path
+
     ttl_seconds = var.ttl_seconds
+
     entrypoint = jsonencode(local.entrypoint)
   }
 }
