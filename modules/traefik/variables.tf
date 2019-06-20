@@ -19,10 +19,7 @@ variable "release_name" {
 
 variable "chart_name" {
   description = "Helm chart name to provision"
-
-  # Awaiting https://github.com/helm/charts/pull/10928 or similiar
-  # default     = "stable/traefik"
-  default = "https://github.com/basisai/charts/releases/download/traefik-env/traefik-1.59.3.tgz"
+  default     = "stable/traefik"
 }
 
 variable "chart_repository" {
@@ -372,7 +369,7 @@ variable "prometheus_restrict_access" {
 
 variable "prometheus_buckets" {
   description = "A list of response times (in seconds) - for each list element, Traefik will report all response times less than the element."
-  default     = [0.1, 0.3, 1.2, 5.0]
+  default     = [0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1.0, 2.5, 5.0, 7.5, 10.0]
 }
 
 variable "datadog_enabled" {

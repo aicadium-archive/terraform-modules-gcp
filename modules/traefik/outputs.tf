@@ -1,6 +1,6 @@
 output "values" {
   description = "Rendered Values file"
-  value       = data.template_file.values.rendered
+  value       = local.rendered_values
 }
 
 output "static_ip" {

@@ -167,7 +167,7 @@ metrics:
     ## If true, prevents exposing port 8080 on the main Traefik service, reserving
     ## it to the dashboard service only
     restrictAccess: ${prometheus_restrict_access}
-    # buckets:
+    buckets: ${prometheus_buckets}
   datadog:
     enabled: ${datadog_enabled}
     address: "${datadog_address}"

@@ -6,7 +6,7 @@ resource "helm_release" "traefik" {
   namespace  = var.chart_namespace
 
   values = [
-    data.template_file.values.rendered,
+    local.rendered_values
   ]
 }
 
@@ -69,10 +69,10 @@ EOF
   )
 }
 
-data "template_file" "values" {
-  template = file("${path.module}/templates/values.yaml")
+locals {
+  rendered_values = templatefile("${path.module}/templates/values.yaml", local.values)
 
-  vars = {
+  values = {
     image = var.traefik_image_name
     image_tag = var.traefik_image_tag
     replicas = var.replicas
