@@ -110,7 +110,7 @@ variable "image" {
 
 variable "tag" {
   description = "Docker image tag of the backup job"
-  default     = "239.0.0-alpine"
+  default     = "251.0.0-alpine"
 }
 
 variable "pull_policy" {
