@@ -10,24 +10,15 @@ env:
 
 install:
   - docker build -t ${LINT_IMAGE} -f tests/Dockerfile .
-  - docker build -t ${LINT_IMAGE_011} -f tests_011/Dockerfile .
 
 script:
-  # - docker run --rm -ti --entrypoint terraform ${LINT_IMAGE} fmt -check=true ./
+  - docker run --rm -ti --entrypoint terraform ${LINT_IMAGE} fmt -check=true ./
   - |
     find . \
       -not -path '*/\.*' \
-      -not -path './modules/cloudsql_backup/*' \
-      -not -path './modules/consul_backup/*' \
       -not -path './vendor/*' \
       -type f -iname '*.tf' \
-      -printf '%h\n' | sort | uniq | xargs -I{} bash -c "echo {} && docker run --rm --entrypoint terraform ${LINT_IMAGE} fmt -check=true {}  && docker run --rm ${LINT_IMAGE} {}"
-  - |
-    for module in "./modules/cloudsql_backup" "./modules/consul_backup"; do \
-      echo "${module}" \
-      && docker run --rm --entrypoint terraform ${LINT_IMAGE_011} fmt -check=true "${module}" \
-      && docker run --rm ${LINT_IMAGE_011} "${module}"; \
-      done
+      -printf '%h\n' | sort | uniq | xargs -I{} bash -c "echo {} && docker run --rm ${LINT_IMAGE} {}"
 
 branches:
   only:

@@ -3,6 +3,9 @@ set -xeuo pipefail
 
 main() {
     cd "$@"
+    # For Vault Provider
+    export VAULT_ADDR=https://vault.service.consul:8200
+
     terraform init -backend=false
     terraform validate
     tflint
