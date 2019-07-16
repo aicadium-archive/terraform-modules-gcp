@@ -427,4 +427,3 @@ variable "vault_service_account" {
   description = "Required if you did not create a node pool. This should be the service account that is used by the nodes to run Vault workload. They will be given additional permissions to use the keys for auto unseal and to write to the storage bucket"
   default = "<REQUIRED if not creating GKE node pool>"
 }
-

@@ -154,4 +154,3 @@ resource "kubernetes_secret" "tls_cert" {
     "${local.tls_secret_key_key}" = var.tls_cert_key
   }
 }
-

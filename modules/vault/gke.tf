@@ -53,7 +53,7 @@ resource "google_container_node_pool" "vault" {
     tags     = var.gke_tags
 
     dynamic "taint" {
-      for_each = [var.gke_taints]
+      for_each = var.gke_taints
       content {
         effect = taint.value.effect
         key    = taint.value.key
@@ -93,4 +93,3 @@ resource "google_project_service" "services" {
 
   disable_on_destroy = false
 }
-

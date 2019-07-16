@@ -16,4 +16,3 @@ resource "google_project_iam_member" "storage" {
   role    = "roles/storage.objectAdmin"
   member  = "serviceAccount:${local.service_account}"
 }
-

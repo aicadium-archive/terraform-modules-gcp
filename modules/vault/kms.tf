@@ -29,4 +29,3 @@ resource "google_kms_crypto_key" "storage" {
     prevent_destroy = true
   }
 }
-

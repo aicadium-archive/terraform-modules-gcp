@@ -28,4 +28,3 @@ resource "google_project_iam_member" "storage_kms" {
   role    = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
   member  = "serviceAccount:${data.google_storage_project_service_account.vault.email_address}"
 }
-
