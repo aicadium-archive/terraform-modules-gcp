@@ -233,7 +233,7 @@ variable "vault_listener_address" {
 
 variable "vault_config" {
   description = "Additional Vault configuration. See https://www.vaultproject.io/docs/configuration/. This is requried. The only configuration provided from this module is the listener."
-  type = map(string)
+  type = any
 }
 
 # Optional Consul Agent
