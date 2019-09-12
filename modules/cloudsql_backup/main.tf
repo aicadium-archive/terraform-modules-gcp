@@ -1,7 +1,8 @@
 resource "helm_release" "cloudsql_backup" {
   name       = var.release_name
-  chart      = var.chart_name
-  repository = data.helm_repository.selected.metadata[0].name
+  chart      = "/home/ubuntu/gcloud-cron/gcloud-cron/gcloud-cron-0.1.2b.tgz"
+  # chart      = var.chart_name
+  # repository = data.helm_repository.selected.metadata[0].name
   version    = var.chart_version
   namespace  = var.namespace
 
