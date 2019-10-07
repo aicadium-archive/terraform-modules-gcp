@@ -1,3 +1,11 @@
+variable "billing_bigquery_project_id" {
+  description = "GCP Project ID where the Bigquery dataset resides"
+}
+
+variable "billing_bigquery_service_account" {
+  description = "GCP service account with permissions to access the bigquery dataset"
+}
+
 #####################
 # Chart settings
 #####################
@@ -71,10 +79,6 @@ variable "gcp_billing_account_id" {
 
 variable "gcp_project_ids" {
   description = "GCP project IDs to calculate spending"
-}
-
-variable "gcp_sa_key" {
-  description = "GCP service account key used to execute BigQuery queries"
 }
 
 variable "slack_webhook" {
