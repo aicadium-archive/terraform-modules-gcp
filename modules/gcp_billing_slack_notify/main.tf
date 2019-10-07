@@ -26,17 +26,17 @@ data "template_file" "values" {
     tag         = var.tag
     pull_policy = var.pull_policy
 
-    gcp_billing_account_id =
-    gcp_project_ids        =
-    gcp_sa_key             =
-    slack_webhook          =
+    gcp_billing_account_id = var.gcp_billing_account_id
+    gcp_project_ids        = var.gcp_project_ids
+    gcp_sa_key             = var.gcp_sa_key
+    slack_webhook          = var.slack_webhook
 
-    resources = var.resources
+    resources = jsonencode(var.resources)
 
-    node_selector = var.node_selector
-    tolerations   = var.tolerations
-    affinity      = var.affinity
-    labels        = var.labels
-    annotations   = var.annotations
+    node_selector = jsonencode(var.node_selector)
+    tolerations   = jsonencode(var.tolerations)
+    affinity      = jsonencode(var.affinity)
+    labels        = jsonencode(var.labels)
+    annotations   = jsonencode(var.annotations)
   }
 }
