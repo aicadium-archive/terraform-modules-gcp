@@ -87,13 +87,13 @@ variable "slack_webhook" {
 
 variable "resources" {
   description = "Resources used by the job"
-  default     = {
+  default = {
     limits = {
-      cpu = "200m"
+      cpu    = "200m"
       memory = "256Mi"
     }
     requests = {
-      cpu = "100m"
+      cpu    = "100m"
       memory = "256Mi"
     }
   }
