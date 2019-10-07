@@ -1,9 +1,13 @@
 #####################
 # Chart settings
 #####################
+variable "enabled" {
+  description = "Enable/disable chart"
+  default     = true
+}
 
 variable "release_name" {
-  description = "Helm release name for Vault"
+  description = "Helm release name"
   default     = "gcp-billing-slack-notify"
 }
 
@@ -28,7 +32,7 @@ variable "chart_version" {
 }
 
 variable "namespace" {
-  description = "Namespace to run the backup job in"
+  description = "Namespace to run the job in"
   default     = "core"
 }
 
@@ -52,12 +56,12 @@ variable "image" {
 }
 
 variable "tag" {
-  description = "Docker image tag of the backup job"
+  description = "Docker image tag of the job"
   default     = "0.1.1"
 }
 
 variable "pull_policy" {
-  description = "Image pull policy of the backup job"
+  description = "Image pull policy of the job"
   default     = "IfNotPresent"
 }
 
