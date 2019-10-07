@@ -11,7 +11,7 @@ image:
 gcp_billing_account_id: "${gcp_billing_account_id}"
 gcp_project_ids: "${gcp_project_ids}"
 secrets:
-  gcp_sa_key: "${gcp_sa_key}"
+  gcp_sa_key: ${gcp_sa_key}
   slack_webhook: "${slack_webhook}"
 
 resources:
