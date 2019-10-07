@@ -4,12 +4,12 @@
 
 variable "release_name" {
   description = "Helm release name for Vault"
-  default     = "cloudsql-backup"
+  default     = "gcp-billing-slack-notify"
 }
 
 variable "chart_name" {
   description = "Helm chart name to provision"
-  default     = "gcloud-cron"
+  default     = "gcp-billing-slack-notify"
 }
 
 variable "chart_repository" {
@@ -29,7 +29,7 @@ variable "chart_version" {
 
 variable "namespace" {
   description = "Namespace to run the backup job in"
-  default     = "default"
+  default     = "core"
 }
 
 #####################
