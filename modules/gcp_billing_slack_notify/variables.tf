@@ -79,6 +79,7 @@ variable "gcp_billing_account_id" {
 
 variable "gcp_project_ids" {
   description = "GCP project IDs to calculate spending"
+  type        = list(string)
 }
 
 variable "slack_webhook" {

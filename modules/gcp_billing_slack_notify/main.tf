@@ -37,7 +37,7 @@ data "template_file" "values" {
     pull_policy = var.pull_policy
 
     gcp_billing_account_id = var.gcp_billing_account_id
-    gcp_project_ids        = var.gcp_project_ids
+    gcp_project_ids        = join(",", var.gcp_project_ids)
     gcp_sa_key             = jsonencode(base64decode(google_service_account_key.notifier[0].private_key))
     slack_webhook          = var.slack_webhook
 
