@@ -1,0 +1,24 @@
+# See https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs/#schedule
+schedule: "${schedule}"
+
+ttlSecondsAfterFinished: ${ttl_seconds}
+
+image:
+  repository: "${image}"
+  tag: "${tag}"
+  pullPolicy: "${pull_policy}"
+
+gcp_billing_account_id: "${gcp_billing_account_id}"
+gcp_project_ids: "${gcp_project_ids}"
+secrets:
+  gcp_sa_key: ${gcp_sa_key}
+  slack_webhook: "${slack_webhook}"
+
+resources:
+  cronJob: ${resources}
+
+nodeSelector: ${node_selector}
+tolerations: ${tolerations}
+affinity: ${affinity}
+labels: ${labels}
+annotations: ${annotations}
