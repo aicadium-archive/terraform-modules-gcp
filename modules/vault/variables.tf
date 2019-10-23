@@ -134,20 +134,23 @@ variable "memory_limit" {
 }
 
 variable "affinity" {
-  description = "Affinity settings for the pods in YAML. The default has Anti affinity for other Vault pods."
+  description = "Affinity settings for the pods. Can be templated via Helm. The default has Anti affinity for other Vault pods."
 
-  default = <<EOF
-podAntiAffinity:
-  preferredDuringSchedulingIgnoredDuringExecution:
-  - weight: 100
-    podAffinityTerm:
-      topologyKey: kubernetes.io/hostname
-      labelSelector:
-        matchLabels:
-          app: {{ template "vault.fullname" . }}
-          release: {{ .Release.Name }}
-EOF
-
+  default = {
+    podAntiAffinity = {
+      requiredDuringSchedulingIgnoredDuringExecution = [
+        {
+          topologyKey = "kubernetes.io/hostname"
+          labelSelector = {
+            matchLabels = {
+              app     = "{{ template \"vault.name\" . }}"
+              release = "{{ .Release.Name }}"
+            }
+          }
+        }
+      ]
+    }
+  }
 }
 
 variable "tolerations" {
