@@ -274,25 +274,25 @@ EOF
 
 variable "ldap_existing_secret" {
   description = "Use an existing secret for LDAP config"
-  default = ""
+  default     = ""
 }
 
 variable "ldap_config" {
   description = "String with contents for LDAP configuration in TOML"
-  default = ""
+  default     = ""
 }
 
 variable "smtp_existing_secret" {
   description = "Existing secret containing the SMTP credentials"
-  default = ""
+  default     = ""
 }
 
 variable "smtp_user_key" {
   description = "Key in the secret containing the SMTP username"
-  default = "user"
+  default     = "user"
 }
 
 variable "smtp_password_key" {
   description = "Key in the secret containing the SMTP password"
-  default = "password"
+  default     = "password"
 }

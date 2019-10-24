@@ -134,137 +134,140 @@ variable "memory_limit" {
 }
 
 variable "affinity" {
-  description = "Affinity settings for the pods in YAML. The default has Anti affinity for other Vault pods."
+  description = "Affinity settings for the pods. Can be templated via Helm. The default has Anti affinity for other Vault pods."
 
-  default = <<EOF
-podAntiAffinity:
-  preferredDuringSchedulingIgnoredDuringExecution:
-  - weight: 100
-    podAffinityTerm:
-      topologyKey: kubernetes.io/hostname
-      labelSelector:
-        matchLabels:
-          app: {{ template "vault.fullname" . }}
-          release: {{ .Release.Name }}
-EOF
-
+  default = {
+    podAntiAffinity = {
+      requiredDuringSchedulingIgnoredDuringExecution = [
+        {
+          topologyKey = "kubernetes.io/hostname"
+          labelSelector = {
+            matchLabels = {
+              app     = "{{ template \"vault.name\" . }}"
+              release = "{{ .Release.Name }}"
+            }
+          }
+        }
+      ]
+    }
+  }
 }
 
 variable "tolerations" {
   description = "List of maps of tolerations for the pod. It is recommend you use this to run Vault on dedicated nodes. See the README"
-  default = []
+  default     = []
 }
 
 variable "node_selector" {
   description = "Node selectors for pods"
-  default = {}
+  default     = {}
 }
 
 variable "annotations" {
   description = "Deployment annotations"
-  default = {}
+  default     = {}
 }
 
 variable "pod_annotations" {
   description = "Annotations for pods"
-  default = {}
+  default     = {}
 }
 
 variable "labels" {
   description = "Additional labels for deployment"
-  default = {}
+  default     = {}
 }
 
 variable "container_lifecycle" {
   description = "YAML string of the Vault container lifecycle hooks"
-  default = ""
+  default     = ""
 }
 
 variable "pod_priority_class" {
   description = "Pod priority class name. See https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/"
-  default = ""
+  default     = ""
 }
 
 variable "min_ready_seconds" {
   description = "Minimum number of seconds that newly created replicas must be ready without any containers crashing"
-  default = "0"
+  default     = "0"
 }
 
 # Vault Configuration
 variable "vault_dev" {
   description = "Run Vault in dev mode"
-  default = "false"
+  default     = "false"
 }
 
 variable "vault_secret_volumes" {
   description = "List of maps of custom volume mounts that are backed by Kubernetes secrets. The maps should contain the keys `secretName` and `mountPath`."
-  default = []
+  default     = []
 }
 
 variable "vault_env" {
   description = "Extra environment variables for Vault"
-  default = []
+  default     = []
 }
 
 variable "vault_extra_containers" {
   description = "Extra containers for Vault"
-  default = []
+  default     = []
 }
 
 variable "vault_extra_volumes" {
   description = "Additional volumes for Vault"
-  default = []
+  default     = []
 }
 
 variable "vault_extra_volume_mounts" {
   description = "Additional Volume Mounts for Vault"
-  default = []
+  default     = []
 }
 
 variable "vault_log_level" {
   description = "Log level for Vault"
-  default = "info"
+  default     = "info"
 }
 
 variable "vault_listener_address" {
   description = "Address for the Default Vault listener to bind to"
-  default = "[::]"
+  default     = "[::]"
 }
 
 variable "vault_config" {
   description = "Additional Vault configuration. See https://www.vaultproject.io/docs/configuration/. This is requried. The only configuration provided from this module is the listener."
-  type = any
+  type        = any
 }
 
 # Optional Consul Agent
 variable "consul_image" {
   description = "Consul Agent image to run"
-  default = "consul"
+  default     = "consul"
 }
 
 variable "consul_tag" {
   description = "Consul Agent image tag to run"
-  default = "1.4.2"
+  default     = "1.4.2"
 }
 
 variable "consul_join" {
   description = "If set, will use this to run a Consul agent sidecar container alongside Vault. You will still need to configure Vault to use this. See https://www.consul.io/docs/agent/options.html#_join for details on this parameter"
-  default = ""
+  default     = ""
 }
 
 variable "consul_gossip_secret_key_name" {
   description = "Kubernetes Secret Key holding Consul gossip key"
-  default = ""
+  default     = ""
 }
 
 variable "secrets_labels" {
   description = "Labels for secrets"
-  default = {}
+  default     = {}
 }
 
 variable "secrets_annotations" {
   description = "Annotations for secrets"
-  default = {}
+  default     = {}
 }
 
 variable "tls_cert_pem" {
@@ -277,14 +280,14 @@ variable "tls_cert_key" {
 
 variable "tls_cipher_suites" {
   description = "Specifies the list of supported ciphersuites as a comma-separated-list. Make sure this matches the type of key of the TLS certificate you are using. See https://golang.org/src/crypto/tls/cipher_suites.go"
-  default = "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA"
+  default     = "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA"
 }
 
 # KMS Configuration
 
 variable "key_ring_name" {
   description = "Name of the Keyring to create."
-  default = "vault"
+  default     = "vault"
 }
 
 variable "kms_location" {
@@ -297,22 +300,22 @@ variable "kms_project" {
 
 variable "unseal_key_name" {
   description = "Name of the Vault unseal key"
-  default = "unseal"
+  default     = "unseal"
 }
 
 variable "unseal_key_rotation_period" {
   description = "Rotation period of the Vault unseal key. Defaults to 6 months"
-  default = "15780000s"
+  default     = "15780000s"
 }
 
 variable "storage_key_name" {
   description = "Name of the Vault storage key"
-  default = "storage"
+  default     = "storage"
 }
 
 variable "storage_key_rotation_period" {
   description = "Rotation period of the Vault storage key. Defaults to 6 months"
-  default = "15780000s"
+  default     = "15780000s"
 }
 
 # Storage bucket configuration
@@ -322,12 +325,12 @@ variable "storage_bucket_name" {
 
 variable "storage_bucket_class" {
   description = "Storage class of the bucket. See https://cloud.google.com/storage/docs/storage-classes"
-  default = "REGIONAL"
+  default     = "REGIONAL"
 }
 
 variable "storage_bucket_location" {
   description = "Location of the storage bucket. Defaults to the provider's region if empty. This must be in the same location as your KMS key."
-  default = ""
+  default     = ""
 }
 
 variable "storage_bucket_project" {
@@ -344,86 +347,86 @@ variable "storage_bucket_labels" {
 
 variable "storage_ha_enabled" {
   description = "Use the GCS bucket to provide HA for Vault. Set to \"false\" if you are using alternative HA storage like Consul"
-  default = "true"
+  default     = "true"
 }
 
 # Optional GKE Node pool
 variable "gke_pool_create" {
   description = "Whether to create the GKE node pool or not"
-  default = false
+  default     = false
 }
 
 variable "gke_service_account_id" {
   description = "Service Account name for the GKE Node pool"
-  default = "vault-gke-pool"
+  default     = "vault-gke-pool"
 }
 
 variable "gke_project" {
   description = "Project ID where the GKE cluster lives in"
-  default = "<REQUIRED if gke_pool_create is true>"
+  default     = "<REQUIRED if gke_pool_create is true>"
 }
 
 variable "gke_pool_name" {
   description = "Name of the GKE Pool name to create"
-  default = "vault"
+  default     = "vault"
 }
 
 variable "gke_pool_region" {
   description = "Region for the GKE cluster if regional"
-  default = "<REQUIRED if cluster is regional>"
+  default     = "<REQUIRED if cluster is regional>"
 }
 
 variable "gke_pool_zone" {
   description = "Zone for GKE cluster if zonal"
-  default = "<REQUIRED if cluster is zonal>"
+  default     = "<REQUIRED if cluster is zonal>"
 }
 
 variable "gke_cluster" {
   description = "Cluster to create node pool for"
-  default = "<REQUIRED if gke_pool_create is true>"
+  default     = "<REQUIRED if gke_pool_create is true>"
 }
 
 variable "gke_node_count" {
   description = "Initial Node count. If regional, remember to divide the desired node count by the number of zones"
-  default = 3
+  default     = 3
 }
 
 variable "gke_node_size_gb" {
   description = "Disk size for the nodes in GB"
-  default = "20"
+  default     = "20"
 }
 
 variable "gke_disk_type" {
   description = "Disk type for the nodes"
-  default = "pd-standard"
+  default     = "pd-standard"
 }
 
 variable "gke_machine_type" {
   description = "Machine type for the GKE nodes. Make sure this matches the resources you are requesting"
-  default = "n1-standard-2"
+  default     = "n1-standard-2"
 }
 
 variable "gke_labels" {
   description = "Labels for the GKE nodes"
-  default = {}
+  default     = {}
 }
 
 variable "gke_metadata" {
   description = "Metadata for the GKE nodes"
-  default = {}
+  default     = {}
 }
 
 variable "gke_tags" {
   description = "Network tags for the GKE nodes"
-  default = []
+  default     = []
 }
 
 variable "gke_taints" {
   description = "List of map of taints for GKE nodes. It is highly recommended you do set this alongside the pods toleration. See https://www.terraform.io/docs/providers/google/r/container_cluster.html#key for the keys and the README for more information"
-  default = []
+  default     = []
 }
 
 variable "vault_service_account" {
   description = "Required if you did not create a node pool. This should be the service account that is used by the nodes to run Vault workload. They will be given additional permissions to use the keys for auto unseal and to write to the storage bucket"
-  default = "<REQUIRED if not creating GKE node pool>"
+  default     = "<REQUIRED if not creating GKE node pool>"
 }

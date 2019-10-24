@@ -6,7 +6,6 @@ services:
 env:
   global:
     - LINT_IMAGE=lint
-    - LINT_IMAGE_011=lint-011
 
 install:
   - docker build -t ${LINT_IMAGE} -f tests/Dockerfile .
