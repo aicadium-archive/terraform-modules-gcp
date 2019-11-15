@@ -53,6 +53,10 @@ locals {
         tls_key_file                    = "${local.tls_secret_path}/${local.tls_secret_key_key}"
         tls_cipher_suites               = var.tls_cipher_suites
         tls_prefer_server_cipher_suites = "true"
+
+        telemetry = {
+          unauthenticated_metrics_access = var.unauthenticated_metrics_access
+        }
       }
     }
     storage = {
@@ -69,6 +73,8 @@ locals {
         crypto_key = google_kms_crypto_key.unseal.name
       }
     }
+
+    api_addr = var.vault_api_addr
   }
 
   # Overwrite dumb defaults from chart
@@ -127,6 +133,7 @@ data "template_file" "values" {
     lifecycle          = jsonencode(var.container_lifecycle)
     pod_priority_class = var.pod_priority_class
     min_ready_seconds  = var.min_ready_seconds
+    pod_api_address    = var.pod_api_address
 
     vault_dev                 = var.vault_dev
     vault_secret_volumes      = jsonencode(var.vault_secret_volumes)
