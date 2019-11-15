@@ -371,14 +371,9 @@ variable "gke_pool_name" {
   default     = "vault"
 }
 
-variable "gke_pool_region" {
-  description = "Region for the GKE cluster if regional"
-  default     = "<REQUIRED if cluster is regional>"
-}
-
-variable "gke_pool_zone" {
-  description = "Zone for GKE cluster if zonal"
-  default     = "<REQUIRED if cluster is zonal>"
+variable "gke_pool_location" {
+  description = "Location for the node pool"
+  default     = "<REQUIRED if gke_pool_create is true>"
 }
 
 variable "gke_cluster" {
@@ -429,4 +424,19 @@ variable "gke_taints" {
 variable "vault_service_account" {
   description = "Required if you did not create a node pool. This should be the service account that is used by the nodes to run Vault workload. They will be given additional permissions to use the keys for auto unseal and to write to the storage bucket"
   default     = "<REQUIRED if not creating GKE node pool>"
+}
+
+variable "pod_api_address" {
+  description = "Set the `VAULT_API_ADDR` environment variable to the Pod IP Address. This is the address (full URL) to advertise to other Vault servers in the cluster for client redirection. See https://www.vaultproject.io/docs/configuration/#api_addr. If this is `true`, then `vault_api_addr` will have no effect."
+  default     = "false"
+}
+
+variable "vault_api_addr" {
+  description = "This is the address (full URL) to advertise to other Vault servers in the cluster for client redirection. See https://www.vaultproject.io/docs/configuration/#api_addr."
+  default     = "false"
+}
+
+variable "unauthenticated_metrics_access" {
+  description = "If set to true, allows unauthenticated access to the /v1/sys/metrics endpoint."
+  default     = false
 }

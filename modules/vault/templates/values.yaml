@@ -98,4 +98,8 @@ vault:
     readyIfSealed: false
     readyIfStandby: true
     readyIfUninitialized: true
+  # Set the `VAULT_API_ADDR` environment variable to the Pod IP Address
+  # This is the address (full URL) to advertise to other Vault servers in the cluster for client redirection.
+  # See https://www.vaultproject.io/docs/configuration/#api_addr
+  podApiAddress: ${pod_api_address}
   config: ${vault_config}

@@ -30,11 +30,10 @@ resource "google_container_node_pool" "vault" {
     google_project_service.services,
   ]
 
-  name    = var.gke_pool_name
-  region  = var.gke_pool_region
-  zone    = var.gke_pool_zone
-  cluster = var.gke_cluster
-  project = var.gke_project
+  name     = var.gke_pool_name
+  location = var.gke_pool_location
+  cluster  = var.gke_cluster
+  project  = var.gke_project
 
   node_count = var.gke_node_count
 
