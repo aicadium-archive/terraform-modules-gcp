@@ -6,21 +6,18 @@ variable "kube_context" {
   description = "Kubernetes context"
 }
 
-variable "service_namespace" {
-  description = "Namespace to run services in"
+variable "kube_namespace" {
+  description = "Namespace to run Certmanager"
   default     = "core"
 }
 
 ############################################
-# DNS Managed Zone
+# Certificates
 ############################################
-variable "dns_base_name" {
-  description = "Base DNS Name"
-}
-
-variable "external_dns_base_name" {
-  description = "Base DNS Name"
-  default     = ""
+variable "certificates" {
+  description = "Certificates to generate"
+  type        = list(object(any))
+  default     = []
 }
 
 variable "acme_email" {
@@ -44,9 +41,4 @@ variable "certmanager_crd_version" {
 variable "certmanager_chart_version" {
   description = "Version of Certmanager helm chart"
   default     = "1.0.0"
-}
-
-variable "certificate_renew_before" {
-  description = "Duration in advance to renew cert before expiry. Must only be specifed using s, m, and h suffixes (seconds, minutes and hours respectively)."
-  default     = "720h"
 }

@@ -21,31 +21,10 @@ resource "helm_release" "certmanager" {
   version    = var.certmanager_chart_version
   chart      = "cert-manager"
 
-  namespace = var.service_namespace
+  namespace = var.kube_namespace
 
   values = [
     data.template_file.certmanager.rendered,
-  ]
-}
-
-locals {
-  certificates = [
-    {
-      common_name = "*.${var.dns_base_name}"
-      san = [
-        var.dns_base_name,
-        "*.${var.dns_base_name}",
-      ]
-      renew_before = var.certificate_renew_before
-    },
-    {
-      common_name = "*.${var.external_dns_base_name}"
-      san = [
-        var.external_dns_base_name,
-        "*.${var.external_dns_base_name}",
-      ]
-      renew_before = var.certificate_renew_before
-    }
   ]
 }
 
@@ -62,6 +41,6 @@ data "template_file" "certmanager" {
     email               = var.acme_email
     project_id          = var.project_id
     service_account_key = indent(4, base64decode(google_service_account_key.certmanager.private_key))
-    certificates        = yamlencode(local.certificates)
+    certificates        = yamlencode(var.certificates)
   }
 }
