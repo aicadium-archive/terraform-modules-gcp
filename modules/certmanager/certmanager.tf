@@ -17,7 +17,7 @@ resource "helm_release" "certmanager" {
   depends_on = [null_resource.certmanager_crds]
 
   name       = "cert-manager"
-  repository = "amoy"
+  repository = data.helm_repository.incubator.metadata[0].name
   version    = var.certmanager_chart_version
   chart      = "cert-manager"
 
@@ -47,6 +47,11 @@ locals {
       renew_before = var.certificate_renew_before
     }
   ]
+}
+
+data "helm_repository" "repository" {
+  name = "amoy"
+  url  = "https://charts.amoy.ai"
 }
 
 data "template_file" "certmanager" {
