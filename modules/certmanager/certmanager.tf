@@ -19,7 +19,7 @@ resource "helm_release" "certmanager" {
   name       = "cert-manager"
   repository = data.helm_repository.repository.metadata[0].name
   version    = var.certmanager_chart_version
-  chart      = "cert-manager"
+  chart      = "cert-manager-aio"
 
   namespace = var.kube_namespace
 
