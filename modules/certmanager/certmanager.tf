@@ -17,7 +17,7 @@ resource "helm_release" "certmanager" {
   depends_on = [null_resource.certmanager_crds]
 
   name       = "cert-manager"
-  repository = data.helm_repository.incubator.metadata[0].name
+  repository = data.helm_repository.repository.metadata[0].name
   version    = var.certmanager_chart_version
   chart      = "cert-manager"
 
