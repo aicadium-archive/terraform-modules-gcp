@@ -1,0 +1,13 @@
+lets_encrypt:
+  environment: ${environment}
+  email: ${email}
+
+acme_solver: clouddns
+
+clouddns:
+  gcp_project_id: ${project_id}
+  service_account_key: |
+    ${service_account_key}
+
+certificates:
+${certificates}
