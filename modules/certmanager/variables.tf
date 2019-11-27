@@ -24,6 +24,11 @@ variable "acme_email" {
   description = "Email address to register for ACME account"
 }
 
+variable "acme_environment" {
+  description = "ACME environment. Either production or staging."
+  default     = "staging"
+}
+
 ############################################
 # Cert Manager
 ############################################

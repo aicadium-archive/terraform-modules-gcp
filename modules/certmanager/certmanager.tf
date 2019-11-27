@@ -37,7 +37,7 @@ data "template_file" "certmanager" {
   template = file("${path.module}/templates/certmanager.yaml")
 
   vars = {
-    environment         = "staging"
+    environment         = var.acme_environment
     email               = var.acme_email
     project_id          = var.project_id
     service_account_key = indent(4, base64decode(google_service_account_key.certmanager.private_key))
