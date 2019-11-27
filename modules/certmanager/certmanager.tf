@@ -4,12 +4,12 @@ resource "null_resource" "certmanager_crds" {
   }
 
   provisioner "local-exec" {
-    command = "kubectl apply --validate=false -f https://raw.githubusercontent.com/jetstack/cert-manager/release-${var.certmanager_crd_version}/deploy/manifests/00-crds.yaml"
+    command = "kubectl apply --context ${var.kube_context} --validate=false -f https://raw.githubusercontent.com/jetstack/cert-manager/release-${var.certmanager_crd_version}/deploy/manifests/00-crds.yaml"
   }
 
   provisioner "local-exec" {
     when    = destroy
-    command = "kubectl delete -f https://raw.githubusercontent.com/jetstack/cert-manager/release-${var.certmanager_crd_version}/deploy/manifests/00-crds.yaml"
+    command = "kubectl delete --context ${var.kube_context} -f https://raw.githubusercontent.com/jetstack/cert-manager/release-${var.certmanager_crd_version}/deploy/manifests/00-crds.yaml"
   }
 }
 
