@@ -16,7 +16,7 @@ variable "kube_namespace" {
 ############################################
 variable "certificates" {
   description = "Certificates to generate"
-  type        = list(object(any))
+  type        = list(object({ common_name = string, san = list(string), renew_before = string }))
   default     = []
 }
 
