@@ -33,6 +33,11 @@ variable "acme_environment" {
 # Cert Manager
 ############################################
 
+variable "certmanager_enabled" {
+  description = "Enable/disable Certmanager"
+  default     = true
+}
+
 variable "certmanager_service_account" {
   description = "Name of the service account for Certmanager"
   default     = "certmanager"
@@ -45,5 +50,5 @@ variable "certmanager_crd_version" {
 
 variable "certmanager_chart_version" {
   description = "Version of Certmanager helm chart"
-  default     = "1.0.0"
+  default     = "1.0.1"
 }
