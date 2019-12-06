@@ -73,6 +73,15 @@ resource "google_container_node_pool" "vault" {
       node_metadata = "SECURE"
     }
   }
+
+  dynamic "upgrade_settings" {
+    for_each = var.gke_node_upgrade_settings_enabled ? list(var.gke_node_upgrade_settings) : []
+
+    content {
+      max_surge       = upgrade_settings.value.max_surge
+      max_unavailable = upgrade_settings.value.max_unavailable
+    }
+  }
 }
 
 resource "google_project_iam_member" "vault" {
