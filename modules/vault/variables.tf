@@ -421,6 +421,20 @@ variable "gke_taints" {
   default     = []
 }
 
+variable "gke_node_upgrade_settings_enabled" {
+  description = "Enable/disable gke node pool surge upgrade settings"
+  default     = false
+}
+
+variable "gke_node_upgrade_settings" {
+  description = "Surge upgrade settings as per https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-upgrades#surge"
+  type        = object({ max_surge = number, max_unavailable = number })
+  default = {
+    max_surge       = 1
+    max_unavailable = 0
+  }
+}
+
 variable "vault_service_account" {
   description = "Required if you did not create a node pool. This should be the service account that is used by the nodes to run Vault workload. They will be given additional permissions to use the keys for auto unseal and to write to the storage bucket"
   default     = "<REQUIRED if not creating GKE node pool>"
