@@ -22,3 +22,13 @@ output "key_ring_self_link" {
   description = "Self-link of the KMS Keyring created for Vault"
   value       = google_kms_key_ring.vault.self_link
 }
+
+output "vault_workload_identity" {
+  description = "Email ID of the Vault Workload Identity Service Account if created"
+  value       = google_service_account.vault_workload_identity.*.email
+}
+
+output "vault_workload_identity_name" {
+  description = "Name of the Vault Workload Identity Service Account if created"
+  value       = google_service_account.vault_workload_identity.*.name
+}

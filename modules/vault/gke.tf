@@ -16,7 +16,8 @@ resource "google_service_account" "vault_gke" {
   count = local.gke_pool_create ? 1 : 0
 
   account_id   = var.gke_service_account_id
-  display_name = "Service Account for the GKE cluster ${var.gke_pool_name} pools"
+  display_name = "${var.gke_pool_name} GKE Node Pool"
+  description  = "Service Account for the GKE cluster ${var.gke_pool_name} pools"
 
   project = var.gke_project
 }
@@ -70,7 +71,7 @@ resource "google_container_node_pool" "vault" {
 
     # See https://cloud.google.com/kubernetes-engine/docs/how-to/protecting-cluster-metadata#concealment
     workload_metadata_config {
-      node_metadata = "SECURE"
+      node_metadata = var.workload_identity_enable ? "GKE_METADATA_SERVER" : "SECURE"
     }
   }
 
@@ -81,6 +82,10 @@ resource "google_container_node_pool" "vault" {
       max_surge       = upgrade_settings.value.max_surge
       max_unavailable = upgrade_settings.value.max_unavailable
     }
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 

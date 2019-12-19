@@ -454,3 +454,18 @@ variable "unauthenticated_metrics_access" {
   description = "If set to true, allows unauthenticated access to the /v1/sys/metrics endpoint."
   default     = false
 }
+
+variable "workload_identity_enable" {
+  description = "Enable Workload Identity on the GKE Node Pool. For more information, see https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity"
+  default     = false
+}
+
+variable "workload_identity_account" {
+  description = "Service Account for Vault Pods if Workload Identity is enabled"
+  default     = "vault-server"
+}
+
+variable "workload_identity_project" {
+  description = "Project to Create the Service Accoutn for Vault Pods  if Workload Identity is enabled. Defaults to the GKE project."
+  default     = ""
+}
