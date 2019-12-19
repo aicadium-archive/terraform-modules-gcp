@@ -148,8 +148,6 @@ data "template_file" "values" {
   }
 }
 
-
-
 resource "kubernetes_secret" "tls_cert" {
   type = "Opaque"
 
