@@ -143,8 +143,12 @@ data "template_file" "values" {
     vault_extra_volume_mounts = jsonencode(concat(local.tls_cert_mounts, var.vault_extra_volume_mounts))
     vault_log_level           = var.vault_log_level
     vault_config              = local.vault_config
+
+    service_account_annotation = jsonencode(var.workload_identity_enable ? local.worload_identity_sa_annotation : {})
   }
 }
+
+
 
 resource "kubernetes_secret" "tls_cert" {
   type = "Opaque"

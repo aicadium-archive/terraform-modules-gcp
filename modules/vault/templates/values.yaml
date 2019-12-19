@@ -57,6 +57,18 @@ lifecycle: ${lifecycle}
 priorityClassName: ${pod_priority_class}
 minReadySeconds: ${min_ready_seconds}
 
+serviceAccount:
+  ## Specifies whether a ServiceAccount should be created
+  ##
+  create: true
+  ## Annotations to set for the ServiceAccount
+  # annotations:
+    # my-annotation: my-annotation-value
+  annotations: ${service_account_annotation}
+  ## The name of the ServiceAccount to use.
+  ## If not set and create is true, a name is generated using the fullname template
+  # name:
+
 vault:
   # Only used to enable dev mode. When in dev mode, the rest of this config
   # section below is not used to configure Vault. See
