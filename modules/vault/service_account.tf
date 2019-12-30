@@ -10,7 +10,7 @@ locals {
     "iam.gke.io/gcp-service-account" = local.gke_pool_create ? google_service_account.vault_server[0].email : ""
   }
 
-  fullname = var.fullname_override != "" ? var.fullname_override : (var.release_name == "vault" ? "vault" : "vault-${var.release_name}")
+  fullname                 = var.fullname_override != "" ? var.fullname_override : (var.release_name == "vault" ? "vault" : "vault-${var.release_name}")
   node_pool_sa_description = "Service Account for the GKE cluster ${var.gke_cluster} - ${var.gke_pool_name} pool"
 
   vault_server_location = coalesce(var.vault_server_location_description, "<unknown>")
@@ -22,7 +22,7 @@ resource "google_service_account" "vault_server" {
 
   account_id   = var.vault_server_service_account
   display_name = "Vault Server ${local.vault_server_location}"
-  description  = "Service Account for Vault Server at ${local.vault_server_location}.${var.workload_identity_enable ? "" :" ${local.node_pool_sa_description}" }"
+  description  = "Service Account for Vault Server at ${local.vault_server_location}.${var.workload_identity_enable ? "" : " ${local.node_pool_sa_description}"}"
 
   project = var.gke_project
 }
