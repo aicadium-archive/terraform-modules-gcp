@@ -4,7 +4,7 @@
 
 locals {
   node_service_account         = local.gke_pool_create ? (var.workload_identity_enable ? google_service_account.vault_gke_pool[0].email : google_service_account.vault_server[0].email) : ""
-  vault_server_service_account = google_service_account.vault_server[0].email
+  vault_server_service_account = local.gke_pool_create ? google_service_account.vault_server[0].email : var.vault_service_account
 
   worload_identity_sa_annotation = {
     "iam.gke.io/gcp-service-account" = local.gke_pool_create ? google_service_account.vault_server[0].email : ""
@@ -48,7 +48,7 @@ resource "google_project_iam_member" "vault_nodes" {
 }
 
 resource "google_service_account_iam_member" "vault_workload_identity" {
-  count = var.workload_identity_enable ? 1 : 0
+  count = local.gke_pool_create && var.workload_identity_enable ? 1 : 0
 
   service_account_id = google_service_account.vault_server[0].name
   role               = "roles/iam.workloadIdentityUser"
