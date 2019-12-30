@@ -12,22 +12,12 @@ locals {
   ]
 }
 
-resource "google_service_account" "vault_gke" {
-  count = local.gke_pool_create ? 1 : 0
-
-  account_id   = var.gke_service_account_id
-  display_name = "${var.gke_pool_name} GKE Node Pool"
-  description  = "Service Account for the GKE cluster ${var.gke_pool_name} pools"
-
-  project = var.gke_project
-}
-
 resource "google_container_node_pool" "vault" {
   provider = google-beta
   count    = local.gke_pool_create ? 1 : 0
 
   depends_on = [
-    google_project_iam_member.vault,
+    google_project_iam_member.vault_nodes,
     google_project_service.services,
   ]
 
@@ -61,7 +51,7 @@ resource "google_container_node_pool" "vault" {
       }
     }
 
-    service_account = google_service_account.vault_gke[0].email
+    service_account = local.node_service_account
 
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform",
@@ -87,14 +77,6 @@ resource "google_container_node_pool" "vault" {
   lifecycle {
     create_before_destroy = true
   }
-}
-
-resource "google_project_iam_member" "vault" {
-  count = local.gke_pool_create ? length(local.gke_service_account_roles) : 0
-
-  member  = "serviceAccount:${google_service_account.vault_gke[0].email}"
-  role    = element(local.gke_service_account_roles, count.index)
-  project = var.gke_project
 }
 
 # We need to enable the KMS and GCS APIs on the GKE cluster project

@@ -356,9 +356,9 @@ variable "gke_pool_create" {
   default     = false
 }
 
-variable "gke_service_account_id" {
-  description = "Service Account name for the GKE Node pool"
-  default     = "vault-gke-pool"
+variable "vault_server_service_account" {
+  description = "Service Account name for the Vault Server"
+  default     = "vault-server"
 }
 
 variable "gke_project" {
@@ -460,12 +460,17 @@ variable "workload_identity_enable" {
   default     = false
 }
 
-variable "workload_identity_account" {
-  description = "Service Account for Vault Pods if Workload Identity is enabled"
-  default     = "vault-server"
+variable "vault_node_service_account" {
+  description = "Service Account for Vault Node Pools if Workload Identity is enabled"
+  default     = "vault-gke-node"
 }
 
 variable "workload_identity_project" {
   description = "Project to Create the Service Accoutn for Vault Pods  if Workload Identity is enabled. Defaults to the GKE project."
+  default     = ""
+}
+
+variable "vault_server_location_description" {
+  description = "Location of Vault server to put in description strings of resources"
   default     = ""
 }
