@@ -55,10 +55,10 @@ resource "google_service_account_iam_member" "vault_workload_identity" {
   member             = "serviceAccount:${var.gke_project}.svc.id.goog[${var.chart_namespace}/${local.fullname}]"
 }
 
-resource "google_project_iam_member" "auto_unseal" {
-  project = var.kms_project
-  role    = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
-  member  = "serviceAccount:${local.vault_server_service_account}"
+resource "google_kms_crypto_key_iam_member" "auto_unseal" {
+  crypto_key_id = google_kms_crypto_key.unseal.id
+  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+  member        = "serviceAccount:${local.vault_server_service_account}"
 }
 
 resource "google_storage_bucket_iam_member" "storage" {
