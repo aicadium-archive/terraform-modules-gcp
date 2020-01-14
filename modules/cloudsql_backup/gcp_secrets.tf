@@ -35,6 +35,7 @@ resource "google_project_iam_custom_role" "vault" {
   role_id = "vault_${var.gcp_role_id}"
   title   = "Vault GCP Secrets Engine IAM role for CloudSQL backup cronjob"
 
+  # https://www.vaultproject.io/docs/secrets/gcp/index.html#required-permissions
   permissions = [
     "iam.serviceAccounts.create",
     "iam.serviceAccounts.delete",
