@@ -33,7 +33,7 @@ resource "google_project_iam_custom_role" "backup" {
 
 resource "google_project_iam_custom_role" "vault" {
   role_id = "vault_${var.gcp_role_id}"
-  title   = "Vault GCP Secrets Engine IAM role for CloudSQL backup"
+  title   = "Vault GCP Secrets Engine IAM role for CloudSQL backup cronjob"
 
   permissions = [
     "iam.serviceAccounts.create",
