@@ -36,6 +36,7 @@ resource "google_project_iam_custom_role" "vault" {
   title       = var.gcp_vault_role_title
   description = var.gcp_vault_role_description
 
+  # https://www.vaultproject.io/docs/secrets/gcp/index.html#required-permissions
   permissions = [
     "iam.serviceAccounts.create",
     "iam.serviceAccounts.delete",
