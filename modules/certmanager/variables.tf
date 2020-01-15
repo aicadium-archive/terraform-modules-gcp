@@ -52,3 +52,8 @@ variable "certmanager_chart_version" {
   description = "Version of Certmanager helm chart"
   default     = "1.0.1"
 }
+
+variable "additional_values" {
+  description = "Additional Values for the Helm Chart. (for e.g. values for the underlying dependent chart)"
+  default     = []
+}
