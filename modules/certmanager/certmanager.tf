@@ -31,9 +31,7 @@ resource "helm_release" "certmanager" {
 
   namespace = var.kube_namespace
 
-  values = [
-    data.template_file.certmanager[0].rendered,
-  ]
+  values = concat([data.template_file.certmanager[0].rendered], var.additional_values)
 }
 
 data "helm_repository" "repository" {
