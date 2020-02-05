@@ -1,14 +1,28 @@
 rbac:
   create: true
   namespaced: true
-  pspEnabled: false
-  pspUseAppArmor: false
+  pspEnabled: ${psp_enable}
+  pspUseAppArmor: true
+  extraRoleRules: []
+  # - apiGroups: []
+  #   resources: []
+  #   verbs: []
+  extraClusterRoleRules: []
+  # - apiGroups: []
+  #   resources: []
+  #   verbs: []
 
 serviceAccount:
   create: true
   name: ${service_account}
 
 replicas: ${replicas}
+
+## See `kubectl explain poddisruptionbudget.spec` for more
+## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+podDisruptionBudget: ${pdb}
+#  minAvailable: 1
+#  maxUnavailable: 1
 
 image:
   repository: ${image}
@@ -105,8 +119,7 @@ affinity: ${affinity}
 extraInitContainers: ${extra_init_containers}
 
 ## Enable an Specify container in extraContainers. This is meant to allow adding an authentication proxy to a grafana pod
-extraContainers:
-  ${extra_containers}
+extraContainers: ${extra_containers}
 # - name: proxy
 #   image: quay.io/gambol99/keycloak-proxy:latest
 #   args:

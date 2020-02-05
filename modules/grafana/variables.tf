@@ -296,3 +296,15 @@ variable "smtp_password_key" {
   description = "Key in the secret containing the SMTP password"
   default     = "password"
 }
+
+variable "psp_enable" {
+  description = "Enable PSP"
+  default     = true
+}
+
+variable "pdb" {
+  description = "PodDisruptionBudget for Grafana"
+  default = {
+    minAvailable = 1
+  }
+}
