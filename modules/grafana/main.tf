@@ -23,8 +23,8 @@ data "template_file" "general" {
 
     run_as_user = var.run_as_user
     fs_group    = var.fs_group
-    psp_enable = var.psp_enable
-    pdb = jsonencode(var.pdb)
+    psp_enable  = var.psp_enable
+    pdb         = jsonencode(var.pdb)
     command     = jsonencode(var.command)
 
     extra_configmap_mounts = jsonencode(var.extra_configmap_mounts)
