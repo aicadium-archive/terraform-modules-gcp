@@ -11,6 +11,11 @@ variable "kube_namespace" {
   default     = "core"
 }
 
+variable "max_history" {
+  description = "Max history for Helm"
+  default     = 20
+}
+
 ############################################
 # Certificates
 ############################################

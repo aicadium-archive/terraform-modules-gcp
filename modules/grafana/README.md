@@ -9,7 +9,7 @@ This module makes use of the
 
 | Name | Version |
 |------|---------|
-| helm | n/a |
+| helm | >= 1.0 |
 | template | n/a |
 
 ## Inputs
@@ -47,9 +47,11 @@ This module makes use of the
 | init\_chown\_data\_resources | Resources for the Chown init container | `map` | `{}` | no |
 | ldap\_config | String with contents for LDAP configuration in TOML | `string` | `""` | no |
 | ldap\_existing\_secret | Use an existing secret for LDAP config | `string` | `""` | no |
-| main\_config | Main Config file in YAML | `string` | `"paths:\n  data: /var/lib/grafana/data\n  logs: /var/log/grafana\n  plugins: /var/lib/grafana/plugins\n  provisioning: /etc/grafana/provisioning\nanalytics:\n  check_for_updates: true\nlog:\n  mode: console\ngrafana_net:\n  url: https://grafana.net\n"` | no |
+| main\_config | Main Config file in YAML | `string` | `"paths:\n  data: /var/lib/grafana/data\n  logs: /var/log/grafana\n  plugins: /var/lib/grafana/plugins\n  provisioning: /etc/grafana/provisioning\nanalytics:\n  check_for_updates: true\nlog:\n  mode: console\ngrafana_net:\n  url: https://grafana.netn"` | no |
+| max\_history | Max history for Helm | `number` | `20` | no |
 | node\_selector | Node selector for Pods | `map` | `{}` | no |
 | notifiers | YAML string to configure notifiers http://docs.grafana.org/administration/provisioning/#alert-notification-channels | `string` | `""` | no |
+| pdb | PodDisruptionBudget for Grafana | `map` | <pre>{<br>  "minAvailable": 1<br>}</pre> | no |
 | persistence\_annotations | Annotations for the PV | `map` | `{}` | no |
 | persistence\_enabled | Enable PV | `string` | `"false"` | no |
 | persistence\_existing\_claim | Use an existing PVC | `string` | `""` | no |
@@ -58,6 +60,7 @@ This module makes use of the
 | plugins | List of plugins to install | `list` | `[]` | no |
 | pod\_annotations | Pod annotations | `map` | `{}` | no |
 | priority\_class\_name | Priority Class name for Grafana | `string` | `""` | no |
+| psp\_enable | Enable PSP | `bool` | `true` | no |
 | release\_name | Helm release name for Grafana | `string` | `"grafana"` | no |
 | replicas | Number of replicas of Grafana to run | `number` | `1` | no |
 | resources | Resources for Grafana container | `map` | `{}` | no |

@@ -23,6 +23,11 @@ variable "chart_version" {
   default     = ""
 }
 
+variable "max_history" {
+  description = "Max history for Helm"
+  default     = 20
+}
+
 variable "vault_address" {
   description = "Address for Vault"
 }

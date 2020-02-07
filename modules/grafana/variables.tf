@@ -23,6 +23,11 @@ variable "chart_namespace" {
   default     = "default"
 }
 
+variable "max_history" {
+  description = "Max history for Helm"
+  default     = 20
+}
+
 variable "service_account" {
   description = "Name of the Service Account for Grafana"
   default     = ""

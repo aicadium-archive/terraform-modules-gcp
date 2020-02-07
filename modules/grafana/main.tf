@@ -5,6 +5,8 @@ resource "helm_release" "grafana" {
   version    = var.chart_version
   namespace  = var.chart_namespace
 
+  max_history = var.max_history
+
   values = [
     data.template_file.general.rendered,
   ]

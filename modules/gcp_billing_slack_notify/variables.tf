@@ -44,6 +44,11 @@ variable "namespace" {
   default     = "core"
 }
 
+variable "max_history" {
+  description = "Max history for Helm"
+  default     = 20
+}
+
 #####################
 # Chart values
 #####################

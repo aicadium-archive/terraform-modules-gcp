@@ -5,6 +5,8 @@ resource "helm_release" "consul_backup" {
   version    = var.chart_version
   namespace  = var.namespace
 
+  max_history = var.max_history
+
   values = [
     data.template_file.values.rendered,
   ]

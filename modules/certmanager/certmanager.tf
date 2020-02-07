@@ -31,6 +31,8 @@ resource "helm_release" "certmanager" {
 
   namespace = var.kube_namespace
 
+  max_history = var.max_history
+
   values = concat([data.template_file.certmanager[0].rendered], var.additional_values)
 }
 
