@@ -23,6 +23,11 @@ variable "chart_namespace" {
   default     = "kube-system"
 }
 
+variable "max_history" {
+  description = "Max history for Helm"
+  default     = 20
+}
+
 variable "timeout" {
   description = "Time in seconds to wait for any individual kubernetes operation."
   default     = 600

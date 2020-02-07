@@ -9,6 +9,8 @@ resource "helm_release" "vault" {
 
   timeout = var.timeout
 
+  max_history = var.max_history
+
   values = [
     data.template_file.values.rendered,
     local.vault_config_overwrite,

@@ -11,6 +11,8 @@ resource "helm_release" "notifier" {
   version    = var.chart_version
   namespace  = var.namespace
 
+  max_history = var.max_history
+
   values = [
     data.template_file.values[0].rendered,
   ]
