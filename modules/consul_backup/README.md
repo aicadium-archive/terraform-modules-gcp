@@ -8,9 +8,13 @@ GCS.
 ## Requirements
 
 - An existing Consul cluster to do the snapshot
+
+Either:
+
 - A Vault server with [Kubernetes Auth Engine](https://www.vaultproject.io/docs/auth/kubernetes.html)
     configured for the job to authenticate and a
     [GCP Secrets Engine](https://www.vaultproject.io/docs/secrets/gcp/index.html) mounted.
+- GKE cluster with Workload Identity enabled
 
 ## Providers
 
@@ -31,6 +35,8 @@ GCS.
 | chart\_repository\_url | URL of the Chart Repository | `string` | `"https://charts.amoy.ai"` | no |
 | chart\_version | Version of Chart to install. Set to empty to install the latest version | `string` | `""` | no |
 | consul\_address | Address of Consul server | `string` | `"consul-server.service.consul:8500"` | no |
+| enable\_vault\_agent | Enable using Vault agent for retrieving GCP credentials | `bool` | `false` | no |
+| enable\_workload\_identity | Enable Workload Identity for GCP credentials | `bool` | `false` | no |
 | env | Additional environment variables for the Ansible playbook | `list` | `[]` | no |
 | gcp\_bucket\_name | GCS Storage bucket name | `any` | n/a | yes |
 | gcp\_bucket\_project | Project where the backup bucket is stored in | `any` | n/a | yes |
@@ -42,7 +48,7 @@ GCS.
 | gcp\_vault\_role\_description | Description for the custom role to allow Vault to manage bucket IAM permissions | `string` | `"Allow Vault to manage bucket IAM permissions"` | no |
 | gcp\_vault\_role\_id | Name of the custom role to allow Vault to manage bucket IAM permissions | `string` | `"vaultBucketIam"` | no |
 | gcp\_vault\_role\_title | Title of the custom role to allow Vault to manage bucket IAM permissions | `string` | `"Vault Bucket IAM Manager"` | no |
-| gcp\_vault\_service\_account | Service account email for Vault for the GCP secrets engine | `any` | n/a | yes |
+| gcp\_vault\_service\_account | Service account email for Vault for the GCP secrets engine | `string` | `""` | no |
 | gcs\_prefix | Prefix for backup snapshots in the GCS bucket | `string` | `"backup/consul/"` | no |
 | image | Docker image of the backup job | `string` | `"basisai/consul-backup-gcs"` | no |
 | kubernetes\_auth\_path | Path to the Kubernetes Auth Engine | `string` | `"kubernetes"` | no |
@@ -57,10 +63,12 @@ GCS.
 | tag | Docker image tag of the backup job | `string` | `"0.2.0"` | no |
 | tolerations | Tolerations for the job | `list` | `[]` | no |
 | ttl\_seconds | TTL of jobs in seconds. Set to an empty string to disable | `string` | `""` | no |
-| vault\_address | Address for Vault | `any` | n/a | yes |
-| vault\_ca | PEM encoded Vault CA certificate | `any` | n/a | yes |
+| vault\_address | Address for Vault | `string` | `""` | no |
+| vault\_ca | PEM encoded Vault CA certificate | `string` | `""` | no |
 | vault\_policy | Name of the policy for Vault | `string` | `"consul_backup"` | no |
 | vault\_ttl | TTL for the Vault Token | `string` | `"600"` | no |
+| workload\_identity\_gke\_project | GCP Project where the GKE cluster is located in | `string` | `""` | no |
+| workload\_identity\_service\_account | Name of the GCP Service account for Workload Identity | `string` | `"consul-backup"` | no |
 
 ## Outputs
 
