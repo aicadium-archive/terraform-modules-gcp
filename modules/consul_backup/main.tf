@@ -40,12 +40,30 @@ data "template_file" "values" {
     vault_address = var.vault_address
     vault_ca      = jsonencode(var.vault_ca)
 
-    vault_auth_path = var.kubernetes_auth_path
-    vault_auth_role = vault_kubernetes_auth_backend_role.job.role_name
+    enable_vault_agent = var.enable_vault_agent
+    vault_auth_path    = var.kubernetes_auth_path
+    vault_auth_role    = var.enable_vault_agent ? vault_kubernetes_auth_backend_role.job[0].role_name : ""
+
     service_account = var.service_account_name
+    service_account_annotations = jsonencode(var.enable_workload_identity ? {
+      "iam.gke.io/gcp-service-account" = var.enable_workload_identity ? google_service_account.workload_identity[0].email : ""
+    } : {})
 
     vault_gcp_path = local.gcp_secret_path
 
     ttl_seconds = var.ttl_seconds
   }
+}
+
+resource "google_project_iam_custom_role" "object_writer" {
+  role_id     = var.gcp_role_id
+  title       = var.gcp_role_title
+  description = var.gcp_role_description
+
+  permissions = [
+    "storage.objects.create",
+    "storage.objects.list",
+  ]
+
+  project = var.gcp_bucket_project
 }

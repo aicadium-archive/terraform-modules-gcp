@@ -28,12 +28,19 @@ variable "max_history" {
   default     = 20
 }
 
+variable "enable_vault_agent" {
+  description = "Enable using Vault agent for retrieving GCP credentials "
+  default     = false
+}
+
 variable "vault_address" {
   description = "Address for Vault"
+  default     = ""
 }
 
 variable "vault_ca" {
   description = "PEM encoded Vault CA certificate"
+  default     = ""
 }
 
 variable "gcp_secrets_path" {
@@ -91,6 +98,7 @@ variable "gcp_vault_role_description" {
 
 variable "gcp_vault_service_account" {
   description = "Service account email for Vault for the GCP secrets engine"
+  default     = ""
 }
 
 variable "kubernetes_auth_path" {
@@ -171,4 +179,19 @@ variable "ttl_seconds" {
 variable "env" {
   description = "Additional environment variables for the Ansible playbook"
   default     = []
+}
+
+variable "enable_workload_identity" {
+  description = "Enable Workload Identity for GCP credentials"
+  default     = false
+}
+
+variable "workload_identity_service_account" {
+  description = "Name of the GCP Service account for Workload Identity"
+  default     = "consul-backup"
+}
+
+variable "workload_identity_gke_project" {
+  description = "GCP Project where the GKE cluster is located in"
+  default     = ""
 }

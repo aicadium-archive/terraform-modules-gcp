@@ -24,6 +24,7 @@ gcs:
   prefix: ${gcs_prefix}
 
 vault:
+  enabled: ${enable_vault_agent}
   pullPolicy: IfNotPresent
   address: ${vault_address}
   # PEM encoded CA used to issue Vault's Certificate
@@ -36,3 +37,6 @@ vault:
   env: []
 
 env: ${env}
+
+annotations:
+  serviceAccount: ${service_account_annotations}
