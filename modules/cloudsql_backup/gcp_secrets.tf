@@ -1,6 +1,7 @@
 # Configure a GCP Secrets Engine Roleset
 
-resource "vault_gcp_secret_roleset" "bucket" {
+resource "vault_gcp_secret_roleset" "cloudsql" {
+  count      = var.enable_vault_agent ? 1 : 0
   depends_on = [google_project_iam_member.vault]
 
   backend      = var.gcp_secrets_path
@@ -18,20 +19,9 @@ resource "vault_gcp_secret_roleset" "bucket" {
   }
 }
 
-resource "google_project_iam_custom_role" "backup" {
-  role_id     = var.gcp_role_id
-  title       = var.gcp_role_title
-  description = var.gcp_role_description
-
-  permissions = [
-    "cloudsql.backupRuns.create",
-    "cloudsql.instances.get",
-  ]
-
-  project = var.cloudsql_project
-}
-
 resource "google_project_iam_custom_role" "vault" {
+  count = var.enable_vault_agent ? 1 : 0
+
   role_id = "vault_${var.gcp_role_id}"
   title   = "Vault GCP Secrets Engine IAM role for CloudSQL backup cronjob"
 
@@ -54,7 +44,9 @@ resource "google_project_iam_custom_role" "vault" {
 }
 
 resource "google_project_iam_member" "vault" {
+  count = var.enable_vault_agent ? 1 : 0
+
   project = var.cloudsql_project
-  role    = google_project_iam_custom_role.vault.id
+  role    = google_project_iam_custom_role.vault[0].id
   member  = "serviceAccount:${var.gcp_vault_service_account}"
 }

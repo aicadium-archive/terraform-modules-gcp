@@ -72,4 +72,7 @@ Either:
 
 ## Outputs
 
-No output.
+| Name | Description |
+|------|-------------|
+| vault\_roleset\_service\_account | Email address of the GCP Secrets Engine Service account |
+| workload\_identity\_service\_account | Email address of the workload identity linked service account |
