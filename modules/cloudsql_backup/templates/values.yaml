@@ -10,9 +10,6 @@ image:
   tag: ${tag}
   pullPolicy: ${pull_policy}
 
-consul:
-  address: ${consul_address}
-
 nodeSelector: ${node_selector}
 
 tolerations: ${tolerations}
@@ -20,6 +17,7 @@ tolerations: ${tolerations}
 affinity: ${affinity}
 
 vault:
+  enabled: ${enable_vault_agent}
   pullPolicy: IfNotPresent
   address: ${vault_address}
   # PEM encoded CA used to issue Vault's Certificate
@@ -34,3 +32,6 @@ vault:
 env: ${env}
 
 entrypoint: ${entrypoint}
+
+annotations:
+  serviceAccount: ${service_account_annotations}
