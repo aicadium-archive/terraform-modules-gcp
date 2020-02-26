@@ -114,6 +114,7 @@ data "template_file" "values" {
     service_annotations         = jsonencode(var.service_annotations)
     load_balancer_ip            = jsonencode(var.load_balancer_ip)
     load_balancer_source_ranges = jsonencode(var.load_balancer_source_ranges)
+    service_additional_selector = jsonencode(var.service_additional_selector)
 
     ingress_enabled     = var.ingress_enabled
     ingress_labels      = jsonencode(var.ingress_labels)
