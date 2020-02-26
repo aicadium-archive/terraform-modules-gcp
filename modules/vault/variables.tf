@@ -93,6 +93,11 @@ variable "service_annotations" {
   default     = {}
 }
 
+variable "service_additional_selector" {
+  description = "Additional selector the Vault service"
+  default     = {}
+}
+
 variable "ingress_enabled" {
   description = "Enable ingress"
   default     = "false"

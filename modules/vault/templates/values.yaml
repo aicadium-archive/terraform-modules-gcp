@@ -22,6 +22,7 @@ service:
   port: ${service_port}
   clusterIP: ${service_cluster_ip}
   annotations: ${service_annotations}
+  additionalSelector: ${service_additional_selector}
 
 ingress:
   enabled: ${ingress_enabled}
