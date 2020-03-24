@@ -7,16 +7,35 @@ resource "null_resource" "certmanager_crds" {
 
   triggers = {
     certmanager_crd_version = var.certmanager_crd_version
+    id                      = local_file.cluster_ca_cert.id
   }
 
   provisioner "local-exec" {
-    command = "kubectl apply --context ${var.kube_context} --validate=false -f https://raw.githubusercontent.com/jetstack/cert-manager/release-${var.certmanager_crd_version}/deploy/manifests/00-crds.yaml"
+    command = "kubectl apply --certificate-authority $CA_CERT_PATH --server $HOST --token $TOKEN --validate=false -f https://raw.githubusercontent.com/jetstack/cert-manager/release-${var.certmanager_crd_version}/deploy/manifests/00-crds.yaml"
+
+    environment = {
+      CA_CERT_PATH = local_file.cluster_ca_cert.filename
+      HOST         = "https://${var.cluster_host}"
+      TOKEN        = var.cluster_token
+    }
   }
 
   provisioner "local-exec" {
     when    = destroy
-    command = "kubectl delete --context ${var.kube_context} -f https://raw.githubusercontent.com/jetstack/cert-manager/release-${var.certmanager_crd_version}/deploy/manifests/00-crds.yaml"
+    command = "kubectl delete --certificate-authority $CA_CERT_PATH --server $HOST --token $TOKEN -f https://raw.githubusercontent.com/jetstack/cert-manager/release-${var.certmanager_crd_version}/deploy/manifests/00-crds.yaml"
+
+    environment = {
+      CA_CERT_PATH = local_file.cluster_ca_cert.filename
+      HOST         = "https://${var.cluster_host}"
+      TOKEN        = var.cluster_token
+    }
   }
+}
+
+resource "local_file" "cluster_ca_cert" {
+  content_base64  = var.cluster_ca_cert_base64
+  filename        = "${path.module}/.cluster_ca_cert"
+  file_permission = "0600"
 }
 
 resource "helm_release" "certmanager" {
