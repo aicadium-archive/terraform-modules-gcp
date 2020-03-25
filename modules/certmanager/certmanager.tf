@@ -7,15 +7,24 @@ resource "null_resource" "certmanager_crds" {
 
   triggers = {
     certmanager_crd_version = var.certmanager_crd_version
+    kubeconfig              = var.kubeconfig_path
   }
 
   provisioner "local-exec" {
-    command = "kubectl apply --context ${var.kube_context} --validate=false -f https://raw.githubusercontent.com/jetstack/cert-manager/release-${var.certmanager_crd_version}/deploy/manifests/00-crds.yaml"
+    command = "kubectl apply --validate=false -f https://raw.githubusercontent.com/jetstack/cert-manager/release-${var.certmanager_crd_version}/deploy/manifests/00-crds.yaml"
+
+    environment = {
+      KUBECONFIG = var.kubeconfig_path
+    }
   }
 
   provisioner "local-exec" {
     when    = destroy
-    command = "kubectl delete --context ${var.kube_context} -f https://raw.githubusercontent.com/jetstack/cert-manager/release-${var.certmanager_crd_version}/deploy/manifests/00-crds.yaml"
+    command = "kubectl delete -f https://raw.githubusercontent.com/jetstack/cert-manager/release-${var.certmanager_crd_version}/deploy/manifests/00-crds.yaml"
+
+    environment = {
+      KUBECONFIG = var.kubeconfig_path
+    }
   }
 }
 
