@@ -7,7 +7,7 @@ resource "null_resource" "certmanager_crds" {
 
   triggers = {
     certmanager_crd_version = var.certmanager_crd_version
-    id                      = local_file.cluster_ca_cert.id
+    kubeconfig              = var.kubeconfig_path
   }
 
   provisioner "local-exec" {
