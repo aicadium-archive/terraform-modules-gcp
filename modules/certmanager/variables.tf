@@ -3,7 +3,7 @@ variable "project_id" {
 }
 
 variable "kubeconfig_path" {
-  description = "The file path to the kubeconfig"
+  description = "The file path to the kubeconfig with the current context set correctly."
 }
 
 variable "kube_namespace" {
