@@ -2,16 +2,8 @@ variable "project_id" {
   description = "Project ID to deploy the cluster to"
 }
 
-variable "cluster_host" {
-  description = "The address and port of the Kubernetes API server"
-}
-
-variable "cluster_token" {
-  description = "Bearer token for authentication to the Kubernetes API server"
-}
-
-variable "cluster_ca_cert_base64" {
-  description = "Base64 encoded cert for the certificate authority"
+variable "kubeconfig_path" {
+  description = "The file path to the kubeconfig"
 }
 
 variable "kube_namespace" {
