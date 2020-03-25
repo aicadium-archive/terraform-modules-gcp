@@ -20,7 +20,7 @@ resource "null_resource" "certmanager_crds" {
 
   provisioner "local-exec" {
     when    = destroy
-    command = "kubectl delete --certificate-authority $CA_CERT_PATH --server $HOST --token $TOKEN -f https://raw.githubusercontent.com/jetstack/cert-manager/release-${var.certmanager_crd_version}/deploy/manifests/00-crds.yaml"
+    command = "kubectl delete -f https://raw.githubusercontent.com/jetstack/cert-manager/release-${var.certmanager_crd_version}/deploy/manifests/00-crds.yaml"
 
     environment = {
       KUBECONFIG = var.kubeconfig_path
