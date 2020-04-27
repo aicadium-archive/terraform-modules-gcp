@@ -16,12 +16,13 @@ data "template_file" "general" {
   template = file("${path.module}/templates/general.yaml")
 
   vars = {
-    service_account = var.service_account
-    replicas        = var.replicas
-
+    replicas          = var.replicas
     image             = var.image
     tag               = var.tag
     image_pull_policy = var.image_pull_policy
+
+    service_account             = var.service_account
+    service_account_annotations = jsonencode(var.service_account_annotations)
 
     run_as_user = var.run_as_user
     fs_group    = var.fs_group

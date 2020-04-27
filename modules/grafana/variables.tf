@@ -33,6 +33,11 @@ variable "service_account" {
   default     = ""
 }
 
+variable "service_account_annotations" {
+  description = "Annotations for service account"
+  default     = {}
+}
+
 variable "replicas" {
   description = "Number of replicas of Grafana to run"
   default     = 1
