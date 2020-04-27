@@ -5,6 +5,13 @@ Deploys Grafana and some supporting services on a Kubernetes cluster running in 
 This module makes use of the
 [`stable/grafana`](https://github.com/helm/charts/tree/master/stable/grafana) chart.
 
+## Requirements
+
+| Name | Version |
+|------|---------|
+| terraform | >= 0.12 |
+| helm | >= 1.0 |
+
 ## Providers
 
 | Name | Version |
@@ -15,7 +22,7 @@ This module makes use of the
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:-----:|
+|------|-------------|------|---------|:--------:|
 | affinity | Pod affinity | `map` | `{}` | no |
 | annotations | Deployment annotations | `map` | `{}` | no |
 | chart\_name | Helm chart name to provision | `string` | `"grafana"` | no |
@@ -66,6 +73,7 @@ This module makes use of the
 | resources | Resources for Grafana container | `map` | `{}` | no |
 | run\_as\_user | UID to run the Grafana container in | `string` | `"472"` | no |
 | service\_account | Name of the Service Account for Grafana | `string` | `""` | no |
+| service\_account\_annotations | Annotations for service account | `map` | `{}` | no |
 | service\_annotations | Annotations for the service | `map` | `{}` | no |
 | service\_labels | Labels for the service | `map` | `{}` | no |
 | service\_port | Port of the service | `string` | `"80"` | no |

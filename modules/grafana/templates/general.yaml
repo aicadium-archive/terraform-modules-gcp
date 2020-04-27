@@ -15,6 +15,7 @@ rbac:
 serviceAccount:
   create: true
   name: ${service_account}
+  annotations: ${service_account_annotations}
 
 replicas: ${replicas}
 
