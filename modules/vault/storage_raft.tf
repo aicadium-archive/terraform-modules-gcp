@@ -6,7 +6,7 @@ resource "google_compute_disk" "raft" {
   type = var.raft_disk_type
   size = var.raft_disk_size
 
-  zone = element(coalescelist(var.raft_disk_zones, data.google_compute_zones.raft.names), count.index)
+  zone = element(coalescelist(var.raft_disk_zones, data.google_compute_zones.raft[0].names), count.index)
 
   description = "Vault server data disks replica ${count.index}"
 
@@ -29,7 +29,7 @@ resource "google_compute_region_disk" "raft" {
   region = var.raft_region
   replica_zones = coalescelist(
     element(var.raft_replica_zones, count.index),
-    [element(data.google_compute_zones.raft.names, count.index), element(data.google_compute_zones.raft.names, count.index + 1)]
+    [element(data.google_compute_zones.raft[0].names, count.index), element(data.google_compute_zones.raft[0].names, count.index + 1)]
   )
 
   description = "Vault server data disks replica ${count.index}"

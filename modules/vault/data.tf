@@ -1,5 +1,6 @@
 data "google_compute_zones" "raft" {
   provider = google-beta
+  count    = var.raft_storage_enable ? 1 : 0
 
   project = var.project_id
   region  = var.raft_region
@@ -9,6 +10,16 @@ data "google_project" "this" {
   provider = google-beta
 
   project_id = var.project_id
+}
+
+data "google_client_config" "current" {
+  provider = google-beta
+}
+
+data "google_storage_project_service_account" "vault" {
+  provider = google-beta
+
+  project = var.storage_bucket_project
 }
 
 locals {
@@ -22,15 +33,4 @@ locals {
     ),
     "-"
   )
-}
-
-
-data "google_client_config" "current" {
-  provider = google-beta
-}
-
-data "google_storage_project_service_account" "vault" {
-  provider = google-beta
-
-  project = var.storage_bucket_project
 }
