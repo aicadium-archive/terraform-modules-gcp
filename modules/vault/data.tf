@@ -1,8 +1,8 @@
-data "google_compute_zones" "available" {
+data "google_compute_zones" "raft" {
   provider = google-beta
 
   project = var.project_id
-  region  = var.region
+  region  = var.raft_region
 }
 
 data "google_project" "this" {

@@ -6,10 +6,6 @@ variable "labels" {
   }
 }
 
-variable "region" {
-  description = "GCP Region for resources"
-}
-
 variable "project_id" {
   description = "Project ID for GCP Resources"
 }
@@ -387,6 +383,11 @@ variable "raft_storage_enable" {
   default     = true
 }
 
+variable "raft_region" {
+  description = "GCP Region for Raft Disk resources"
+  default     = ""
+}
+
 variable "raft_persistent_disks_prefix" {
   description = "Prefix of the name persistent disks for Vault to create. The prefix will be appended with the index"
   default     = "vault-data-"
@@ -448,7 +449,7 @@ variable "raft_snapshot_start_time" {
 ##################################
 variable "gcs_storage_enable" {
   description = "Enable the use of GCS Storage"
-  default     = true
+  default     = false
 }
 
 variable "storage_bucket_name" {
@@ -480,8 +481,8 @@ variable "storage_bucket_labels" {
 }
 
 variable "storage_ha_enabled" {
-  description = "Use the GCS bucket to provide HA for Vault. Set to \"false\" if you are using alternative HA storage like Consul"
-  default     = "true"
+  description = "Use the GCS bucket to provide HA for Vault. Set to false if you are using alternative HA storage like Consul"
+  default     = true
 }
 
 ##################################

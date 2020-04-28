@@ -6,7 +6,7 @@ resource "google_compute_disk" "raft" {
   type = var.raft_disk_type
   size = var.raft_disk_size
 
-  zone = element(coalescelist(var.raft_disk_zones, data.google_compute_zones.available.names), count.index)
+  zone = element(coalescelist(var.raft_disk_zones, data.google_compute_zones.raft.names), count.index)
 
   description = "Vault server data disks replica ${count.index}"
 
@@ -26,10 +26,10 @@ resource "google_compute_region_disk" "raft" {
   type = var.raft_disk_type
   size = var.raft_disk_size
 
-  region = var.region
+  region = var.raft_region
   replica_zones = coalescelist(
     element(var.raft_replica_zones, count.index),
-    [element(data.google_compute_zones.available.names, count.index), element(data.google_compute_zones.available.names, count.index + 1)]
+    [element(data.google_compute_zones.raft.names, count.index), element(data.google_compute_zones.raft.names, count.index + 1)]
   )
 
   description = "Vault server data disks replica ${count.index}"
@@ -47,7 +47,7 @@ resource "google_compute_resource_policy" "raft_backup" {
   count    = var.raft_storage_enable ? 1 : 0
 
   name    = var.raft_backup_policy
-  region  = var.region
+  region  = var.raft_region
   project = var.project_id
 
   snapshot_schedule_policy {
@@ -65,7 +65,7 @@ resource "google_compute_resource_policy" "raft_backup" {
 
     snapshot_properties {
       labels            = var.labels
-      storage_locations = [var.region]
+      storage_locations = [var.raft_region]
       guest_flush       = false
     }
   }
