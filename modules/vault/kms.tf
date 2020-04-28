@@ -48,6 +48,7 @@ resource "google_kms_crypto_key_iam_member" "gcs" {
 
 resource "google_kms_crypto_key_iam_member" "disk" {
   provider = google-beta
+  count    = var.raft_storage_enable ? 1 : 0
 
   crypto_key_id = google_kms_crypto_key.storage.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
