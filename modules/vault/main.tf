@@ -131,8 +131,12 @@ locals {
       service_registration = {
         kubernetes = {}
       }
+
+      storage = merge(
+        var.raft_storage_enable ? local.raft_storage_config : {},
+        var.gcs_storage_enable ? local.gcs_storage_config : {}
+      )
     },
-    var.raft_storage_enable ? local.raft_storage_config : {},
     var.server_config,
   )
 
@@ -149,10 +153,15 @@ locals {
   }
 
   raft_storage_config = {
-    storage = {
-      raft = {
-        path = "/vault/data"
-      }
+    raft = {
+      path = "/vault/data"
+    }
+  }
+
+  gcs_storage_config = {
+    gcs = {
+      bucket     = var.gcs_storage_enable ? google_storage_bucket.vault[0].name : "",
+      ha_enabled = var.storage_ha_enabled
     }
   }
 }

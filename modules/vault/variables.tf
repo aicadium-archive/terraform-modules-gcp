@@ -444,6 +444,47 @@ variable "raft_snapshot_start_time" {
 }
 
 ##################################
+# GCS Storage
+##################################
+variable "gcs_storage_enable" {
+  description = "Enable the use of GCS Storage"
+  default     = true
+}
+
+variable "storage_bucket_name" {
+  description = "Name of the Storage Bucket to store Vault's state"
+  default     = ""
+}
+
+variable "storage_bucket_class" {
+  description = "Storage class of the bucket. See https://cloud.google.com/storage/docs/storage-classes"
+  default     = "REGIONAL"
+}
+
+variable "storage_bucket_location" {
+  description = "Location of the storage bucket. Defaults to the provider's region if empty. This must be in the same location as your KMS key."
+  default     = ""
+}
+
+variable "storage_bucket_project" {
+  description = "Project ID to create the storage bucket under"
+  default     = ""
+}
+
+variable "storage_bucket_labels" {
+  description = "Set of labels for the storage bucket"
+
+  default = {
+    terraform = "true"
+  }
+}
+
+variable "storage_ha_enabled" {
+  description = "Use the GCS bucket to provide HA for Vault. Set to \"false\" if you are using alternative HA storage like Consul"
+  default     = "true"
+}
+
+##################################
 # KMS Configuration
 ##################################
 

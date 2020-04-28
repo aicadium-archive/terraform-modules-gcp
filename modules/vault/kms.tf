@@ -36,6 +36,16 @@ resource "google_kms_crypto_key" "storage" {
   }
 }
 
+resource "google_kms_crypto_key_iam_member" "gcs" {
+  provider = google-beta
+  count    = var.gcs_storage_enable ? 1 : 0
+
+  crypto_key_id = google_kms_crypto_key.storage.id
+  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+  member        = "serviceAccount:${data.google_storage_project_service_account.vault.email_address}"
+}
+
+
 resource "google_kms_crypto_key_iam_member" "disk" {
   provider = google-beta
 
