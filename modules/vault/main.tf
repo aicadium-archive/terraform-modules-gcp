@@ -5,22 +5,129 @@ resource "helm_release" "vault" {
   chart      = var.chart_name
   repository = var.chart_repository
   version    = var.chart_version
-  namespace  = var.chart_namespace
+  namespace  = var.kubernetes_namespace
 
   timeout = var.timeout
 
   max_history = var.max_history
 
   values = [
-    data.template_file.values.rendered,
-    local.vault_config_overwrite,
+    templatefile("${path.module}/templates/values.yaml", local.chart_values),
   ]
 }
 
 locals {
-  cluster_port           = "8201" # Fixed by the chart
-  vault_listener_adderss = "${var.vault_listener_address}:${var.service_port}"
-  vault_cluster_address  = "${var.vault_listener_address}:${local.cluster_port}"
+  chart_values = {
+    global_enabled = var.global_enabled
+    tls_disabled   = var.tls_disabled
+
+    ####################################
+    # Injector
+    ####################################
+    injector_enabled          = var.injector_enabled
+    external_vault_addr       = var.external_vault_addr
+    injector_image_repository = var.injector_image_repository
+    injector_image_tag        = var.injector_image_tag
+    injector_log_level        = var.injector_log_level
+    injector_log_format       = var.injector_log_format
+
+    injector_resources   = jsonencode(var.injector_resources)
+    injector_env         = jsonencode(var.injector_env)
+    injector_affinity    = jsonencode(var.injector_affinity)
+    injector_tolerations = jsonencode(var.injector_tolerations)
+
+    agent_image_repository = var.agent_image_repository
+    agent_image_tag        = var.agent_image_tag
+
+    auth_path          = var.auth_path
+    revoke_on_shutdown = var.revoke_on_shutdown
+
+    namespace_selector = jsonencode(var.namespace_selector)
+
+    ####################################
+    # Server
+    ####################################
+    server_image_repository = var.server_image_repository
+    server_image_tag        = var.server_image_tag
+    server_update_strategy  = var.server_update_strategy
+    server_labels           = jsonencode(var.server_labels)
+    server_annotations      = jsonencode(var.server_annotations)
+
+    server_resources        = jsonencode(var.server_resources)
+    server_extra_containers = jsonencode(var.server_extra_containers)
+    server_share_pid        = var.server_share_pid
+    server_extra_args       = var.server_extra_args
+    server_env              = jsonencode(var.server_env)
+    server_secret_env       = jsonencode(var.server_secret_env)
+    server_volumes          = jsonencode(concat([local.tls_volume], var.server_volumes))
+    server_affinity         = jsonencode(var.server_affinity)
+    server_tolerations      = jsonencode(var.server_tolerations)
+
+    server_readiness_probe_enable = var.server_readiness_probe_enable
+    server_readiness_probe_path   = var.server_readiness_probe_path
+    server_liveness_probe_enable  = var.server_liveness_probe_enable
+    server_liveness_probe_path    = var.server_liveness_probe_path
+
+    service_type        = var.service_type
+    node_port           = var.node_port
+    service_annotations = jsonencode(var.service_annotations)
+
+    ingress_enabled     = var.ingress_enabled
+    ingress_labels      = jsonencode(var.ingress_labels)
+    ingress_annotations = jsonencode(var.ingress_annotations)
+    ingress_hosts       = jsonencode(var.ingress_hosts)
+    ingress_tls         = jsonencode(var.ingress_tls)
+
+    enable_auth_delegator = var.enable_auth_delegator
+
+    ####################################
+    # Storage
+    ####################################
+    data_storage_enable = var.raft_storage_enable
+    data_storage_size   = "${var.raft_disk_size}G"
+
+    ####################################
+    # Configuration
+    ####################################
+    replicas         = var.server_replicas
+    raft_enable      = var.raft_storage_enable
+    raft_set_node_id = var.raft_set_node_id
+
+    server_configuration = jsonencode(local.server_configuration)
+  }
+
+  server_configuration = <<EOF
+ui = true
+
+api_addr     = var.vault_api_addr
+cluster_addr = var.vault_cluster_addr
+
+listener "tcp" {
+  address         = "[::]:8200"
+  cluster_address = "[::]:8201"
+
+  tls_cert_file    = "${local.tls_secret_path}/${local.tls_secret_cert_key}"
+  tls_key_file     = "${local.tls_secret_path}/${local.tls_secret_key_key}"
+  tls_ciper_suites = "${var.tls_cipher_suites}"
+
+  telemetry = {
+    unauthenticated_metrics_access = ${var.unauthenticated_metrics_access}
+  }
+}
+
+seal "gcpckms" {
+  project     = "${google_kms_key_ring.vault.project}"
+  region      = "${google_kms_key_ring.vault.location}"
+  key_ring    = "${google_kms_crypto_key.unseal.key_ring}"
+  crypto_key  = "${google_kms_crypto_key.unseal.name}"
+}
+
+service_registration "kubernetes" {}
+
+${var.raft_storage_enable ? local.raft_storage_config : ""}
+
+${var.server_config}
+EOF
 
   tls_secret_name = "${var.release_name}-tls"
   tls_secret_path = "/vault/tls"
@@ -28,138 +135,28 @@ locals {
   tls_secret_cert_key = "cert"
   tls_secret_key_key  = "key"
 
-  tls_volume = [
-    {
-      name = kubernetes_secret.tls_cert.metadata[0].name
-      secret = {
-        secretName = kubernetes_secret.tls_cert.metadata[0].name
-      }
-    },
-  ]
-
-  tls_cert_mounts = [
-    {
-      name      = kubernetes_secret.tls_cert.metadata[0].name
-      mountPath = local.tls_secret_path
-    },
-  ]
-
-  vault_env = [] # None at the moment
-
-  base_vault_config = {
-    listener = {
-      tcp = {
-        address                         = local.vault_listener_adderss
-        cluster                         = local.vault_cluster_address
-        tls_cert_file                   = "${local.tls_secret_path}/${local.tls_secret_cert_key}"
-        tls_key_file                    = "${local.tls_secret_path}/${local.tls_secret_key_key}"
-        tls_cipher_suites               = var.tls_cipher_suites
-        tls_prefer_server_cipher_suites = "true"
-
-        telemetry = {
-          unauthenticated_metrics_access = var.unauthenticated_metrics_access
-        }
-      }
-    }
-    storage = {
-      gcs = {
-        bucket     = google_storage_bucket.vault.name
-        ha_enabled = var.storage_ha_enabled
-      }
-    }
-    seal = {
-      gcpckms = {
-        project    = google_kms_key_ring.vault.project
-        region     = google_kms_key_ring.vault.location
-        key_ring   = google_kms_key_ring.vault.name
-        crypto_key = google_kms_crypto_key.unseal.name
-      }
-    }
-
-    api_addr = var.vault_api_addr
+  tls_volume = {
+    type = "secret"
+    name = kubernetes_secret.tls_cert.metadata[0].name
+    path = local.tls_secret_path
   }
 
-  # Overwrite dumb defaults from chart
-  vault_config_overwrite = <<EOF
-vault:
-  config:
-    listener:
-      tcp:
-        tls_disable: false
-EOF
-
-
-  vault_config = jsonencode(merge(local.base_vault_config, var.vault_config))
+  raft_storage_config = <<EOF
+storage "raft" {
+  path = "/vault/data"
 }
-
-data "template_file" "values" {
-  template = file("${path.module}/templates/values.yaml")
-
-  vars = {
-    replica           = var.replica
-    vault_image       = var.vault_image
-    vault_tag         = var.vault_tag
-    fullname_override = var.fullname_override
-
-    consul_image                  = var.consul_image
-    consul_tag                    = var.consul_tag
-    consul_join                   = jsonencode(var.consul_join)
-    consul_gossip_secret_key_name = jsonencode(var.consul_gossip_secret_key_name)
-
-    service_name                = var.service_name
-    service_type                = var.service_type
-    service_external_port       = var.service_external_port
-    service_port                = var.service_port
-    service_cluster_ip          = jsonencode(var.service_cluster_ip)
-    service_annotations         = jsonencode(var.service_annotations)
-    load_balancer_ip            = jsonencode(var.load_balancer_ip)
-    load_balancer_source_ranges = jsonencode(var.load_balancer_source_ranges)
-    service_additional_selector = jsonencode(var.service_additional_selector)
-
-    ingress_enabled     = var.ingress_enabled
-    ingress_labels      = jsonencode(var.ingress_labels)
-    ingress_hosts       = jsonencode(var.ingress_hosts)
-    ingress_annotations = jsonencode(var.ingress_annotations)
-    ingress_tls         = jsonencode(var.ingress_tls)
-
-    cpu_request    = var.cpu_request
-    memory_request = var.memory_request
-    cpu_limit      = var.cpu_limit
-    memory_limit   = var.memory_limit
-
-    affinity           = jsonencode(var.affinity)
-    annotations        = jsonencode(var.annotations)
-    labels             = jsonencode(var.labels)
-    pod_annotations    = jsonencode(var.pod_annotations)
-    tolerations        = jsonencode(var.tolerations)
-    node_selector      = jsonencode(var.node_selector)
-    lifecycle          = jsonencode(var.container_lifecycle)
-    pod_priority_class = var.pod_priority_class
-    min_ready_seconds  = var.min_ready_seconds
-    pod_api_address    = var.pod_api_address
-
-    vault_dev                 = var.vault_dev
-    vault_secret_volumes      = jsonencode(var.vault_secret_volumes)
-    vault_env                 = jsonencode(concat(local.vault_env, var.vault_env))
-    vault_extra_containers    = jsonencode(var.vault_extra_containers)
-    vault_extra_volumes       = jsonencode(concat(local.tls_volume, var.vault_extra_volumes))
-    vault_extra_volume_mounts = jsonencode(concat(local.tls_cert_mounts, var.vault_extra_volume_mounts))
-    vault_log_level           = var.vault_log_level
-    vault_config              = local.vault_config
-
-    service_account_annotation = jsonencode(var.workload_identity_enable ? local.worload_identity_sa_annotation : {})
-  }
+EOF
 }
 
 resource "kubernetes_secret" "tls_cert" {
-  type = "Opaque"
-
   metadata {
     name        = local.tls_secret_name
-    namespace   = var.chart_namespace
-    labels      = var.secrets_labels
-    annotations = var.secrets_annotations
+    namespace   = var.kubernetes_namespace
+    labels      = var.kubernetes_labels
+    annotations = var.kubernetes_annotations
   }
+
+  type = "Opaque"
 
   data = {
     "${local.tls_secret_cert_key}" = var.tls_cert_pem

@@ -1,4 +1,6 @@
 resource "google_kms_key_ring" "vault" {
+  provider = google-beta
+
   name     = var.key_ring_name
   location = var.kms_location
   project  = var.kms_project
@@ -9,6 +11,8 @@ resource "google_kms_key_ring" "vault" {
 }
 
 resource "google_kms_crypto_key" "unseal" {
+  provider = google-beta
+
   name     = var.unseal_key_name
   key_ring = google_kms_key_ring.vault.self_link
 
@@ -20,6 +24,8 @@ resource "google_kms_crypto_key" "unseal" {
 }
 
 resource "google_kms_crypto_key" "storage" {
+  provider = google-beta
+
   name     = var.storage_key_name
   key_ring = google_kms_key_ring.vault.self_link
 
@@ -28,4 +34,20 @@ resource "google_kms_crypto_key" "storage" {
   lifecycle {
     prevent_destroy = true
   }
+}
+
+resource "google_kms_crypto_key_iam_member" "disk" {
+  provider = google-beta
+
+  crypto_key_id = google_kms_crypto_key.storage.id
+  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+  member        = "serviceAccount:service-${data.google_project.this.number}@compute-system.iam.gserviceaccount.com"
+}
+
+resource "google_kms_crypto_key_iam_member" "auto_unseal" {
+  provider = google-beta
+
+  crypto_key_id = google_kms_crypto_key.unseal.id
+  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+  member        = "serviceAccount:${local.vault_server_service_account}"
 }

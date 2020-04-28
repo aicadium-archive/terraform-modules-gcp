@@ -6,10 +6,10 @@ locals {
     "roles/monitoring.metricWriter", # Write metrics
   ]
 
-  api_services = [
+  api_services = toset([
     "cloudkms.googleapis.com",
     "storage-api.googleapis.com",
-  ]
+  ])
 }
 
 resource "google_container_node_pool" "vault" {
@@ -24,7 +24,7 @@ resource "google_container_node_pool" "vault" {
   name     = var.gke_pool_name
   location = var.gke_pool_location
   cluster  = var.gke_cluster
-  project  = var.gke_project
+  project  = var.project_id
 
   node_count = var.gke_node_count
 
@@ -81,10 +81,11 @@ resource "google_container_node_pool" "vault" {
 
 # We need to enable the KMS and GCS APIs on the GKE cluster project
 resource "google_project_service" "services" {
-  count = local.gke_pool_create ? length(local.api_services) : 0
+  provider = google-beta
+  for_each = local.gke_pool_create ? local.api_services : []
 
-  project = var.gke_project
-  service = element(local.api_services, count.index)
+  project = var.project_id
+  service = each.key
 
   disable_on_destroy = false
 }

@@ -1,0 +1,22 @@
+{{- $dot := . }}
+{{- $values := .Values }}
+{{- range $i, $e := until (int .Values.replicas) }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $values.namePrefix }}{{ $i }}
+  labels:
+    {{- include "pvc.labels" $dot | nindent 4 }}
+  {{- with $values.labels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with $values.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with $values.spec }}
+  {{- toYaml . | nindent 2}}
+  {{- end }}
+{{- end }}
