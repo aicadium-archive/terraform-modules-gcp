@@ -17,6 +17,8 @@ resource "helm_release" "vault" {
 }
 
 locals {
+  # TODOs:
+  # - Support template string variant of annotations
   chart_values = {
     global_enabled = var.global_enabled
     tls_disabled   = var.tls_disabled
@@ -96,38 +98,43 @@ locals {
     server_configuration = jsonencode(local.server_configuration)
   }
 
-  server_configuration = <<EOF
-ui = true
+  server_configuration = merge(
+    {
+      ui           = true
+      api_addr     = var.vault_api_addr
+      cluster_addr = var.vault_cluster_addr
 
-api_addr     = var.vault_api_addr
-cluster_addr = var.vault_cluster_addr
+      listener = {
+        tcp = {
+          address         = "[::]:8200"
+          cluster_address = "[::]:8201"
 
-listener "tcp" {
-  address         = "[::]:8200"
-  cluster_address = "[::]:8201"
+          tls_cert_file    = "${local.tls_secret_path}/${local.tls_secret_cert_key}"
+          tls_key_file     = "${local.tls_secret_path}/${local.tls_secret_key_key}"
+          tls_ciper_suites = var.tls_cipher_suites
 
-  tls_cert_file    = "${local.tls_secret_path}/${local.tls_secret_cert_key}"
-  tls_key_file     = "${local.tls_secret_path}/${local.tls_secret_key_key}"
-  tls_ciper_suites = "${var.tls_cipher_suites}"
+          telemetry = {
+            unauthenticated_metrics_access = var.unauthenticated_metrics_access
+          }
+        }
+      }
 
-  telemetry = {
-    unauthenticated_metrics_access = ${var.unauthenticated_metrics_access}
-  }
-}
+      seal = {
+        gcpckms = {
+          project    = google_kms_key_ring.vault.project
+          region     = google_kms_key_ring.vault.location
+          key_ring   = google_kms_crypto_key.unseal.key_ring
+          crypto_key = google_kms_crypto_key.unseal.name
+        }
+      }
 
-seal "gcpckms" {
-  project     = "${google_kms_key_ring.vault.project}"
-  region      = "${google_kms_key_ring.vault.location}"
-  key_ring    = "${google_kms_crypto_key.unseal.key_ring}"
-  crypto_key  = "${google_kms_crypto_key.unseal.name}"
-}
-
-service_registration "kubernetes" {}
-
-${var.raft_storage_enable ? local.raft_storage_config : ""}
-
-${var.server_config}
-EOF
+      service_registration = {
+        kubernetes = {}
+      }
+    },
+    var.raft_storage_enable ? local.raft_storage_config : {},
+    var.server_config,
+  )
 
   tls_secret_name = "${var.release_name}-tls"
   tls_secret_path = "/vault/tls"
@@ -141,11 +148,13 @@ EOF
     path = local.tls_secret_path
   }
 
-  raft_storage_config = <<EOF
-storage "raft" {
-  path = "/vault/data"
-}
-EOF
+  raft_storage_config = {
+    storage = {
+      raft = {
+        path = "/vault/data"
+      }
+    }
+  }
 }
 
 resource "kubernetes_secret" "tls_cert" {

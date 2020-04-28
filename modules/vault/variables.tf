@@ -346,8 +346,8 @@ variable "unauthenticated_metrics_access" {
 }
 
 variable "server_config" {
-  description = "Additional server configuration in HCL"
-  default     = ""
+  description = "Additional server configuration"
+  default     = {}
 }
 
 #############################
