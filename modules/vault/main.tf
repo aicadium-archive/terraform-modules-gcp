@@ -1,5 +1,9 @@
 resource "helm_release" "vault" {
-  depends_on = [google_container_node_pool.vault]
+  depends_on = [
+    google_container_node_pool.vault,
+    google_storage_bucket.vault,
+    helm_release.raft_pvc,
+  ]
 
   name       = var.release_name
   chart      = var.chart_name
