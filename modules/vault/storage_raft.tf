@@ -94,7 +94,7 @@ resource "google_compute_region_disk_resource_policy_attachment" "raft_backup" {
 }
 
 locals {
-  volume_name_prefix= "data-${local.fullname}-"
+  volume_name_prefix = "data-${local.fullname}-"
 }
 
 resource "kubernetes_persistent_volume" "raft" {
