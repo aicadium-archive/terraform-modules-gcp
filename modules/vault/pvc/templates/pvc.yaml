@@ -19,4 +19,5 @@ spec:
   {{- with $values.spec }}
   {{- toYaml . | nindent 2}}
   {{- end }}
+  volumeName: {{ $values.volumeNamePrefix }}{{ $i }}
 {{- end }}

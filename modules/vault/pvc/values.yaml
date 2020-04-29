@@ -2,6 +2,7 @@ namePrefix: "data-vault-"
 replicas: 5
 labels: {}
 annotations: {}
+volumeNamePrefix: data-vault-
 
 spec:
   accessModes:
