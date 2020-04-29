@@ -22,7 +22,7 @@ injector:
   # image sets the repo and tag of the vault-k8s image to use for the injector.
   image:
     repository: ${injector_image_repository}
-    tag: "injector_image_tag"
+    tag: "${injector_image_tag}"
     pullPolicy: IfNotPresent
 
   # agentImage sets the repo and tag of the Vault image to use for the Vault Agent
