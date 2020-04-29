@@ -127,7 +127,7 @@ resource "kubernetes_persistent_volume" "raft" {
 #   count = var.raft_storage_enable ? var.server_replicas : 0
 
 #   metadata {
-#     name = "data-${local.fullname}-${count.index}"
+#     name = "${local.volume_name_prefix}${count.index}"
 
 #     annotations = var.kubernetes_annotations
 #     labels      = var.kubernetes_labels
