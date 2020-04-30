@@ -373,7 +373,6 @@ server:
     # persistent volumes for Vault to store data according to the configuration under server.dataStorage.
     # The Vault cluster will coordinate leader elections and failovers internally.
     raft:
-
       # Enables Raft integrated storage
       enabled: ${raft_enable}
       # Set the Node Raft ID to the name of the pod
@@ -398,7 +397,7 @@ server:
     # Extra annotations for the serviceAccount definition. This can either be
     # YAML or a YAML-formatted multi-line templated string map of the
     # annotations to apply to the serviceAccount.
-    annotations: {}
+    annotations: ${service_account_annotations}
 
 # Vault UI
 ui:

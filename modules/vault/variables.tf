@@ -339,6 +339,11 @@ variable "ingress_tls" {
   default     = []
 }
 
+variable "service_account_annotations" {
+  description = "Annotations for service account"
+  default     = {}
+}
+
 #############################
 # Vault Server Configuration
 #############################

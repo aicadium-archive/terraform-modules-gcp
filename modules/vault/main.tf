@@ -94,6 +94,8 @@ locals {
 
     enable_auth_delegator = var.enable_auth_delegator
 
+    service_account_annotations = jsonencode(merge(var.workload_identity_enable ? local.worload_identity_sa_annotation : {}, var.service_account_annotations))
+
     ####################################
     # Storage
     ####################################

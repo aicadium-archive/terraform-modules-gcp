@@ -199,8 +199,7 @@ unsealing Vault if the nodes have access to the keys.
 | external\_vault\_addr | External vault server address for the injector to use. Setting this will disable deployment of a vault server along with the injector. | `string` | `""` | no |
 | fullname\_override | Helm resources full name override | `string` | `""` | no |
 | gcs\_storage\_enable | Enable the use of GCS Storage | `any` | n/a | yes |
-| gke\_cluster | Cluster to create node pool for | `string` | `"\u003cREQUIRED if gke_pool_create is true\u003e"` | no |
-| gke\_disk\_type | Disk type for the nodes | `string` | `"pd-standard"` | no |
+| gke\_cluster | Cluster to create node pool for | `string` | `"\u003cREQUIRED if gke_pool_create is true\u003e"` | no || gke\_disk\_type | Disk type for the nodes | `string` | `"pd-standard"` | no |
 | gke\_labels | Labels for the GKE nodes | `map` | `{}` | no |
 | gke\_machine\_type | Machine type for the GKE nodes. Make sure this matches the resources you are requesting | `string` | `"n1-standard-2"` | no |
 | gke\_metadata | Metadata for the GKE nodes | `map` | `{}` | no |
@@ -278,6 +277,7 @@ unsealing Vault if the nodes have access to the keys.
 | server\_tolerations | YAML string for server tolerations | `string` | `""` | no |
 | server\_update\_strategy | Configure the Update Strategy Type for the StatefulSet. See https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies | `string` | `"RollingUpdate"` | no |
 | server\_volumes | Extra volumes for server | `list` | `[]` | no |
+| service\_account\_annotations | Annotations for service account | `map` | `{}` | no |
 | service\_annotations | Annotations for the service | `map` | `{}` | no |
 | service\_type | Service type for Vault | `string` | `"ClusterIP"` | no |
 | storage\_bucket\_class | Storage class of the bucket. See https://cloud.google.com/storage/docs/storage-classes | `string` | `"REGIONAL"` | no |
