@@ -198,7 +198,7 @@ unsealing Vault if the nodes have access to the keys.
 | enable\_auth\_delegator | uthDelegator enables a cluster role binding to be attached to the service account.  This cluster role binding can be used to setup Kubernetes auth method. https://www.vaultproject.io/docs/auth/kubernetes.html | `bool` | `true` | no |
 | external\_vault\_addr | External vault server address for the injector to use. Setting this will disable deployment of a vault server along with the injector. | `string` | `""` | no |
 | fullname\_override | Helm resources full name override | `string` | `""` | no |
-| gcs\_storage\_enable | Enable the use of GCS Storage | `bool` | `false` | no |
+| gcs\_storage\_enable | Enable the use of GCS Storage | `any` | n/a | yes |
 | gke\_cluster | Cluster to create node pool for | `string` | `"\u003cREQUIRED if gke_pool_create is true\u003e"` | no |
 | gke\_disk\_type | Disk type for the nodes | `string` | `"pd-standard"` | no |
 | gke\_labels | Labels for the GKE nodes | `map` | `{}` | no |
@@ -254,7 +254,7 @@ unsealing Vault if the nodes have access to the keys.
 | raft\_set\_node\_id | Set Raft Node ID as the name of the vault pod | `bool` | `true` | no |
 | raft\_snapshot\_days\_in\_cycle | Number of days between snapshots | `number` | `1` | no |
 | raft\_snapshot\_start\_time | Time in UTC format to start snapshot | `string` | `"19:00"` | no |
-| raft\_storage\_enable | Enable the use of Raft Storage | `bool` | `false` | no |
+| raft\_storage\_enable | Enable the use of Raft Storage | `any` | n/a | yes |
 | release\_name | Helm release name for Vault | `string` | `"vault"` | no |
 | revoke\_on\_shutdown | Attempt to revoke Vault Token on injected agent shutdown. | `bool` | `true` | no |
 | server\_affinity | Server affinity YAML string | `string` | `"podAntiAffinity:\n  requiredDuringSchedulingIgnoredDuringExecution:\n    - labelSelector:\n        matchLabels:\n          app.kubernetes.io/name: {{ template \"vault.name\" . }}\n          app.kubernetes.io/instance: \"{{ .Release.Name }}\"\n          component: server\n      topologyKey: kubernetes.io/hostname\n"` | no |

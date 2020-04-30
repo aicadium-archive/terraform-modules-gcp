@@ -402,7 +402,6 @@ variable "kubernetes_labels" {
 #############################
 variable "raft_storage_enable" {
   description = "Enable the use of Raft Storage"
-  default     = false
 }
 
 variable "raft_region" {
@@ -471,7 +470,6 @@ variable "raft_snapshot_start_time" {
 ##################################
 variable "gcs_storage_enable" {
   description = "Enable the use of GCS Storage"
-  default     = false
 }
 
 variable "storage_bucket_name" {
