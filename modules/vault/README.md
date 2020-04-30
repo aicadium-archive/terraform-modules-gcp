@@ -173,7 +173,7 @@ unsealing Vault if the nodes have access to the keys.
 
 | Name | Version |
 |------|---------|
-| terraform | >= 0.12 |
+| terraform | >= 0.12.17 |
 | helm | >= 1.0 |
 
 ## Providers
@@ -225,6 +225,7 @@ unsealing Vault if the nodes have access to the keys.
 | injector\_image\_tag | Image tag for Vault Injector | `string` | `"0.3.0"` | no |
 | injector\_log\_format | Log format for the injector. standard or json | `string` | `"standard"` | no |
 | injector\_log\_level | Log level for the injector. Supported log levels: trace, debug, error, warn, info | `string` | `"info"` | no |
+| injector\_priority\_class\_name | Priority class name for injector pods | `string` | `""` | no |
 | injector\_resources | Resources for the injector | `map` | <pre>{<br>  "limits": {<br>    "cpu": "250m",<br>    "memory": "256Mi"<br>  },<br>  "requests": {<br>    "cpu": "250m",<br>    "memory": "256Mi"<br>  }<br>}</pre> | no |
 | injector\_tolerations | YAML string for injector tolerations | `string` | `""` | no |
 | key\_ring\_name | Name of the Keyring to create. | `string` | `"vault"` | no |
@@ -264,6 +265,7 @@ unsealing Vault if the nodes have access to the keys.
 | server\_labels | Labels for server | `map` | `{}` | no |
 | server\_liveness\_probe\_enable | Enable server liness probe | `bool` | `true` | no |
 | server\_liveness\_probe\_path | Server liveness probe path | `string` | `"/v1/sys/health?standbyok=true"` | no |
+| server\_priority\_class\_name | Priority class name for server pods | `string` | `""` | no |
 | server\_readiness\_probe\_enable | Enable server readiness probe | `bool` | `true` | no |
 | server\_readiness\_probe\_path | Path for server readiness probe | `string` | `""` | no |
 | server\_replicas | Number of replicas. Should be either 3 or 5 for raft | `number` | `5` | no |

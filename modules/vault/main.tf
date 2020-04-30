@@ -42,6 +42,8 @@ locals {
     injector_affinity    = jsonencode(var.injector_affinity)
     injector_tolerations = jsonencode(var.injector_tolerations)
 
+    injector_priority_class_name = var.injector_priority_class_name
+
     agent_image_repository = var.agent_image_repository
     agent_image_tag        = var.agent_image_tag
 
@@ -68,6 +70,8 @@ locals {
     server_volumes          = jsonencode(concat([local.tls_volume], var.server_volumes))
     server_affinity         = jsonencode(var.server_affinity)
     server_tolerations      = jsonencode(var.server_tolerations)
+
+    server_priority_class_name = var.server_priority_class_name
 
     server_readiness_probe_enable = var.server_readiness_probe_enable
     server_readiness_probe_path   = var.server_readiness_probe_path

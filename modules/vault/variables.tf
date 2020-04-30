@@ -121,6 +121,11 @@ variable "injector_tolerations" {
   default     = ""
 }
 
+variable "injector_priority_class_name" {
+  description = "Priority class name for injector pods"
+  default     = ""
+}
+
 variable "agent_image_repository" {
   description = "Image repository for the Vault agent that is injected"
   default     = "vault"
@@ -144,6 +149,11 @@ variable "revoke_on_shutdown" {
 variable "namespace_selector" {
   description = "The selector for restricting the webhook to only specific namespaces. See https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#matching-requests-namespaceselector for more details."
   default     = {}
+}
+
+variable "server_replicas" {
+  description = "Number of replicas. Should be either 3 or 5 for raft"
+  default     = 5
 }
 
 variable "server_image_repository" {
@@ -231,6 +241,11 @@ EOF
 
 variable "server_tolerations" {
   description = "YAML string for server tolerations"
+  default     = ""
+}
+
+variable "server_priority_class_name" {
+  description = "Priority class name for server pods"
   default     = ""
 }
 
@@ -365,14 +380,6 @@ variable "kubernetes_labels" {
     terraform = "true"
     app       = "vault"
   }
-}
-
-#############################
-# Vault Server
-#############################
-variable "server_replicas" {
-  description = "Number of replicas. Should be either 3 or 5 for raft"
-  default     = 5
 }
 
 #############################
