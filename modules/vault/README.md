@@ -3,8 +3,8 @@
 Deploys a [Vault](https://www.vaultproject.io/) cluster on Kubernetes running on GCP in an
 opinionated fashion.
 
-This module makes use of the this
-[incubator Helm Chart](https://github.com/helm/charts/tree/master/incubator/vault).
+This module makes use of the
+[official Vault Helm Chart](https://github.com/hashicorp/vault-helm).
 
 You should be familiar with various [concepts](https://www.vaultproject.io/docs/concepts/) for Vault
 first before continuing
@@ -45,11 +45,15 @@ Vault to deploy Vault running on a Kubernetes Cluster.
 In addition, for (opinionated) operational reasons, this module additionally provisions the
 following additional resources:
 
+Either
 - A Google Cloud Storage (GCS) Bucket for storing Vault State and to provide High Availability
-- A Google KMS key for auto unsealing Vault
+- GCE disks for storage of raft state
+
+and
+- A Google KMS keyring with keys for auto unsealing Vault and encrypting storage
 - (Optional) A separate GKE Node pool purely for running Vault
 
-This module makes use of both the `google` and the `google-beta` provider. See the documentation on
+This module makes use of both the `google-beta` provider. See the documentation on
 GCP [provider versions](https://www.terraform.io/docs/providers/google/provider_versions.html).
 
 ### Operational Considerations
@@ -115,7 +119,9 @@ The basic configuration provided in this module configures the following:
 - [`seal` stanza](https://www.vaultproject.io/docs/configuration/seal/gcpckms.html) for auto-unsealing
     via GCP KMS.
 - [`storage` stanza](https://www.vaultproject.io/docs/configuration/storage/index.html) using the
-    GCS bucket.
+    GCS bucket or Raft storage.
+- [`service_registration` stanza](https://www.vaultproject.io/docs/configuration/service-registration/kubernetes)
+    for Kubernetes.
 
 Not all required parameters are automatically configured. For example, the
 [`api_addr`](https://www.vaultproject.io/docs/configuration/#api_addr) field is not automatically
@@ -163,34 +169,35 @@ Vault is set up to [auto unseal](https://www.vaultproject.io/docs/concepts/seal.
 using the KMS key provisioned by this module. You will generally not have to worry about manually
 unsealing Vault if the nodes have access to the keys.
 
+## Requirements
+
+| Name | Version |
+|------|---------|
+| terraform | >= 0.12 |
+| helm | >= 1.0 |
+
 ## Providers
 
 | Name | Version |
 |------|---------|
-| google | n/a |
 | google-beta | n/a |
 | helm | >= 1.0 |
 | kubernetes | n/a |
-| template | n/a |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:-----:|
-| affinity | Affinity settings for the pods. Can be templated via Helm. The default has Anti affinity for other Vault pods. | `map` | <pre>{<br>  "podAntiAffinity": {<br>    "requiredDuringSchedulingIgnoredDuringExecution": [<br>      {<br>        "labelSelector": {<br>          "matchLabels": {<br>            "app": "{{ template \"vault.name\" . }}",<br>            "release": "{{ .Release.Name }}"<br>          }<br>        },<br>        "topologyKey": "kubernetes.io/hostname"<br>      }<br>    ]<br>  }<br>}</pre> | no |
-| annotations | Deployment annotations | `map` | `{}` | no |
-| chart\_name | Helm chart name to provision | `string` | `"incubator/vault"` | no |
-| chart\_namespace | Namespace to install the chart into | `string` | `"kube-system"` | no |
+|------|-------------|------|---------|:--------:|
+| agent\_image\_repository | Image repository for the Vault agent that is injected | `string` | `"vault"` | no |
+| agent\_image\_tag | Image tag for the Vault agent that is injected | `string` | `"1.4.0"` | no |
+| auth\_path | Mount path of the Kubernetes Auth Engine that the injector will use | `string` | `"auth/kubernetes"` | no |
+| chart\_name | Helm chart name to provision | `string` | `"https://github.com/hashicorp/vault-helm/archive/master.tar.gz"` | no |
 | chart\_repository | Helm repository for the chart | `string` | `""` | no |
-| chart\_version | Version of Chart to install. Set to empty to install the latest version | `string` | `"0.16.0"` | no |
-| consul\_gossip\_secret\_key\_name | Kubernetes Secret Key holding Consul gossip key | `string` | `""` | no |
-| consul\_image | Consul Agent image to run | `string` | `"consul"` | no |
-| consul\_join | If set, will use this to run a Consul agent sidecar container alongside Vault. You will still need to configure Vault to use this. See https://www.consul.io/docs/agent/options.html#_join for details on this parameter | `string` | `""` | no |
-| consul\_tag | Consul Agent image tag to run | `string` | `"1.4.2"` | no |
-| container\_lifecycle | YAML string of the Vault container lifecycle hooks | `string` | `""` | no |
-| cpu\_limit | CPU limit for pods | `string` | `""` | no |
-| cpu\_request | CPU request for pods | `string` | `"500m"` | no |
-| fullname\_override | Full name of resources | `string` | `"vault"` | no |
+| chart\_version | Version of Chart to install. Set to empty to install the latest version | `string` | `""` | no |
+| enable\_auth\_delegator | uthDelegator enables a cluster role binding to be attached to the service account.  This cluster role binding can be used to setup Kubernetes auth method. https://www.vaultproject.io/docs/auth/kubernetes.html | `bool` | `true` | no |
+| external\_vault\_addr | External vault server address for the injector to use. Setting this will disable deployment of a vault server along with the injector. | `string` | `""` | no |
+| fullname\_override | Helm resources full name override | `string` | `""` | no |
+| gcs\_storage\_enable | Enable the use of GCS Storage | `bool` | `false` | no |
 | gke\_cluster | Cluster to create node pool for | `string` | `"\u003cREQUIRED if gke_pool_create is true\u003e"` | no |
 | gke\_disk\_type | Disk type for the nodes | `string` | `"pd-standard"` | no |
 | gke\_labels | Labels for the GKE nodes | `map` | `{}` | no |
@@ -203,70 +210,93 @@ unsealing Vault if the nodes have access to the keys.
 | gke\_pool\_create | Whether to create the GKE node pool or not | `bool` | `false` | no |
 | gke\_pool\_location | Location for the node pool | `string` | `"\u003cREQUIRED if gke_pool_create is true\u003e"` | no |
 | gke\_pool\_name | Name of the GKE Pool name to create | `string` | `"vault"` | no |
-| gke\_project | Project ID where the GKE cluster lives in | `string` | `"\u003cREQUIRED if gke_pool_create is true\u003e"` | no |
 | gke\_tags | Network tags for the GKE nodes | `list` | `[]` | no |
 | gke\_taints | List of map of taints for GKE nodes. It is highly recommended you do set this alongside the pods toleration. See https://www.terraform.io/docs/providers/google/r/container_cluster.html#key for the keys and the README for more information | `list` | `[]` | no |
-| ingress\_annotations | Annotations for ingress | `map` | `{}` | no |
-| ingress\_enabled | Enable ingress | `string` | `"false"` | no |
-| ingress\_hosts | Name of hosts for ingress | `list` | `[]` | no |
-| ingress\_labels | Labels for ingress | `map` | `{}` | no |
-| ingress\_tls | Ingress TLS settings | `map` | `{}` | no |
+| global\_enabled | Globally enable or disable chart resources | `bool` | `true` | no |
+| ingress\_annotations | Annotations for server ingress | `map` | `{}` | no |
+| ingress\_enabled | Enable ingress for the server | `bool` | `false` | no |
+| ingress\_hosts | Hosts for server ingress | `list` | <pre>[<br>  {<br>    "host": "chart-example.local",<br>    "paths": []<br>  }<br>]</pre> | no |
+| ingress\_labels | Labels for server ingress | `map` | `{}` | no |
+| ingress\_tls | Configuration for server ingress | `list` | `[]` | no |
+| injector\_affinity | YAML string for injector pod affinity | `string` | `""` | no |
+| injector\_enabled | Enable Vault Injector | `bool` | `true` | no |
+| injector\_env | Extra environment variable for the injector pods | `map` | `{}` | no |
+| injector\_image\_repository | Image repository for Vault Injector | `string` | `"hashicorp/vault-k8s"` | no |
+| injector\_image\_tag | Image tag for Vault Injector | `string` | `"0.3.0"` | no |
+| injector\_log\_format | Log format for the injector. standard or json | `string` | `"standard"` | no |
+| injector\_log\_level | Log level for the injector. Supported log levels: trace, debug, error, warn, info | `string` | `"info"` | no |
+| injector\_resources | Resources for the injector | `map` | <pre>{<br>  "limits": {<br>    "cpu": "250m",<br>    "memory": "256Mi"<br>  },<br>  "requests": {<br>    "cpu": "250m",<br>    "memory": "256Mi"<br>  }<br>}</pre> | no |
+| injector\_tolerations | YAML string for injector tolerations | `string` | `""` | no |
 | key\_ring\_name | Name of the Keyring to create. | `string` | `"vault"` | no |
 | kms\_location | Location of the KMS key ring. Must be in the same location as your storage bucket | `any` | n/a | yes |
 | kms\_project | Project ID to create the keyring in | `any` | n/a | yes |
-| labels | Additional labels for deployment | `map` | `{}` | no |
-| load\_balancer\_ip | Static Load balancer IP if needed | `string` | `""` | no |
-| load\_balancer\_source\_ranges | Restrict the CIDRs that can access the load balancer | `list` | `[]` | no |
+| kubernetes\_annotations | Annotations for Kubernetes in general | `map` | `{}` | no |
+| kubernetes\_labels | Labels for Kubernetes in general | `map` | <pre>{<br>  "app": "vault",<br>  "terraform": "true"<br>}</pre> | no |
+| kubernetes\_namespace | Namespace for Kubernetes resources | `string` | `"default"` | no |
+| labels | Labels for GCP resources | `map` | <pre>{<br>  "terraform": "true",<br>  "usage": "vault"<br>}</pre> | no |
 | max\_history | Max history for Helm | `number` | `20` | no |
-| memory\_limit | Memory limit for pods | `string` | `"4Gi"` | no |
-| memory\_request | Memory request for pods | `string` | `""` | no |
-| min\_ready\_seconds | Minimum number of seconds that newly created replicas must be ready without any containers crashing | `string` | `"0"` | no |
-| node\_selector | Node selectors for pods | `map` | `{}` | no |
-| pod\_annotations | Annotations for pods | `map` | `{}` | no |
-| pod\_api\_address | Set the `VAULT_API_ADDR` environment variable to the Pod IP Address. This is the address (full URL) to advertise to other Vault servers in the cluster for client redirection. See https://www.vaultproject.io/docs/configuration/#api_addr. If this is `true`, then `vault_api_addr` will have no effect. | `string` | `"false"` | no |
-| pod\_priority\_class | Pod priority class name. See https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/ | `string` | `""` | no |
+| namespace\_selector | The selector for restricting the webhook to only specific namespaces. See https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#matching-requests-namespaceselector for more details. | `map` | `{}` | no |
+| node\_port | If type is set to 'NodePort', a specific nodePort value can be configured, will be random if left blank. | `string` | `"30000"` | no |
+| project\_id | Project ID for GCP Resources | `any` | n/a | yes |
+| raft\_backup\_max\_retention\_days | Maximum age of the snapshot that is allowed to be kept. | `number` | `14` | no |
+| raft\_backup\_policy | Data disk backup policy name | `string` | `"vault-data-backup"` | no |
+| raft\_disk\_regional | Use regional disks instead of zonal disks | `bool` | `true` | no |
+| raft\_disk\_size | Size of Raft disks in GB | `number` | `100` | no |
+| raft\_disk\_type | Raft data disk type | `string` | `"pd-ssd"` | no |
+| raft\_disk\_zones | List of zones for disks. If not set, will default to the zones in var.region | `list(string)` | `[]` | no |
+| raft\_persistent\_disks\_prefix | Prefix of the name persistent disks for Vault to create. The prefix will be appended with the index | `string` | `"vault-data-"` | no |
+| raft\_region | GCP Region for Raft Disk resources | `string` | `""` | no |
+| raft\_replica\_zones | List of replica zones for disks. If not set, will default to the zones in var.region | `list(list(string))` | <pre>[<br>  []<br>]</pre> | no |
+| raft\_set\_node\_id | Set Raft Node ID as the name of the vault pod | `bool` | `true` | no |
+| raft\_snapshot\_days\_in\_cycle | Number of days between snapshots | `number` | `1` | no |
+| raft\_snapshot\_start\_time | Time in UTC format to start snapshot | `string` | `"19:00"` | no |
+| raft\_storage\_enable | Enable the use of Raft Storage | `bool` | `true` | no |
 | release\_name | Helm release name for Vault | `string` | `"vault"` | no |
-| replica | Number of Replicas of Vault to run | `number` | `3` | no |
-| secrets\_annotations | Annotations for secrets | `map` | `{}` | no |
-| secrets\_labels | Labels for secrets | `map` | `{}` | no |
+| revoke\_on\_shutdown | Attempt to revoke Vault Token on injected agent shutdown. | `bool` | `true` | no |
+| server\_affinity | Server affinity YAML string | `string` | `"podAntiAffinity:\n  requiredDuringSchedulingIgnoredDuringExecution:\n    - labelSelector:\n        matchLabels:\n          app.kubernetes.io/name: {{ template \"vault.name\" . }}\n          app.kubernetes.io/instance: \"{{ .Release.Name }}\"\n          component: server\n      topologyKey: kubernetes.io/hostname\n"` | no |
+| server\_annotations | Annotations for server | `map` | `{}` | no |
+| server\_config | Additional server configuration | `map` | `{}` | no |
+| server\_env | Server extra environment variables | `map` | `{}` | no |
+| server\_extra\_args | Extra args for the server | `string` | `""` | no |
+| server\_extra\_containers | Extra containers for Vault server as a raw YAML string | `string` | `""` | no |
+| server\_image\_repository | Server image repository | `string` | `"vault"` | no |
+| server\_image\_tag | Server image tag | `string` | `"1.4.0"` | no |
+| server\_labels | Labels for server | `map` | `{}` | no |
+| server\_liveness\_probe\_enable | Enable server liness probe | `bool` | `true` | no |
+| server\_liveness\_probe\_path | Server liveness probe path | `string` | `"/v1/sys/health?standbyok=true"` | no |
+| server\_readiness\_probe\_enable | Enable server readiness probe | `bool` | `true` | no |
+| server\_readiness\_probe\_path | Path for server readiness probe | `string` | `""` | no |
+| server\_replicas | Number of replicas. Should be either 3 or 5 for raft | `number` | `5` | no |
+| server\_resources | Resources for server pods | `map` | <pre>{<br>  "limits": {<br>    "cpu": "250m",<br>    "memory": "256Mi"<br>  },<br>  "requests": {<br>    "cpu": "250m",<br>    "memory": "256Mi"<br>  }<br>}</pre> | no |
+| server\_secret\_env | Extra secret environment variables for server | `list` | `[]` | no |
+| server\_share\_pid | Share PID for server pods | `bool` | `false` | no |
+| server\_tolerations | YAML string for server tolerations | `string` | `""` | no |
+| server\_update\_strategy | Configure the Update Strategy Type for the StatefulSet. See https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies | `string` | `"RollingUpdate"` | no |
+| server\_volumes | Extra volumes for server | `list` | `[]` | no |
 | service\_annotations | Annotations for the service | `map` | `{}` | no |
-| service\_cluster\_ip | Cluster Service IP if needed | `string` | `""` | no |
-| service\_external\_port | Service external Port | `number` | `8200` | no |
-| service\_name | Name of service for Vault | `string` | `"vault"` | no |
-| service\_port | Service port | `number` | `8200` | no |
 | service\_type | Service type for Vault | `string` | `"ClusterIP"` | no |
 | storage\_bucket\_class | Storage class of the bucket. See https://cloud.google.com/storage/docs/storage-classes | `string` | `"REGIONAL"` | no |
 | storage\_bucket\_labels | Set of labels for the storage bucket | `map` | <pre>{<br>  "terraform": "true"<br>}</pre> | no |
 | storage\_bucket\_location | Location of the storage bucket. Defaults to the provider's region if empty. This must be in the same location as your KMS key. | `string` | `""` | no |
-| storage\_bucket\_name | Name of the Storage Bucket to store Vault's state | `any` | n/a | yes |
-| storage\_bucket\_project | Project ID to create the storage bucket under | `any` | n/a | yes |
-| storage\_ha\_enabled | Use the GCS bucket to provide HA for Vault. Set to "false" if you are using alternative HA storage like Consul | `string` | `"true"` | no |
+| storage\_bucket\_name | Name of the Storage Bucket to store Vault's state | `string` | `""` | no |
+| storage\_bucket\_project | Project ID to create the storage bucket under | `string` | `""` | no |
+| storage\_ha\_enabled | Use the GCS bucket to provide HA for Vault. Set to false if you are using alternative HA storage like Consul | `bool` | `true` | no |
 | storage\_key\_name | Name of the Vault storage key | `string` | `"storage"` | no |
-| storage\_key\_rotation\_period | Rotation period of the Vault storage key. Defaults to 6 months | `string` | `"15780000s"` | no |
+| storage\_key\_rotation\_period | Rotation period of the Vault storage key. Defaults to 90 days | `string` | `"7776000s"` | no |
 | timeout | Time in seconds to wait for any individual kubernetes operation. | `number` | `600` | no |
 | tls\_cert\_key | PEM encoded private key for Vault | `any` | n/a | yes |
 | tls\_cert\_pem | PEM encoded certificate for Vault | `any` | n/a | yes |
-| tls\_cipher\_suites | Specifies the list of supported ciphersuites as a comma-separated-list. Make sure this matches the type of key of the TLS certificate you are using. See https://golang.org/src/crypto/tls/cipher_suites.go | `string` | `"TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA"` | no |
-| tolerations | List of maps of tolerations for the pod. It is recommend you use this to run Vault on dedicated nodes. See the README | `list` | `[]` | no |
+| tls\_cipher\_suites | Specifies the list of supported ciphersuites as a comma-separated-list. Make sure this matches the type of key of the TLS certificate you are using. See https://golang.org/src/crypto/tls/cipher_suites.go | `string` | `""` | no |
+| tls\_disabled | Disable TLS for Vault | `bool` | `false` | no |
 | unauthenticated\_metrics\_access | If set to true, allows unauthenticated access to the /v1/sys/metrics endpoint. | `bool` | `false` | no |
 | unseal\_key\_name | Name of the Vault unseal key | `string` | `"unseal"` | no |
-| unseal\_key\_rotation\_period | Rotation period of the Vault unseal key. Defaults to 6 months | `string` | `"15780000s"` | no |
-| vault\_api\_addr | This is the address (full URL) to advertise to other Vault servers in the cluster for client redirection. See https://www.vaultproject.io/docs/configuration/#api_addr. | `string` | `"false"` | no |
-| vault\_config | Additional Vault configuration. See https://www.vaultproject.io/docs/configuration/. This is requried. The only configuration provided from this module is the listener. | `any` | n/a | yes |
-| vault\_dev | Run Vault in dev mode | `string` | `"false"` | no |
-| vault\_env | Extra environment variables for Vault | `list` | `[]` | no |
-| vault\_extra\_containers | Extra containers for Vault | `list` | `[]` | no |
-| vault\_extra\_volume\_mounts | Additional Volume Mounts for Vault | `list` | `[]` | no |
-| vault\_extra\_volumes | Additional volumes for Vault | `list` | `[]` | no |
-| vault\_image | Vault Image to run | `string` | `"vault"` | no |
-| vault\_listener\_address | Address for the Default Vault listener to bind to | `string` | `"[::]"` | no |
-| vault\_log\_level | Log level for Vault | `string` | `"info"` | no |
+| unseal\_key\_rotation\_period | Rotation period of the Vault unseal key. Defaults to 6 months | `string` | `"7776000s"` | no |
+| vault\_api\_addr | This is the address (full URL) to advertise to other Vault servers in the cluster for client redirection. See https://www.vaultproject.io/docs/configuration/#api_addr. | `string` | `""` | no |
+| vault\_cluster\_addr | Vault cluster addr | `string` | `""` | no |
 | vault\_node\_service\_account | Service Account for Vault Node Pools if Workload Identity is enabled | `string` | `"vault-gke-node"` | no |
-| vault\_secret\_volumes | List of maps of custom volume mounts that are backed by Kubernetes secrets. The maps should contain the keys `secretName` and `mountPath`. | `list` | `[]` | no |
 | vault\_server\_location\_description | Location of Vault server to put in description strings of resources | `string` | `""` | no |
 | vault\_server\_service\_account | Service Account name for the Vault Server | `string` | `"vault-server"` | no |
 | vault\_service\_account | Required if you did not create a node pool. This should be the service account that is used by the nodes to run Vault workload. They will be given additional permissions to use the keys for auto unseal and to write to the storage bucket | `string` | `"\u003cREQUIRED if not creating GKE node pool\u003e"` | no |
-| vault\_tag | Vault Image Tag to run | `string` | `"1.0.2"` | no |
 | workload\_identity\_enable | Enable Workload Identity on the GKE Node Pool. For more information, see https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity | `bool` | `false` | no |
 | workload\_identity\_project | Project to Create the Service Accoutn for Vault Pods  if Workload Identity is enabled. Defaults to the GKE project. | `string` | `""` | no |
 

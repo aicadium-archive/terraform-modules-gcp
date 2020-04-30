@@ -23,4 +23,8 @@ resource "google_storage_bucket" "vault" {
   encryption {
     default_kms_key_name = google_kms_crypto_key_iam_member.gcs[0].crypto_key_id
   }
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }

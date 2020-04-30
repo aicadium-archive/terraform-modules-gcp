@@ -16,6 +16,10 @@ resource "google_compute_disk" "raft" {
   disk_encryption_key {
     kms_key_self_link = google_kms_crypto_key.storage.self_link
   }
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "google_compute_region_disk" "raft" {
@@ -39,6 +43,10 @@ resource "google_compute_region_disk" "raft" {
 
   disk_encryption_key {
     kms_key_name = google_kms_crypto_key.storage.self_link
+  }
+
+  lifecycle {
+    prevent_destroy = true
   }
 }
 
