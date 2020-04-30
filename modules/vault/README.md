@@ -254,7 +254,7 @@ unsealing Vault if the nodes have access to the keys.
 | raft\_set\_node\_id | Set Raft Node ID as the name of the vault pod | `bool` | `true` | no |
 | raft\_snapshot\_days\_in\_cycle | Number of days between snapshots | `number` | `1` | no |
 | raft\_snapshot\_start\_time | Time in UTC format to start snapshot | `string` | `"19:00"` | no |
-| raft\_storage\_enable | Enable the use of Raft Storage | `bool` | `true` | no |
+| raft\_storage\_enable | Enable the use of Raft Storage | `bool` | `false` | no |
 | release\_name | Helm release name for Vault | `string` | `"vault"` | no |
 | revoke\_on\_shutdown | Attempt to revoke Vault Token on injected agent shutdown. | `bool` | `true` | no |
 | server\_affinity | Server affinity YAML string | `string` | `"podAntiAffinity:\n  requiredDuringSchedulingIgnoredDuringExecution:\n    - labelSelector:\n        matchLabels:\n          app.kubernetes.io/name: {{ template \"vault.name\" . }}\n          app.kubernetes.io/instance: \"{{ .Release.Name }}\"\n          component: server\n      topologyKey: kubernetes.io/hostname\n"` | no |

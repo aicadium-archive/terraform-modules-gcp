@@ -402,7 +402,7 @@ variable "kubernetes_labels" {
 #############################
 variable "raft_storage_enable" {
   description = "Enable the use of Raft Storage"
-  default     = true
+  default     = false
 }
 
 variable "raft_region" {
