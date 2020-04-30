@@ -289,6 +289,21 @@ variable "node_port" {
   default     = "30000"
 }
 
+variable "load_balancer_ip" {
+  description = "LoadBalancer IP, if any for Vault service"
+  default     = ""
+}
+
+variable "load_balancer_source_ranges" {
+  description = "Allowed source rangers for LoadBalancer service"
+  default     = []
+}
+
+variable "active_vault_pod_only" {
+  description = "Configure service to select active Vault pod only"
+  default     = false
+}
+
 variable "service_annotations" {
   description = "Annotations for the service"
   default     = {}

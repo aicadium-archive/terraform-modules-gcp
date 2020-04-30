@@ -242,9 +242,20 @@ server:
   # of the annotations to apply to the server pods
   annotations: ${server_annotations}
 
-  # Enables a headless service to be used by the Vault Statefulset
-  service:
+  # Create services to be used by the Vault Statefulset
+  # Four services are created:
+  #   - Headless Service
+  #   - Service for all pods - the "default" service
+  #   - Service for active pods
+  #   - Service for standby pods  service:
     enabled: true
+    # Extra annotations for all four service definition. This can either be YAML or a
+    # YAML-formatted multi-line templated string map of the annotations to apply
+    # to the service.
+    annotations: {}
+
+    # The options below are for the "default" service
+
     # clusterIP controls whether a Cluster IP address is attached to the
     # Vault service within Kubernetes.  By default the Vault service will
     # be given a Cluster IP address, set to None to disable.  When disabled
@@ -261,6 +272,12 @@ server:
     # will be random if left blank.
     nodePort: ${node_port}
 
+    loadBalancerSourceRanges: ${load_balancer_source_ranges}
+    #   - 10.0.0.0/16
+    #   - 1.78.23.3/32
+
+    loadBalancerIP: ${load_balancer_ip}
+
     # Port on which Vault server is listening
     port: 8200
     # Target port to which the service should be mapped to
@@ -269,6 +286,9 @@ server:
     # YAML-formatted multi-line templated string map of the annotations to apply
     # to the service.
     annotations: ${service_annotations}
+
+    # Configure the default service to only select active Vault pods
+    activeVaultPodOnly: ${active_vault_pod_only}
 
   # This configures the Vault Statefulset to create a PVC for data
   # storage when using the file or raft backend storage engines.

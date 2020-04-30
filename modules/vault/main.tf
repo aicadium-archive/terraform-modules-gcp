@@ -79,8 +79,12 @@ locals {
     server_liveness_probe_path    = var.server_liveness_probe_path
 
     service_type        = var.service_type
-    node_port           = var.node_port
     service_annotations = jsonencode(var.service_annotations)
+
+    node_port                   = var.node_port
+    load_balancer_ip            = var.load_balancer_ip
+    load_balancer_source_ranges = var.load_balancer_source_ranges != [] ? jsonencode(var.load_balancer_source_ranges) : "null"
+    active_vault_pod_only       = var.active_vault_pod_only
 
     ingress_enabled     = var.ingress_enabled
     ingress_labels      = jsonencode(var.ingress_labels)

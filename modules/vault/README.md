@@ -188,6 +188,7 @@ unsealing Vault if the nodes have access to the keys.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| active\_vault\_pod\_only | Configure service to select active Vault pod only | `bool` | `false` | no |
 | agent\_image\_repository | Image repository for the Vault agent that is injected | `string` | `"vault"` | no |
 | agent\_image\_tag | Image tag for the Vault agent that is injected | `string` | `"1.4.0"` | no |
 | auth\_path | Mount path of the Kubernetes Auth Engine that the injector will use | `string` | `"auth/kubernetes"` | no |
@@ -235,6 +236,8 @@ unsealing Vault if the nodes have access to the keys.
 | kubernetes\_labels | Labels for Kubernetes in general | `map` | <pre>{<br>  "app": "vault",<br>  "terraform": "true"<br>}</pre> | no |
 | kubernetes\_namespace | Namespace for Kubernetes resources | `string` | `"default"` | no |
 | labels | Labels for GCP resources | `map` | <pre>{<br>  "terraform": "true",<br>  "usage": "vault"<br>}</pre> | no |
+| load\_balancer\_ip | LoadBalancer IP, if any for Vault service | `string` | `""` | no |
+| load\_balancer\_source\_ranges | Allowed source rangers for LoadBalancer service | `list` | `[]` | no |
 | max\_history | Max history for Helm | `number` | `20` | no |
 | namespace\_selector | The selector for restricting the webhook to only specific namespaces. See https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#matching-requests-namespaceselector for more details. | `map` | `{}` | no |
 | node\_port | If type is set to 'NodePort', a specific nodePort value can be configured, will be random if left blank. | `string` | `"30000"` | no |
