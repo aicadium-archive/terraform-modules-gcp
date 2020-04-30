@@ -247,7 +247,8 @@ server:
   #   - Headless Service
   #   - Service for all pods - the "default" service
   #   - Service for active pods
-  #   - Service for standby pods  service:
+  #   - Service for standby pods
+  service:
     enabled: true
     # Extra annotations for all four service definition. This can either be YAML or a
     # YAML-formatted multi-line templated string map of the annotations to apply

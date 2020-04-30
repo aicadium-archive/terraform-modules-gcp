@@ -10,6 +10,11 @@ variable "project_id" {
   description = "Project ID for GCP Resources"
 }
 
+variable "values_file" {
+  description = "Write Helm chart values to file"
+  default     = ""
+}
+
 #############################
 # Helm Resources
 #############################

@@ -195,3 +195,9 @@ resource "kubernetes_secret" "tls_cert" {
     "${local.tls_secret_key_key}"  = var.tls_cert_key
   }
 }
+
+resource "local_file" "values" {
+  count = var.values_file != "" ? 1: 0
+    content  = templatefile("${path.module}/templates/values.yaml", local.chart_values)
+    filename = var.values_file
+}

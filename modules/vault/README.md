@@ -183,6 +183,7 @@ unsealing Vault if the nodes have access to the keys.
 | google-beta | n/a |
 | helm | >= 1.0 |
 | kubernetes | n/a |
+| local | n/a |
 
 ## Inputs
 
@@ -199,7 +200,8 @@ unsealing Vault if the nodes have access to the keys.
 | external\_vault\_addr | External vault server address for the injector to use. Setting this will disable deployment of a vault server along with the injector. | `string` | `""` | no |
 | fullname\_override | Helm resources full name override | `string` | `""` | no |
 | gcs\_storage\_enable | Enable the use of GCS Storage | `any` | n/a | yes |
-| gke\_cluster | Cluster to create node pool for | `string` | `"\u003cREQUIRED if gke_pool_create is true\u003e"` | no || gke\_disk\_type | Disk type for the nodes | `string` | `"pd-standard"` | no |
+| gke\_cluster | Cluster to create node pool for | `string` | `"\u003cREQUIRED if gke_pool_create is true\u003e"` | no |
+| gke\_disk\_type | Disk type for the nodes | `string` | `"pd-standard"` | no |
 | gke\_labels | Labels for the GKE nodes | `map` | `{}` | no |
 | gke\_machine\_type | Machine type for the GKE nodes. Make sure this matches the resources you are requesting | `string` | `"n1-standard-2"` | no |
 | gke\_metadata | Metadata for the GKE nodes | `map` | `{}` | no |
@@ -296,6 +298,7 @@ unsealing Vault if the nodes have access to the keys.
 | unauthenticated\_metrics\_access | If set to true, allows unauthenticated access to the /v1/sys/metrics endpoint. | `bool` | `false` | no |
 | unseal\_key\_name | Name of the Vault unseal key | `string` | `"unseal"` | no |
 | unseal\_key\_rotation\_period | Rotation period of the Vault unseal key. Defaults to 6 months | `string` | `"7776000s"` | no |
+| values\_file | Write Helm chart values to file | `string` | `""` | no |
 | vault\_api\_addr | This is the address (full URL) to advertise to other Vault servers in the cluster for client redirection. See https://www.vaultproject.io/docs/configuration/#api_addr. | `string` | `""` | no |
 | vault\_cluster\_addr | Vault cluster addr | `string` | `""` | no |
 | vault\_node\_service\_account | Service Account for Vault Node Pools if Workload Identity is enabled | `string` | `"vault-gke-node"` | no |
