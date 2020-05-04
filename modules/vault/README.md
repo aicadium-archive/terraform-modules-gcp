@@ -189,7 +189,6 @@ unsealing Vault if the nodes have access to the keys.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| active\_vault\_pod\_only | Configure service to select active Vault pod only | `bool` | `false` | no |
 | agent\_image\_repository | Image repository for the Vault agent that is injected | `string` | `"vault"` | no |
 | agent\_image\_tag | Image tag for the Vault agent that is injected | `string` | `"1.4.0"` | no |
 | auth\_path | Mount path of the Kubernetes Auth Engine that the injector will use | `string` | `"auth/kubernetes"` | no |
@@ -199,6 +198,7 @@ unsealing Vault if the nodes have access to the keys.
 | enable\_auth\_delegator | uthDelegator enables a cluster role binding to be attached to the service account.  This cluster role binding can be used to setup Kubernetes auth method. https://www.vaultproject.io/docs/auth/kubernetes.html | `bool` | `true` | no |
 | external\_vault\_addr | External vault server address for the injector to use. Setting this will disable deployment of a vault server along with the injector. | `string` | `""` | no |
 | fullname\_override | Helm resources full name override | `string` | `""` | no |
+| gcs\_extra\_parameters | Additional paramaters for GCS storage. See https://www.vaultproject.io/docs/configuration/storage/google-cloud-storage | `map` | `{}` | no |
 | gcs\_storage\_enable | Enable the use of GCS Storage | `any` | n/a | yes |
 | gke\_cluster | Cluster to create node pool for | `string` | `"\u003cREQUIRED if gke_pool_create is true\u003e"` | no |
 | gke\_disk\_type | Disk type for the nodes | `string` | `"pd-standard"` | no |
@@ -237,8 +237,6 @@ unsealing Vault if the nodes have access to the keys.
 | kubernetes\_labels | Labels for Kubernetes in general | `map` | <pre>{<br>  "app": "vault",<br>  "terraform": "true"<br>}</pre> | no |
 | kubernetes\_namespace | Namespace for Kubernetes resources | `string` | `"default"` | no |
 | labels | Labels for GCP resources | `map` | <pre>{<br>  "terraform": "true",<br>  "usage": "vault"<br>}</pre> | no |
-| load\_balancer\_ip | LoadBalancer IP, if any for Vault service | `string` | `""` | no |
-| load\_balancer\_source\_ranges | Allowed source rangers for LoadBalancer service | `list` | `[]` | no |
 | max\_history | Max history for Helm | `number` | `20` | no |
 | namespace\_selector | The selector for restricting the webhook to only specific namespaces. See https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#matching-requests-namespaceselector for more details. | `map` | `{}` | no |
 | node\_port | If type is set to 'NodePort', a specific nodePort value can be configured, will be random if left blank. | `string` | `"30000"` | no |
@@ -249,6 +247,7 @@ unsealing Vault if the nodes have access to the keys.
 | raft\_disk\_size | Size of Raft disks in GB | `number` | `100` | no |
 | raft\_disk\_type | Raft data disk type | `string` | `"pd-ssd"` | no |
 | raft\_disk\_zones | List of zones for disks. If not set, will default to the zones in var.region | `list(string)` | `[]` | no |
+| raft\_extra\_parameters | Extra parameters for Raft storage | `map` | `{}` | no |
 | raft\_persistent\_disks\_prefix | Prefix of the name persistent disks for Vault to create. The prefix will be appended with the index | `string` | `"vault-data-"` | no |
 | raft\_region | GCP Region for Raft Disk resources | `string` | `""` | no |
 | raft\_replica\_zones | List of replica zones for disks. If not set, will default to the zones in var.region | `list(list(string))` | <pre>[<br>  []<br>]</pre> | no |
@@ -295,12 +294,19 @@ unsealing Vault if the nodes have access to the keys.
 | tls\_cert\_pem | PEM encoded certificate for Vault | `any` | n/a | yes |
 | tls\_cipher\_suites | Specifies the list of supported ciphersuites as a comma-separated-list. Make sure this matches the type of key of the TLS certificate you are using. See https://golang.org/src/crypto/tls/cipher_suites.go | `string` | `""` | no |
 | tls\_disabled | Disable TLS for Vault | `bool` | `false` | no |
+| ui\_active\_vault\_pod\_only | Only select active vault server pod for UI service | `bool` | `true` | no |
+| ui\_annotations | Annotations for UI service | `map` | `{}` | no |
+| ui\_load\_balancer\_ip | UI Load balancer IP | `string` | `""` | no |
+| ui\_load\_balancer\_source\_ranges | Load balancer source ranges for UI service | `list` | `[]` | no |
+| ui\_publish\_unready | Publish unready pod IP address for UI service | `bool` | `false` | no |
+| ui\_service\_enable | Enable an additional UI service | `bool` | `false` | no |
+| ui\_service\_node\_port | Service node port for UI | `string` | `""` | no |
+| ui\_service\_port | Port for UI service | `number` | `8200` | no |
+| ui\_service\_type | Service Type for UI | `string` | `"ClusterIP"` | no |
 | unauthenticated\_metrics\_access | If set to true, allows unauthenticated access to the /v1/sys/metrics endpoint. | `bool` | `false` | no |
 | unseal\_key\_name | Name of the Vault unseal key | `string` | `"unseal"` | no |
 | unseal\_key\_rotation\_period | Rotation period of the Vault unseal key. Defaults to 6 months | `string` | `"7776000s"` | no |
 | values\_file | Write Helm chart values to file | `string` | `""` | no |
-| vault\_api\_addr | This is the address (full URL) to advertise to other Vault servers in the cluster for client redirection. See https://www.vaultproject.io/docs/configuration/#api_addr. | `string` | `""` | no |
-| vault\_cluster\_addr | Vault cluster addr | `string` | `""` | no |
 | vault\_node\_service\_account | Service Account for Vault Node Pools if Workload Identity is enabled | `string` | `"vault-gke-node"` | no |
 | vault\_server\_location\_description | Location of Vault server to put in description strings of resources | `string` | `""` | no |
 | vault\_server\_service\_account | Service Account name for the Vault Server | `string` | `"vault-server"` | no |
