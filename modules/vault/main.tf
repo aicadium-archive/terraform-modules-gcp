@@ -80,11 +80,17 @@ locals {
 
     service_type        = var.service_type
     service_annotations = jsonencode(var.service_annotations)
+    node_port           = var.node_port
 
-    node_port                   = var.node_port
-    load_balancer_ip            = var.load_balancer_ip
-    load_balancer_source_ranges = var.load_balancer_source_ranges != [] ? jsonencode(var.load_balancer_source_ranges) : "null"
-    active_vault_pod_only       = var.active_vault_pod_only
+    ui_service_enable              = var.ui_service_enable
+    ui_publish_unready             = var.ui_publish_unready
+    ui_active_vault_pod_only       = var.ui_active_vault_pod_only
+    ui_service_type                = var.ui_service_type
+    ui_service_node_port           = var.ui_service_node_port != "" ? var.ui_service_node_port : "null"
+    ui_service_port                = var.ui_service_port
+    ui_load_balancer_source_ranges = var.ui_load_balancer_source_ranges != [] ? jsonencode(var.ui_load_balancer_source_ranges) : "null"
+    ui_load_balancer_ip            = var.ui_load_balancer_ip
+    ui_annotations                 = jsonencode(var.ui_annotations)
 
     ingress_enabled     = var.ingress_enabled
     ingress_labels      = jsonencode(var.ingress_labels)
@@ -114,17 +120,15 @@ locals {
 
   server_configuration = merge(
     {
-      ui           = true
-      api_addr     = var.vault_api_addr
-      cluster_addr = var.vault_cluster_addr
+      ui = true
 
       listener = {
         tcp = {
           address         = "[::]:8200"
           cluster_address = "[::]:8201"
 
-          tls_cert_file    = "${local.tls_secret_path}/${local.tls_secret_cert_key}"
-          tls_key_file     = "${local.tls_secret_path}/${local.tls_secret_key_key}"
+          tls_cert_file    = "${local.tls_secret_path}/${local.tls_secret_name}/${local.tls_secret_cert_key}"
+          tls_key_file     = "${local.tls_secret_path}/${local.tls_secret_name}/${local.tls_secret_key_key}"
           tls_ciper_suites = var.tls_cipher_suites
 
           telemetry = {
@@ -167,16 +171,20 @@ locals {
   }
 
   raft_storage_config = {
-    raft = {
-      path = "/vault/data"
-    }
+    raft = merge(
+      {
+        path = "/vault/data"
+      },
+    var.raft_extra_parameters)
   }
 
   gcs_storage_config = {
-    gcs = {
-      bucket     = var.gcs_storage_enable ? google_storage_bucket.vault[0].name : "",
-      ha_enabled = var.storage_ha_enabled
-    }
+    gcs = merge(
+      {
+        bucket     = var.gcs_storage_enable ? google_storage_bucket.vault[0].name : "",
+        ha_enabled = var.storage_ha_enabled
+      },
+    var.gcs_extra_parameters)
   }
 }
 

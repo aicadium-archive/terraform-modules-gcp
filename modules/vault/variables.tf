@@ -294,21 +294,6 @@ variable "node_port" {
   default     = "30000"
 }
 
-variable "load_balancer_ip" {
-  description = "LoadBalancer IP, if any for Vault service"
-  default     = ""
-}
-
-variable "load_balancer_source_ranges" {
-  description = "Allowed source rangers for LoadBalancer service"
-  default     = []
-}
-
-variable "active_vault_pod_only" {
-  description = "Configure service to select active Vault pod only"
-  default     = false
-}
-
 variable "service_annotations" {
   description = "Annotations for the service"
   default     = {}
@@ -349,6 +334,51 @@ variable "service_account_annotations" {
   default     = {}
 }
 
+variable "ui_service_enable" {
+  description = "Enable an additional UI service"
+  default     = false
+}
+
+variable "ui_publish_unready" {
+  description = "Publish unready pod IP address for UI service"
+  default     = false
+}
+
+variable "ui_active_vault_pod_only" {
+  description = "Only select active vault server pod for UI service"
+  default     = true
+}
+
+variable "ui_service_type" {
+  description = "Service Type for UI"
+  default     = "ClusterIP"
+}
+
+variable "ui_service_node_port" {
+  description = "Service node port for UI"
+  default     = ""
+}
+
+variable "ui_service_port" {
+  description = "Port for UI service"
+  default     = 8200
+}
+
+variable "ui_load_balancer_source_ranges" {
+  description = "Load balancer source ranges for UI service"
+  default     = []
+}
+
+variable "ui_load_balancer_ip" {
+  description = "UI Load balancer IP"
+  default     = ""
+}
+
+variable "ui_annotations" {
+  description = "Annotations for UI service"
+  default     = {}
+}
+
 #############################
 # Vault Server Configuration
 #############################
@@ -362,17 +392,6 @@ variable "tls_cert_key" {
 
 variable "tls_cipher_suites" {
   description = "Specifies the list of supported ciphersuites as a comma-separated-list. Make sure this matches the type of key of the TLS certificate you are using. See https://golang.org/src/crypto/tls/cipher_suites.go"
-  default     = ""
-}
-
-
-variable "vault_api_addr" {
-  description = "This is the address (full URL) to advertise to other Vault servers in the cluster for client redirection. See https://www.vaultproject.io/docs/configuration/#api_addr."
-  default     = ""
-}
-
-variable "vault_cluster_addr" {
-  description = "Vault cluster addr"
   default     = ""
 }
 
@@ -451,6 +470,11 @@ variable "raft_replica_zones" {
   type        = list(list(string))
 }
 
+variable "raft_extra_parameters" {
+  description = "Extra parameters for Raft storage"
+  default     = {}
+}
+
 ##################################
 # Raft Data Disk Backup
 ##################################
@@ -513,6 +537,11 @@ variable "storage_bucket_labels" {
 variable "storage_ha_enabled" {
   description = "Use the GCS bucket to provide HA for Vault. Set to false if you are using alternative HA storage like Consul"
   default     = true
+}
+
+variable "gcs_extra_parameters" {
+  description = "Additional paramaters for GCS storage. See https://www.vaultproject.io/docs/configuration/storage/google-cloud-storage"
+  default     = {}
 }
 
 ##################################

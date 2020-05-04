@@ -143,7 +143,7 @@ server:
       #   or
       # kubernetes.io/ingress.class: nginx
       # kubernetes.io/tls-acme: "true"
-      hosts: ${ingress_hosts}
+    hosts: ${ingress_hosts}
 
     tls: ${ingress_tls}
     #  - secretName: chart-example-tls
@@ -242,18 +242,16 @@ server:
   # of the annotations to apply to the server pods
   annotations: ${server_annotations}
 
-  # Create services to be used by the Vault Statefulset
-  # Four services are created:
-  #   - Headless Service
-  #   - Service for all pods - the "default" service
-  #   - Service for active pods
-  #   - Service for standby pods
+  # Enables a headless service to be used by the Vault Statefulset
   service:
     enabled: true
-    # Extra annotations for all four service definition. This can either be YAML or a
-    # YAML-formatted multi-line templated string map of the annotations to apply
-    # to the service.
-    annotations: {}
+    # clusterIP controls whether a Cluster IP address is attached to the
+    # Vault service within Kubernetes.  By default the Vault service will
+    # be given a Cluster IP address, set to None to disable.  When disabled
+    # Kubernetes will create a "headless" service.  Headless services can be
+    # used to communicate with pods directly through DNS instead of a round robin
+    # load balancer.
+    # clusterIP: None
 
     # The options below are for the "default" service
 
@@ -269,16 +267,6 @@ server:
     # or NodePort.
     type: ${service_type}
 
-    # If type is set to "NodePort", a specific nodePort value can be configured,
-    # will be random if left blank.
-    nodePort: ${node_port}
-
-    loadBalancerSourceRanges: ${load_balancer_source_ranges}
-    #   - 10.0.0.0/16
-    #   - 1.78.23.3/32
-
-    loadBalancerIP: ${load_balancer_ip}
-
     # Port on which Vault server is listening
     port: 8200
     # Target port to which the service should be mapped to
@@ -287,9 +275,6 @@ server:
     # YAML-formatted multi-line templated string map of the annotations to apply
     # to the service.
     annotations: ${service_annotations}
-
-    # Configure the default service to only select active Vault pods
-    activeVaultPodOnly: ${active_vault_pod_only}
 
   # This configures the Vault Statefulset to create a PVC for data
   # storage when using the file or raft backend storage engines.
@@ -407,18 +392,21 @@ ui:
   # serviceType can be used to control the type of service created. For
   # example, setting this to "LoadBalancer" will create an external load
   # balancer (for supported K8S installations) to access the UI.
-  enabled: false
-  serviceType: "ClusterIP"
-  serviceNodePort: null
-  externalPort: 8200
+  enabled: ${ui_service_enable}
+  publishNotReadyAddresses: ${ui_publish_unready}
+  # The service should only contain selectors for active Vault pod
+  activeVaultPodOnly: ${ui_active_vault_pod_only}
+  serviceType: ${ui_service_type}
+  serviceNodePort: ${ui_service_node_port}
+  externalPort: ${ui_service_port}
 
-  # loadBalancerSourceRanges:
+  loadBalancerSourceRanges: ${ui_load_balancer_source_ranges}
   #   - 10.0.0.0/16
   #   - 1.78.23.3/32
 
-  # loadBalancerIP:
+  loadBalancerIP: ${ui_load_balancer_ip}
 
   # Extra annotations to attach to the ui service
   # This can either be YAML or a YAML-formatted multi-line templated string map
   # of the annotations to apply to the ui service
-  annotations: {}
+  annotations: ${ui_annotations}
