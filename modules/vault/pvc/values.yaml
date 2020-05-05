@@ -1,0 +1,13 @@
+namePrefix: "data-vault-"
+replicas: 5
+labels: {}
+annotations: {}
+volumeNamePrefix: data-vault-
+
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100G
+  storageClassName: ""

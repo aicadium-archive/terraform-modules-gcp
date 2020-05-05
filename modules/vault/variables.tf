@@ -1,3 +1,23 @@
+variable "labels" {
+  description = "Labels for GCP resources"
+  default = {
+    terraform = "true"
+    usage     = "vault"
+  }
+}
+
+variable "project_id" {
+  description = "Project ID for GCP Resources"
+}
+
+variable "values_file" {
+  description = "Write Helm chart values to file"
+  default     = ""
+}
+
+#############################
+# Helm Resources
+#############################
 variable "release_name" {
   description = "Helm release name for Vault"
   default     = "vault"
@@ -5,7 +25,7 @@ variable "release_name" {
 
 variable "chart_name" {
   description = "Helm chart name to provision"
-  default     = "incubator/vault"
+  default     = "https://github.com/hashicorp/vault-helm/archive/master.tar.gz"
 }
 
 variable "chart_repository" {
@@ -15,12 +35,7 @@ variable "chart_repository" {
 
 variable "chart_version" {
   description = "Version of Chart to install. Set to empty to install the latest version"
-  default     = "0.16.0"
-}
-
-variable "chart_namespace" {
-  description = "Namespace to install the chart into"
-  default     = "kube-system"
+  default     = ""
 }
 
 variable "max_history" {
@@ -33,29 +48,240 @@ variable "timeout" {
   default     = 600
 }
 
-variable "replica" {
-  description = "Number of Replicas of Vault to run"
-  default     = 3
-}
-
 variable "fullname_override" {
-  description = "Full name of resources"
+  description = "Helm resources full name override"
+  type        = string
+  default     = ""
+}
+
+#############################
+# Chart Configuration
+#############################
+variable "global_enabled" {
+  description = "Globally enable or disable chart resources"
+  default     = true
+}
+
+variable "tls_disabled" {
+  description = "Disable TLS for Vault"
+  default     = false
+}
+
+variable "injector_enabled" {
+  description = "Enable Vault Injector"
+  default     = true
+}
+
+variable "external_vault_addr" {
+  description = "External vault server address for the injector to use. Setting this will disable deployment of a vault server along with the injector."
+  default     = ""
+}
+
+variable "injector_image_repository" {
+  description = "Image repository for Vault Injector"
+  default     = "hashicorp/vault-k8s"
+}
+
+variable "injector_image_tag" {
+  description = "Image tag for Vault Injector"
+  default     = "0.3.0"
+}
+
+variable "injector_log_level" {
+  description = "Log level for the injector. Supported log levels: trace, debug, error, warn, info"
+  default     = "info"
+}
+
+variable "injector_log_format" {
+  description = "Log format for the injector. standard or json"
+  default     = "standard"
+}
+
+variable "injector_resources" {
+  description = "Resources for the injector"
+  default = {
+    requests = {
+      memory = "256Mi"
+      cpu    = "250m"
+    }
+    limits = {
+      memory = "256Mi"
+      cpu    = "250m"
+    }
+  }
+}
+
+variable "injector_env" {
+  description = "Extra environment variable for the injector pods"
+  default     = {}
+}
+
+variable "injector_affinity" {
+  description = "YAML string for injector pod affinity"
+  default     = ""
+}
+
+variable "injector_tolerations" {
+  description = "YAML string for injector tolerations"
+  default     = ""
+}
+
+variable "injector_priority_class_name" {
+  description = "Priority class name for injector pods"
+  default     = ""
+}
+
+variable "agent_image_repository" {
+  description = "Image repository for the Vault agent that is injected"
   default     = "vault"
 }
 
-variable "vault_image" {
-  description = "Vault Image to run"
+variable "agent_image_tag" {
+  description = "Image tag for the Vault agent that is injected"
+  default     = "1.4.0"
+}
+
+variable "auth_path" {
+  description = "Mount path of the Kubernetes Auth Engine that the injector will use"
+  default     = "auth/kubernetes"
+}
+
+variable "revoke_on_shutdown" {
+  description = "Attempt to revoke Vault Token on injected agent shutdown."
+  default     = true
+}
+
+variable "namespace_selector" {
+  description = "The selector for restricting the webhook to only specific namespaces. See https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#matching-requests-namespaceselector for more details."
+  default     = {}
+}
+
+variable "server_replicas" {
+  description = "Number of replicas. Should be either 3 or 5 for raft"
+  default     = 5
+}
+
+variable "server_image_repository" {
+  description = "Server image repository"
   default     = "vault"
 }
 
-variable "vault_tag" {
-  description = "Vault Image Tag to run"
-  default     = "1.0.2"
+variable "server_image_tag" {
+  description = "Server image tag"
+  default     = "1.4.0"
 }
 
-variable "service_name" {
-  description = "Name of service for Vault"
-  default     = "vault"
+variable "server_update_strategy" {
+  description = "Configure the Update Strategy Type for the StatefulSet. See https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies"
+  default     = "RollingUpdate"
+}
+
+variable "server_labels" {
+  description = "Labels for server"
+  default     = {}
+}
+
+variable "server_annotations" {
+  description = "Annotations for server"
+  default     = {}
+}
+
+variable "server_resources" {
+  description = "Resources for server pods"
+  default = {
+    requests = {
+      memory = "256Mi"
+      cpu    = "250m"
+    }
+    limits = {
+      memory = "256Mi"
+      cpu    = "250m"
+    }
+  }
+}
+
+variable "server_extra_containers" {
+  description = "Extra containers for Vault server as a raw YAML string"
+  default     = ""
+}
+
+variable "server_extra_args" {
+  description = "Extra args for the server"
+  default     = ""
+}
+
+variable "server_share_pid" {
+  description = "Share PID for server pods"
+  default     = false
+}
+
+variable "server_env" {
+  description = "Server extra environment variables"
+  default     = {}
+}
+
+variable "server_secret_env" {
+  description = "Extra secret environment variables for server"
+  default     = []
+}
+
+variable "server_volumes" {
+  description = "Extra volumes for server"
+  default     = []
+}
+
+variable "server_affinity" {
+  description = "Server affinity YAML string"
+  default     = <<EOF
+podAntiAffinity:
+  requiredDuringSchedulingIgnoredDuringExecution:
+    - labelSelector:
+        matchLabels:
+          app.kubernetes.io/name: {{ template "vault.name" . }}
+          app.kubernetes.io/instance: "{{ .Release.Name }}"
+          component: server
+      topologyKey: kubernetes.io/hostname
+EOF
+}
+
+variable "server_tolerations" {
+  description = "YAML string for server tolerations"
+  default     = ""
+}
+
+variable "server_priority_class_name" {
+  description = "Priority class name for server pods"
+  default     = ""
+}
+
+variable "server_readiness_probe_enable" {
+  description = "Enable server readiness probe"
+  default     = true
+}
+
+variable "server_readiness_probe_path" {
+  description = "Path for server readiness probe"
+  default     = ""
+}
+
+variable "server_liveness_probe_enable" {
+  description = "Enable server liness probe"
+  default     = true
+}
+
+variable "server_liveness_probe_path" {
+  description = "Server liveness probe path"
+  default     = "/v1/sys/health?standbyok=true"
+}
+
+variable "enable_auth_delegator" {
+  description = "uthDelegator enables a cluster role binding to be attached to the service account.  This cluster role binding can be used to setup Kubernetes auth method. https://www.vaultproject.io/docs/auth/kubernetes.html"
+  default     = true
+}
+
+variable "raft_set_node_id" {
+  description = "Set Raft Node ID as the name of the vault pod"
+  default     = true
 }
 
 variable "service_type" {
@@ -63,29 +289,9 @@ variable "service_type" {
   default     = "ClusterIP"
 }
 
-variable "load_balancer_ip" {
-  description = "Static Load balancer IP if needed"
-  default     = ""
-}
-
-variable "load_balancer_source_ranges" {
-  description = "Restrict the CIDRs that can access the load balancer"
-  default     = []
-}
-
-variable "service_external_port" {
-  description = "Service external Port"
-  default     = 8200
-}
-
-variable "service_port" {
-  description = "Service port"
-  default     = 8200
-}
-
-variable "service_cluster_ip" {
-  description = "Cluster Service IP if needed"
-  default     = ""
+variable "node_port" {
+  description = "If type is set to 'NodePort', a specific nodePort value can be configured, will be random if left blank."
+  default     = "30000"
 }
 
 variable "service_annotations" {
@@ -93,193 +299,89 @@ variable "service_annotations" {
   default     = {}
 }
 
-variable "service_additional_selector" {
-  description = "Additional selector the Vault service"
-  default     = {}
-}
-
 variable "ingress_enabled" {
-  description = "Enable ingress"
-  default     = "false"
+  description = "Enable ingress for the server"
+  default     = false
 }
 
 variable "ingress_labels" {
-  description = "Labels for ingress"
+  description = "Labels for server ingress"
+  default     = {}
+}
+
+variable "ingress_annotations" {
+  description = "Annotations for server ingress"
   default     = {}
 }
 
 variable "ingress_hosts" {
-  description = "Name of hosts for ingress"
-  default     = []
-}
-
-variable "ingress_annotations" {
-  description = "Annotations for ingress"
-  default     = {}
+  description = "Hosts for server ingress"
+  default = [
+    {
+      host  = "chart-example.local"
+      paths = []
+    }
+  ]
 }
 
 variable "ingress_tls" {
-  description = "Ingress TLS settings"
-  default     = {}
-}
-
-variable "cpu_request" {
-  description = "CPU request for pods"
-  default     = "500m"
-}
-
-variable "memory_request" {
-  description = "Memory request for pods"
-  default     = ""
-}
-
-variable "cpu_limit" {
-  description = "CPU limit for pods"
-  default     = ""
-}
-
-variable "memory_limit" {
-  description = "Memory limit for pods"
-  default     = "4Gi"
-}
-
-variable "affinity" {
-  description = "Affinity settings for the pods. Can be templated via Helm. The default has Anti affinity for other Vault pods."
-
-  default = {
-    podAntiAffinity = {
-      requiredDuringSchedulingIgnoredDuringExecution = [
-        {
-          topologyKey = "kubernetes.io/hostname"
-          labelSelector = {
-            matchLabels = {
-              app     = "{{ template \"vault.name\" . }}"
-              release = "{{ .Release.Name }}"
-            }
-          }
-        }
-      ]
-    }
-  }
-}
-
-variable "tolerations" {
-  description = "List of maps of tolerations for the pod. It is recommend you use this to run Vault on dedicated nodes. See the README"
+  description = "Configuration for server ingress"
   default     = []
 }
 
-variable "node_selector" {
-  description = "Node selectors for pods"
+variable "service_account_annotations" {
+  description = "Annotations for service account"
   default     = {}
 }
 
-variable "annotations" {
-  description = "Deployment annotations"
-  default     = {}
+variable "ui_service_enable" {
+  description = "Enable an additional UI service"
+  default     = false
 }
 
-variable "pod_annotations" {
-  description = "Annotations for pods"
-  default     = {}
+variable "ui_publish_unready" {
+  description = "Publish unready pod IP address for UI service"
+  default     = false
 }
 
-variable "labels" {
-  description = "Additional labels for deployment"
-  default     = {}
+variable "ui_active_vault_pod_only" {
+  description = "Only select active vault server pod for UI service"
+  default     = true
 }
 
-variable "container_lifecycle" {
-  description = "YAML string of the Vault container lifecycle hooks"
+variable "ui_service_type" {
+  description = "Service Type for UI"
+  default     = "ClusterIP"
+}
+
+variable "ui_service_node_port" {
+  description = "Service node port for UI"
   default     = ""
 }
 
-variable "pod_priority_class" {
-  description = "Pod priority class name. See https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/"
+variable "ui_service_port" {
+  description = "Port for UI service"
+  default     = 8200
+}
+
+variable "ui_load_balancer_source_ranges" {
+  description = "Load balancer source ranges for UI service"
+  default     = []
+}
+
+variable "ui_load_balancer_ip" {
+  description = "UI Load balancer IP"
   default     = ""
 }
 
-variable "min_ready_seconds" {
-  description = "Minimum number of seconds that newly created replicas must be ready without any containers crashing"
-  default     = "0"
-}
-
-# Vault Configuration
-variable "vault_dev" {
-  description = "Run Vault in dev mode"
-  default     = "false"
-}
-
-variable "vault_secret_volumes" {
-  description = "List of maps of custom volume mounts that are backed by Kubernetes secrets. The maps should contain the keys `secretName` and `mountPath`."
-  default     = []
-}
-
-variable "vault_env" {
-  description = "Extra environment variables for Vault"
-  default     = []
-}
-
-variable "vault_extra_containers" {
-  description = "Extra containers for Vault"
-  default     = []
-}
-
-variable "vault_extra_volumes" {
-  description = "Additional volumes for Vault"
-  default     = []
-}
-
-variable "vault_extra_volume_mounts" {
-  description = "Additional Volume Mounts for Vault"
-  default     = []
-}
-
-variable "vault_log_level" {
-  description = "Log level for Vault"
-  default     = "info"
-}
-
-variable "vault_listener_address" {
-  description = "Address for the Default Vault listener to bind to"
-  default     = "[::]"
-}
-
-variable "vault_config" {
-  description = "Additional Vault configuration. See https://www.vaultproject.io/docs/configuration/. This is requried. The only configuration provided from this module is the listener."
-  type        = any
-}
-
-# Optional Consul Agent
-variable "consul_image" {
-  description = "Consul Agent image to run"
-  default     = "consul"
-}
-
-variable "consul_tag" {
-  description = "Consul Agent image tag to run"
-  default     = "1.4.2"
-}
-
-variable "consul_join" {
-  description = "If set, will use this to run a Consul agent sidecar container alongside Vault. You will still need to configure Vault to use this. See https://www.consul.io/docs/agent/options.html#_join for details on this parameter"
-  default     = ""
-}
-
-variable "consul_gossip_secret_key_name" {
-  description = "Kubernetes Secret Key holding Consul gossip key"
-  default     = ""
-}
-
-variable "secrets_labels" {
-  description = "Labels for secrets"
+variable "ui_annotations" {
+  description = "Annotations for UI service"
   default     = {}
 }
 
-variable "secrets_annotations" {
-  description = "Annotations for secrets"
-  default     = {}
-}
-
+#############################
+# Vault Server Configuration
+#############################
 variable "tls_cert_pem" {
   description = "PEM encoded certificate for Vault"
 }
@@ -290,10 +392,161 @@ variable "tls_cert_key" {
 
 variable "tls_cipher_suites" {
   description = "Specifies the list of supported ciphersuites as a comma-separated-list. Make sure this matches the type of key of the TLS certificate you are using. See https://golang.org/src/crypto/tls/cipher_suites.go"
-  default     = "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA"
+  default     = ""
 }
 
+variable "unauthenticated_metrics_access" {
+  description = "If set to true, allows unauthenticated access to the /v1/sys/metrics endpoint."
+  default     = false
+}
+
+variable "server_config" {
+  description = "Additional server configuration"
+  default     = {}
+}
+
+#############################
+# Kubernetes Resources
+#############################
+variable "kubernetes_namespace" {
+  description = "Namespace for Kubernetes resources"
+  default     = "default"
+}
+
+variable "kubernetes_annotations" {
+  description = "Annotations for Kubernetes in general"
+  default     = {}
+}
+
+variable "kubernetes_labels" {
+  description = "Labels for Kubernetes in general"
+  default = {
+    terraform = "true"
+    app       = "vault"
+  }
+}
+
+#############################
+# Raft Storage
+#############################
+variable "raft_storage_enable" {
+  description = "Enable the use of Raft Storage"
+}
+
+variable "raft_region" {
+  description = "GCP Region for Raft Disk resources"
+  default     = ""
+}
+
+variable "raft_persistent_disks_prefix" {
+  description = "Prefix of the name persistent disks for Vault to create. The prefix will be appended with the index"
+  default     = "vault-data-"
+}
+
+variable "raft_disk_type" {
+  description = "Raft data disk type"
+  default     = "pd-ssd"
+}
+
+variable "raft_disk_size" {
+  description = "Size of Raft disks in GB"
+  default     = 100
+}
+
+variable "raft_disk_regional" {
+  description = "Use regional disks instead of zonal disks"
+  default     = true
+}
+
+variable "raft_disk_zones" {
+  description = "List of zones for disks. If not set, will default to the zones in var.region"
+  default     = []
+  type        = list(string)
+}
+
+variable "raft_replica_zones" {
+  description = "List of replica zones for disks. If not set, will default to the zones in var.region"
+  default     = [[]]
+  type        = list(list(string))
+}
+
+variable "raft_extra_parameters" {
+  description = "Extra parameters for Raft storage"
+  default     = {}
+}
+
+##################################
+# Raft Data Disk Backup
+##################################
+
+variable "raft_backup_policy" {
+  description = "Data disk backup policy name"
+  default     = "vault-data-backup"
+}
+
+variable "raft_backup_max_retention_days" {
+  description = "Maximum age of the snapshot that is allowed to be kept."
+  default     = 14
+}
+
+variable "raft_snapshot_days_in_cycle" {
+  description = "Number of days between snapshots"
+  default     = 1
+}
+
+variable "raft_snapshot_start_time" {
+  description = "Time in UTC format to start snapshot"
+  default     = "19:00"
+}
+
+##################################
+# GCS Storage
+##################################
+variable "gcs_storage_enable" {
+  description = "Enable the use of GCS Storage"
+}
+
+variable "storage_bucket_name" {
+  description = "Name of the Storage Bucket to store Vault's state"
+  default     = ""
+}
+
+variable "storage_bucket_class" {
+  description = "Storage class of the bucket. See https://cloud.google.com/storage/docs/storage-classes"
+  default     = "REGIONAL"
+}
+
+variable "storage_bucket_location" {
+  description = "Location of the storage bucket. Defaults to the provider's region if empty. This must be in the same location as your KMS key."
+  default     = ""
+}
+
+variable "storage_bucket_project" {
+  description = "Project ID to create the storage bucket under"
+  default     = ""
+}
+
+variable "storage_bucket_labels" {
+  description = "Set of labels for the storage bucket"
+
+  default = {
+    terraform = "true"
+  }
+}
+
+variable "storage_ha_enabled" {
+  description = "Use the GCS bucket to provide HA for Vault. Set to false if you are using alternative HA storage like Consul"
+  default     = true
+}
+
+variable "gcs_extra_parameters" {
+  description = "Additional paramaters for GCS storage. See https://www.vaultproject.io/docs/configuration/storage/google-cloud-storage"
+  default     = {}
+}
+
+##################################
 # KMS Configuration
+##################################
 
 variable "key_ring_name" {
   description = "Name of the Keyring to create."
@@ -315,7 +568,7 @@ variable "unseal_key_name" {
 
 variable "unseal_key_rotation_period" {
   description = "Rotation period of the Vault unseal key. Defaults to 6 months"
-  default     = "15780000s"
+  default     = "7776000s"
 }
 
 variable "storage_key_name" {
@@ -324,43 +577,13 @@ variable "storage_key_name" {
 }
 
 variable "storage_key_rotation_period" {
-  description = "Rotation period of the Vault storage key. Defaults to 6 months"
-  default     = "15780000s"
+  description = "Rotation period of the Vault storage key. Defaults to 90 days"
+  default     = "7776000s"
 }
 
-# Storage bucket configuration
-variable "storage_bucket_name" {
-  description = "Name of the Storage Bucket to store Vault's state"
-}
-
-variable "storage_bucket_class" {
-  description = "Storage class of the bucket. See https://cloud.google.com/storage/docs/storage-classes"
-  default     = "REGIONAL"
-}
-
-variable "storage_bucket_location" {
-  description = "Location of the storage bucket. Defaults to the provider's region if empty. This must be in the same location as your KMS key."
-  default     = ""
-}
-
-variable "storage_bucket_project" {
-  description = "Project ID to create the storage bucket under"
-}
-
-variable "storage_bucket_labels" {
-  description = "Set of labels for the storage bucket"
-
-  default = {
-    terraform = "true"
-  }
-}
-
-variable "storage_ha_enabled" {
-  description = "Use the GCS bucket to provide HA for Vault. Set to \"false\" if you are using alternative HA storage like Consul"
-  default     = "true"
-}
-
+##################################
 # Optional GKE Node pool
+##################################
 variable "gke_pool_create" {
   description = "Whether to create the GKE node pool or not"
   default     = false
@@ -369,11 +592,6 @@ variable "gke_pool_create" {
 variable "vault_server_service_account" {
   description = "Service Account name for the Vault Server"
   default     = "vault-server"
-}
-
-variable "gke_project" {
-  description = "Project ID where the GKE cluster lives in"
-  default     = "<REQUIRED if gke_pool_create is true>"
 }
 
 variable "gke_pool_name" {
@@ -448,21 +666,6 @@ variable "gke_node_upgrade_settings" {
 variable "vault_service_account" {
   description = "Required if you did not create a node pool. This should be the service account that is used by the nodes to run Vault workload. They will be given additional permissions to use the keys for auto unseal and to write to the storage bucket"
   default     = "<REQUIRED if not creating GKE node pool>"
-}
-
-variable "pod_api_address" {
-  description = "Set the `VAULT_API_ADDR` environment variable to the Pod IP Address. This is the address (full URL) to advertise to other Vault servers in the cluster for client redirection. See https://www.vaultproject.io/docs/configuration/#api_addr. If this is `true`, then `vault_api_addr` will have no effect."
-  default     = "false"
-}
-
-variable "vault_api_addr" {
-  description = "This is the address (full URL) to advertise to other Vault servers in the cluster for client redirection. See https://www.vaultproject.io/docs/configuration/#api_addr."
-  default     = "false"
-}
-
-variable "unauthenticated_metrics_access" {
-  description = "If set to true, allows unauthenticated access to the /v1/sys/metrics endpoint."
-  default     = false
 }
 
 variable "workload_identity_enable" {
