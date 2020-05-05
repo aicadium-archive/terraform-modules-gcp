@@ -74,7 +74,7 @@ locals {
     server_priority_class_name = var.server_priority_class_name
 
     server_readiness_probe_enable = var.server_readiness_probe_enable
-    server_readiness_probe_path   = var.server_readiness_probe_path
+    server_readiness_probe_path   = var.server_readiness_probe_path != "" ? var.server_readiness_probe_path : "null"
     server_liveness_probe_enable  = var.server_liveness_probe_enable
     server_liveness_probe_path    = var.server_liveness_probe_path
 
@@ -141,7 +141,7 @@ locals {
         gcpckms = {
           project    = google_kms_key_ring.vault.project
           region     = google_kms_key_ring.vault.location
-          key_ring   = google_kms_crypto_key.unseal.key_ring
+          key_ring   = google_kms_key_ring.vault.name
           crypto_key = google_kms_crypto_key.unseal.name
         }
       }
@@ -182,7 +182,7 @@ locals {
     gcs = merge(
       {
         bucket     = var.gcs_storage_enable ? google_storage_bucket.vault[0].name : "",
-        ha_enabled = var.storage_ha_enabled
+        ha_enabled = tostring(var.storage_ha_enabled)
       },
     var.gcs_extra_parameters)
   }

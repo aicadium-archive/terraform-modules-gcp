@@ -28,3 +28,12 @@ resource "google_storage_bucket" "vault" {
     prevent_destroy = true
   }
 }
+
+resource "google_storage_bucket_iam_member" "storage" {
+  provider = google-beta
+  count    = var.gcs_storage_enable ? 1 : 0
+
+  bucket = google_storage_bucket.vault[0].name
+  role   = "roles/storage.objectAdmin"
+  member = "serviceAccount:${local.vault_server_service_account}"
+}
