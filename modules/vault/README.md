@@ -16,6 +16,11 @@ You will need to have the following resources available:
 - A Kubernetes cluster, managed by GKE, or not
 - [Helm](https://helm.sh/) with Tiller running on the Cluster or you can opt to run
     [Tiller locally](https://docs.helm.sh/using_helm/#running-tiller-locally)
+- If you are planning to use the Raft storage for Vault, you will need to have the
+    [Google Compute Engine Persistent Disk CSI Driver](https://github.com/kubernetes-sigs/gcp-compute-persistent-disk-csi-driver)
+    installed on your cluster. GKE users can
+    [enable this](https://cloud.google.com/kubernetes-engine/docs/how-to/gce-pd-csi-driver) in their
+    cluster.
 
 You will need to have the following configured on your machine:
 
