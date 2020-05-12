@@ -107,6 +107,7 @@ locals {
     ####################################
     data_storage_enable = var.raft_storage_enable
     data_storage_size   = "${var.raft_disk_size}G"
+    storage_class       = var.raft_storage_enable ? kubernetes_storage_class.raft[0].metadata[0].name : ""
 
     ####################################
     # Configuration
