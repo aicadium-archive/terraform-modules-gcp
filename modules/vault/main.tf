@@ -105,15 +105,15 @@ locals {
     ####################################
     # Storage
     ####################################
-    data_storage_enable = var.raft_storage_enable
+    data_storage_enable = var.raft_storage_enable && var.raft_storage_use
     data_storage_size   = "${var.raft_disk_size}G"
-    storage_class       = var.raft_storage_enable ? kubernetes_storage_class.raft[0].metadata[0].name : ""
+    storage_class       = var.raft_storage_enable && var.raft_storage_use ? kubernetes_storage_class.raft[0].metadata[0].name : ""
 
     ####################################
     # Configuration
     ####################################
     replicas         = var.server_replicas
-    raft_enable      = var.raft_storage_enable
+    raft_enable      = var.raft_storage_enable && var.raft_storage_use
     raft_set_node_id = var.raft_set_node_id
 
     server_configuration = jsonencode(local.server_configuration)
@@ -152,8 +152,8 @@ locals {
       }
 
       storage = merge(
-        var.raft_storage_enable ? local.raft_storage_config : {},
-        var.gcs_storage_enable ? local.gcs_storage_config : {}
+        var.raft_storage_enable && var.raft_storage_use ? local.raft_storage_config : {},
+        var.gcs_storage_enable && var.gcs_storage_use ? local.gcs_storage_config : {}
       )
     },
     var.server_config,

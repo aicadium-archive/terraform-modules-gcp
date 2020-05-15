@@ -174,13 +174,6 @@ Vault is set up to [auto unseal](https://www.vaultproject.io/docs/concepts/seal.
 using the KMS key provisioned by this module. You will generally not have to worry about manually
 unsealing Vault if the nodes have access to the keys.
 
-## Requirements
-
-| Name | Version |
-|------|---------|
-| terraform | >= 0.12.17 |
-| helm | >= 1.0 |
-
 ## Providers
 
 | Name | Version |
@@ -193,7 +186,7 @@ unsealing Vault if the nodes have access to the keys.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+|------|-------------|------|---------|:-----:|
 | agent\_image\_repository | Image repository for the Vault agent that is injected | `string` | `"vault"` | no |
 | agent\_image\_tag | Image tag for the Vault agent that is injected | `string` | `"1.4.0"` | no |
 | auth\_path | Mount path of the Kubernetes Auth Engine that the injector will use | `string` | `"auth/kubernetes"` | no |
@@ -205,6 +198,7 @@ unsealing Vault if the nodes have access to the keys.
 | fullname\_override | Helm resources full name override | `string` | `""` | no |
 | gcs\_extra\_parameters | Additional paramaters for GCS storage. See https://www.vaultproject.io/docs/configuration/storage/google-cloud-storage | `map` | `{}` | no |
 | gcs\_storage\_enable | Enable the use of GCS Storage | `any` | n/a | yes |
+| gcs\_storage\_use | Use GCS storage in Vault configuration. Setting this to false allows GCS storage resouces to be created but not used with Vault | `bool` | `true` | no |
 | gke\_cluster | Cluster to create node pool for | `string` | `"\u003cREQUIRED if gke_pool_create is true\u003e"` | no |
 | gke\_disk\_type | Disk type for the nodes | `string` | `"pd-standard"` | no |
 | gke\_labels | Labels for the GKE nodes | `map` | `{}` | no |
@@ -246,7 +240,7 @@ unsealing Vault if the nodes have access to the keys.
 | namespace\_selector | The selector for restricting the webhook to only specific namespaces. See https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#matching-requests-namespaceselector for more details. | `map` | `{}` | no |
 | node\_port | If type is set to 'NodePort', a specific nodePort value can be configured, will be random if left blank. | `string` | `"30000"` | no |
 | project\_id | Project ID for GCP Resources | `any` | n/a | yes |
-| raft\_backup\_max\_retention\_days | Maximum age of the snapshot that is allowed to be kept. | `number` | `14` | no |
+| raft\_backup\_max\_retention\_days | Maximum daily age of the snapshot that is allowed to be kept. | `number` | `14` | no |
 | raft\_backup\_policy | Data disk backup policy name | `string` | `"vault-data-backup"` | no |
 | raft\_disk\_regional | Use regional disks instead of zonal disks | `bool` | `true` | no |
 | raft\_disk\_size | Size of Raft disks in GB | `number` | `100` | no |
@@ -257,9 +251,16 @@ unsealing Vault if the nodes have access to the keys.
 | raft\_region | GCP Region for Raft Disk resources | `string` | `""` | no |
 | raft\_replica\_zones | List of replica zones for disks. If not set, will default to the zones in var.region | `list(list(string))` | <pre>[<br>  []<br>]</pre> | no |
 | raft\_set\_node\_id | Set Raft Node ID as the name of the vault pod | `bool` | `true` | no |
-| raft\_snapshot\_days\_in\_cycle | Number of days between snapshots | `number` | `1` | no |
-| raft\_snapshot\_start\_time | Time in UTC format to start snapshot | `string` | `"19:00"` | no |
+| raft\_snapshot\_daily | Take snapshot of raft disks daily | `bool` | `true` | no |
+| raft\_snapshot\_day\_of\_weeks | Map where the key is the day of the week to take snapshot and the value is the time of the day | `map` | <pre>{<br>  "SUNDAY": "00:00",<br>  "WEDNESDAY": "00:00"<br>}</pre> | no |
+| raft\_snapshot\_days\_in\_cycle | Number of days between snapshots for daily snapshots | `number` | `1` | no |
+| raft\_snapshot\_enable | Create data disk resource backup policy | `bool` | `true` | no |
+| raft\_snapshot\_hourly | Take snapshot of raft disks hourly | `bool` | `false` | no |
+| raft\_snapshot\_hours\_in\_cycle | Number of hours between snapshots for hourly snapshots | `number` | `1` | no |
+| raft\_snapshot\_start\_time | Time in UTC format to start snapshot. Context depends on whether it's daily or hourly | `string` | `"19:00"` | no |
+| raft\_snapshot\_weekly | Take snapshot of raft disks weekly | `bool` | `false` | no |
 | raft\_storage\_enable | Enable the use of Raft Storage | `any` | n/a | yes |
+| raft\_storage\_use | Use Raft storage in Vault configuration. Setting this to false allows Raft storage resouces to be created but not used with Vault | `bool` | `true` | no |
 | release\_name | Helm release name for Vault | `string` | `"vault"` | no |
 | revoke\_on\_shutdown | Attempt to revoke Vault Token on injected agent shutdown. | `bool` | `true` | no |
 | server\_affinity | Server affinity YAML string | `string` | `"podAntiAffinity:\n  requiredDuringSchedulingIgnoredDuringExecution:\n    - labelSelector:\n        matchLabels:\n          app.kubernetes.io/name: {{ template \"vault.name\" . }}\n          app.kubernetes.io/instance: \"{{ .Release.Name }}\"\n          component: server\n      topologyKey: kubernetes.io/hostname\n"` | no |

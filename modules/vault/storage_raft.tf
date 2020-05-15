@@ -14,7 +14,7 @@ resource "google_compute_disk" "raft" {
   project = var.project_id
 
   disk_encryption_key {
-    kms_key_self_link = google_kms_crypto_key.storage.self_link
+    kms_key_self_link = google_kms_crypto_key_iam_member.disk[0].crypto_key_id
   }
 
   lifecycle {
@@ -52,7 +52,7 @@ resource "google_compute_region_disk" "raft" {
 
 resource "google_compute_resource_policy" "raft_backup" {
   provider = google-beta
-  count    = var.raft_storage_enable ? 1 : 0
+  count    = var.raft_storage_enable && var.raft_snapshot_enable ? 1 : 0
 
   name    = var.raft_backup_policy
   region  = var.raft_region
@@ -60,9 +60,34 @@ resource "google_compute_resource_policy" "raft_backup" {
 
   snapshot_schedule_policy {
     schedule {
-      daily_schedule {
-        days_in_cycle = var.raft_snapshot_days_in_cycle
-        start_time    = var.raft_snapshot_start_time
+      dynamic "hourly_schedule" {
+        for_each = var.raft_snapshot_hourly ? [{}] : []
+        content {
+          hours_in_cycle = var.raft_snapshot_hours_in_cycle
+          start_time     = var.raft_snapshot_start_time
+        }
+      }
+
+      dynamic "daily_schedule" {
+        for_each = var.raft_snapshot_daily ? [{}] : []
+        content {
+          days_in_cycle = var.raft_snapshot_days_in_cycle
+          start_time    = var.raft_snapshot_start_time
+        }
+      }
+
+      dynamic "weekly_schedule" {
+        for_each = var.raft_snapshot_weekly ? [{}] : []
+        content {
+          dynamic "day_of_weeks" {
+            for_each = var.raft_snapshot_day_of_weeks
+
+            content {
+              day        = day_of_weeks.key
+              start_time = day_of_weeks.value
+            }
+          }
+        }
       }
     }
 
@@ -74,14 +99,17 @@ resource "google_compute_resource_policy" "raft_backup" {
     snapshot_properties {
       labels            = var.labels
       storage_locations = [var.raft_region]
-      guest_flush       = false
     }
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
 resource "google_compute_disk_resource_policy_attachment" "raft_backup" {
   provider = google-beta
-  count    = var.raft_storage_enable && ! var.raft_disk_regional ? var.server_replicas : 0
+  count    = var.raft_storage_enable && var.raft_snapshot_enable && ! var.raft_disk_regional ? var.server_replicas : 0
 
   name = google_compute_resource_policy.raft_backup[0].name
   disk = google_compute_disk.raft[count.index].name
@@ -92,7 +120,7 @@ resource "google_compute_disk_resource_policy_attachment" "raft_backup" {
 
 resource "google_compute_region_disk_resource_policy_attachment" "raft_backup" {
   provider = google-beta
-  count    = var.raft_storage_enable && var.raft_disk_regional ? var.server_replicas : 0
+  count    = var.raft_storage_enable && var.raft_snapshot_enable && var.raft_disk_regional ? var.server_replicas : 0
 
   name   = google_compute_resource_policy.raft_backup[0].name
   disk   = google_compute_region_disk.raft[count.index].name

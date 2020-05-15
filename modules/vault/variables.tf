@@ -433,6 +433,11 @@ variable "raft_storage_enable" {
   description = "Enable the use of Raft Storage"
 }
 
+variable "raft_storage_use" {
+  description = "Use Raft storage in Vault configuration. Setting this to false allows Raft storage resouces to be created but not used with Vault"
+  default     = true
+}
+
 variable "raft_region" {
   description = "GCP Region for Raft Disk resources"
   default     = ""
@@ -479,24 +484,57 @@ variable "raft_extra_parameters" {
 # Raft Data Disk Backup
 ##################################
 
+variable "raft_snapshot_enable" {
+  description = "Create data disk resource backup policy"
+  default     = true
+}
+
 variable "raft_backup_policy" {
   description = "Data disk backup policy name"
   default     = "vault-data-backup"
 }
 
-variable "raft_backup_max_retention_days" {
-  description = "Maximum age of the snapshot that is allowed to be kept."
-  default     = 14
+variable "raft_snapshot_daily" {
+  description = "Take snapshot of raft disks daily"
+  default     = true
 }
 
 variable "raft_snapshot_days_in_cycle" {
-  description = "Number of days between snapshots"
+  description = "Number of days between snapshots for daily snapshots"
   default     = 1
 }
 
 variable "raft_snapshot_start_time" {
-  description = "Time in UTC format to start snapshot"
+  description = "Time in UTC format to start snapshot. Context depends on whether it's daily or hourly"
   default     = "19:00"
+}
+
+variable "raft_snapshot_hourly" {
+  description = "Take snapshot of raft disks hourly"
+  default     = false
+}
+
+variable "raft_snapshot_hours_in_cycle" {
+  description = "Number of hours between snapshots for hourly snapshots"
+  default     = 1
+}
+
+variable "raft_snapshot_weekly" {
+  description = "Take snapshot of raft disks weekly"
+  default     = false
+}
+
+variable "raft_snapshot_day_of_weeks" {
+  description = "Map where the key is the day of the week to take snapshot and the value is the time of the day"
+  default = {
+    SUNDAY    = "00:00"
+    WEDNESDAY = "00:00"
+  }
+}
+
+variable "raft_backup_max_retention_days" {
+  description = "Maximum daily age of the snapshot that is allowed to be kept."
+  default     = 14
 }
 
 ##################################
@@ -504,6 +542,11 @@ variable "raft_snapshot_start_time" {
 ##################################
 variable "gcs_storage_enable" {
   description = "Enable the use of GCS Storage"
+}
+
+variable "gcs_storage_use" {
+  description = "Use GCS storage in Vault configuration. Setting this to false allows GCS storage resouces to be created but not used with Vault"
+  default     = true
 }
 
 variable "storage_bucket_name" {
