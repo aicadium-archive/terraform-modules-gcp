@@ -250,7 +250,7 @@ unsealing Vault if the nodes have access to the keys.
 | raft\_backup\_max\_retention\_days | Maximum daily age of the snapshot that is allowed to be kept. | `number` | `14` | no |
 | raft\_backup\_policy | Data disk backup policy name | `string` | `"vault-data-backup"` | no |
 | raft\_disk\_regional | Use regional disks instead of zonal disks | `bool` | `true` | no |
-| raft\_disk\_size | Size of Raft disks in GB | `number` | `100` | no |
+| raft\_disk\_size | Size of Raft disks in GB | `number` | `10` | no |
 | raft\_disk\_type | Raft data disk type | `string` | `"pd-ssd"` | no |
 | raft\_disk\_zones | List of zones for disks. If not set, will default to the zones in var.region | `list(string)` | `[]` | no |
 | raft\_extra\_parameters | Extra parameters for Raft storage | `map` | `{}` | no |

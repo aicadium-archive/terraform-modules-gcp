@@ -454,7 +454,7 @@ variable "raft_disk_type" {
 
 variable "raft_disk_size" {
   description = "Size of Raft disks in GB"
-  default     = 100
+  default     = 10
 }
 
 variable "raft_disk_regional" {
