@@ -2,7 +2,7 @@ resource "helm_release" "vault" {
   depends_on = [
     google_container_node_pool.vault,
     google_storage_bucket.vault,
-    kubernetes_persistent_volume.raft,
+    kubernetes_persistent_volume_claim.raft,
   ]
 
   name       = var.release_name
