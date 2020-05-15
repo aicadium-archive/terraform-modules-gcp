@@ -26,7 +26,10 @@ resource "google_container_node_pool" "vault" {
   cluster  = var.gke_cluster
   project  = var.project_id
 
-  node_count = var.gke_node_count
+  autoscaling {
+    min_node_count = 0
+    max_node_count = var.gke_node_count
+  }
 
   management {
     auto_repair  = true

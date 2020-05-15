@@ -2,7 +2,7 @@ resource "helm_release" "vault" {
   depends_on = [
     google_container_node_pool.vault,
     google_storage_bucket.vault,
-    helm_release.raft_pvc,
+    kubernetes_persistent_volume_claim.raft,
   ]
 
   name       = var.release_name
@@ -25,7 +25,6 @@ locals {
   # - Support template string variant of annotations
   chart_values = {
     global_enabled = var.global_enabled
-    tls_disabled   = var.tls_disabled
 
     ####################################
     # Injector
@@ -105,14 +104,15 @@ locals {
     ####################################
     # Storage
     ####################################
-    data_storage_enable = var.raft_storage_enable
+    data_storage_enable = var.raft_storage_enable && var.raft_storage_use
     data_storage_size   = "${var.raft_disk_size}G"
+    storage_class       = var.raft_storage_enable && var.raft_storage_use ? kubernetes_storage_class.raft[0].metadata[0].name : ""
 
     ####################################
     # Configuration
     ####################################
     replicas         = var.server_replicas
-    raft_enable      = var.raft_storage_enable
+    raft_enable      = var.raft_storage_enable && var.raft_storage_use
     raft_set_node_id = var.raft_set_node_id
 
     server_configuration = jsonencode(local.server_configuration)
@@ -151,8 +151,8 @@ locals {
       }
 
       storage = merge(
-        var.raft_storage_enable ? local.raft_storage_config : {},
-        var.gcs_storage_enable ? local.gcs_storage_config : {}
+        var.raft_storage_enable && var.raft_storage_use ? local.raft_storage_config : {},
+        var.gcs_storage_enable && var.gcs_storage_use ? local.gcs_storage_config : {}
       )
     },
     var.server_config,
@@ -163,6 +163,7 @@ locals {
 
   tls_secret_cert_key = "cert"
   tls_secret_key_key  = "key"
+  tls_secret_ca_key   = "ca"
 
   tls_volume = {
     type = "secret"
@@ -174,6 +175,14 @@ locals {
     raft = merge(
       {
         path = "/vault/data"
+
+        retry_join = [
+          for i in range(var.server_replicas) :
+          {
+            leader_api_addr = "https://vault-${i}.${local.fullname}-internal.${var.kubernetes_namespace}.svc:8200"
+            leader_ca_cert  = var.tls_cert_ca
+          }
+        ]
       },
     var.raft_extra_parameters)
   }
@@ -201,6 +210,7 @@ resource "kubernetes_secret" "tls_cert" {
   data = {
     "${local.tls_secret_cert_key}" = var.tls_cert_pem
     "${local.tls_secret_key_key}"  = var.tls_cert_key
+    "${local.tls_secret_ca_key}"   = var.tls_cert_ca
   }
 }
 

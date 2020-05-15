@@ -16,6 +16,11 @@ You will need to have the following resources available:
 - A Kubernetes cluster, managed by GKE, or not
 - [Helm](https://helm.sh/) with Tiller running on the Cluster or you can opt to run
     [Tiller locally](https://docs.helm.sh/using_helm/#running-tiller-locally)
+- If you are planning to use the Raft storage for Vault, you will need to have the
+    [Google Compute Engine Persistent Disk CSI Driver](https://github.com/kubernetes-sigs/gcp-compute-persistent-disk-csi-driver)
+    installed on your cluster. GKE users can
+    [enable this](https://cloud.google.com/kubernetes-engine/docs/how-to/gce-pd-csi-driver) in their
+    cluster.
 
 You will need to have the following configured on your machine:
 
@@ -200,6 +205,7 @@ unsealing Vault if the nodes have access to the keys.
 | fullname\_override | Helm resources full name override | `string` | `""` | no |
 | gcs\_extra\_parameters | Additional paramaters for GCS storage. See https://www.vaultproject.io/docs/configuration/storage/google-cloud-storage | `map` | `{}` | no |
 | gcs\_storage\_enable | Enable the use of GCS Storage | `any` | n/a | yes |
+| gcs\_storage\_use | Use GCS storage in Vault configuration. Setting this to false allows GCS storage resouces to be created but not used with Vault | `bool` | `true` | no |
 | gke\_cluster | Cluster to create node pool for | `string` | `"\u003cREQUIRED if gke_pool_create is true\u003e"` | no |
 | gke\_disk\_type | Disk type for the nodes | `string` | `"pd-standard"` | no |
 | gke\_labels | Labels for the GKE nodes | `map` | `{}` | no |
@@ -241,10 +247,10 @@ unsealing Vault if the nodes have access to the keys.
 | namespace\_selector | The selector for restricting the webhook to only specific namespaces. See https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#matching-requests-namespaceselector for more details. | `map` | `{}` | no |
 | node\_port | If type is set to 'NodePort', a specific nodePort value can be configured, will be random if left blank. | `string` | `"30000"` | no |
 | project\_id | Project ID for GCP Resources | `any` | n/a | yes |
-| raft\_backup\_max\_retention\_days | Maximum age of the snapshot that is allowed to be kept. | `number` | `14` | no |
+| raft\_backup\_max\_retention\_days | Maximum daily age of the snapshot that is allowed to be kept. | `number` | `14` | no |
 | raft\_backup\_policy | Data disk backup policy name | `string` | `"vault-data-backup"` | no |
 | raft\_disk\_regional | Use regional disks instead of zonal disks | `bool` | `true` | no |
-| raft\_disk\_size | Size of Raft disks in GB | `number` | `100` | no |
+| raft\_disk\_size | Size of Raft disks in GB | `number` | `10` | no |
 | raft\_disk\_type | Raft data disk type | `string` | `"pd-ssd"` | no |
 | raft\_disk\_zones | List of zones for disks. If not set, will default to the zones in var.region | `list(string)` | `[]` | no |
 | raft\_extra\_parameters | Extra parameters for Raft storage | `map` | `{}` | no |
@@ -252,9 +258,16 @@ unsealing Vault if the nodes have access to the keys.
 | raft\_region | GCP Region for Raft Disk resources | `string` | `""` | no |
 | raft\_replica\_zones | List of replica zones for disks. If not set, will default to the zones in var.region | `list(list(string))` | <pre>[<br>  []<br>]</pre> | no |
 | raft\_set\_node\_id | Set Raft Node ID as the name of the vault pod | `bool` | `true` | no |
-| raft\_snapshot\_days\_in\_cycle | Number of days between snapshots | `number` | `1` | no |
-| raft\_snapshot\_start\_time | Time in UTC format to start snapshot | `string` | `"19:00"` | no |
+| raft\_snapshot\_daily | Take snapshot of raft disks daily | `bool` | `true` | no |
+| raft\_snapshot\_day\_of\_weeks | Map where the key is the day of the week to take snapshot and the value is the time of the day | `map` | <pre>{<br>  "SUNDAY": "00:00",<br>  "WEDNESDAY": "00:00"<br>}</pre> | no |
+| raft\_snapshot\_days\_in\_cycle | Number of days between snapshots for daily snapshots | `number` | `1` | no |
+| raft\_snapshot\_enable | Create data disk resource backup policy | `bool` | `true` | no |
+| raft\_snapshot\_hourly | Take snapshot of raft disks hourly | `bool` | `false` | no |
+| raft\_snapshot\_hours\_in\_cycle | Number of hours between snapshots for hourly snapshots | `number` | `1` | no |
+| raft\_snapshot\_start\_time | Time in UTC format to start snapshot. Context depends on whether it's daily or hourly | `string` | `"19:00"` | no |
+| raft\_snapshot\_weekly | Take snapshot of raft disks weekly | `bool` | `false` | no |
 | raft\_storage\_enable | Enable the use of Raft Storage | `any` | n/a | yes |
+| raft\_storage\_use | Use Raft storage in Vault configuration. Setting this to false allows Raft storage resouces to be created but not used with Vault | `bool` | `true` | no |
 | release\_name | Helm release name for Vault | `string` | `"vault"` | no |
 | revoke\_on\_shutdown | Attempt to revoke Vault Token on injected agent shutdown. | `bool` | `true` | no |
 | server\_affinity | Server affinity YAML string | `string` | `"podAntiAffinity:\n  requiredDuringSchedulingIgnoredDuringExecution:\n    - labelSelector:\n        matchLabels:\n          app.kubernetes.io/name: {{ template \"vault.name\" . }}\n          app.kubernetes.io/instance: \"{{ .Release.Name }}\"\n          component: server\n      topologyKey: kubernetes.io/hostname\n"` | no |
@@ -290,10 +303,10 @@ unsealing Vault if the nodes have access to the keys.
 | storage\_key\_name | Name of the Vault storage key | `string` | `"storage"` | no |
 | storage\_key\_rotation\_period | Rotation period of the Vault storage key. Defaults to 90 days | `string` | `"7776000s"` | no |
 | timeout | Time in seconds to wait for any individual kubernetes operation. | `number` | `600` | no |
+| tls\_cert\_ca | PEM encoded CA for Vault | `any` | n/a | yes |
 | tls\_cert\_key | PEM encoded private key for Vault | `any` | n/a | yes |
 | tls\_cert\_pem | PEM encoded certificate for Vault | `any` | n/a | yes |
 | tls\_cipher\_suites | Specifies the list of supported ciphersuites as a comma-separated-list. Make sure this matches the type of key of the TLS certificate you are using. See https://golang.org/src/crypto/tls/cipher_suites.go | `string` | `""` | no |
-| tls\_disabled | Disable TLS for Vault | `bool` | `false` | no |
 | ui\_active\_vault\_pod\_only | Only select active vault server pod for UI service | `bool` | `true` | no |
 | ui\_annotations | Annotations for UI service | `map` | `{}` | no |
 | ui\_load\_balancer\_ip | UI Load balancer IP | `string` | `""` | no |
