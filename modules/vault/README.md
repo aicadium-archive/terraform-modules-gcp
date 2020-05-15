@@ -296,10 +296,10 @@ unsealing Vault if the nodes have access to the keys.
 | storage\_key\_name | Name of the Vault storage key | `string` | `"storage"` | no |
 | storage\_key\_rotation\_period | Rotation period of the Vault storage key. Defaults to 90 days | `string` | `"7776000s"` | no |
 | timeout | Time in seconds to wait for any individual kubernetes operation. | `number` | `600` | no |
+| tls\_cert\_ca | PEM encoded CA for Vault | `any` | n/a | yes |
 | tls\_cert\_key | PEM encoded private key for Vault | `any` | n/a | yes |
 | tls\_cert\_pem | PEM encoded certificate for Vault | `any` | n/a | yes |
 | tls\_cipher\_suites | Specifies the list of supported ciphersuites as a comma-separated-list. Make sure this matches the type of key of the TLS certificate you are using. See https://golang.org/src/crypto/tls/cipher_suites.go | `string` | `""` | no |
-| tls\_disabled | Disable TLS for Vault | `bool` | `false` | no |
 | ui\_active\_vault\_pod\_only | Only select active vault server pod for UI service | `bool` | `true` | no |
 | ui\_annotations | Annotations for UI service | `map` | `{}` | no |
 | ui\_load\_balancer\_ip | UI Load balancer IP | `string` | `""` | no |

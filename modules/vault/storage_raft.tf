@@ -178,7 +178,10 @@ resource "kubernetes_persistent_volume" "raft" {
           match_expressions {
             key      = "topology.gke.io/zone"
             operator = "In"
-            values   = var.raft_disk_regional ? google_compute_region_disk.raft[count.index].replica_zones : [google_compute_disk.raft[count.index].zone]
+            values = var.raft_disk_regional ? coalescelist(
+              element(var.raft_replica_zones, count.index),
+              [element(data.google_compute_zones.raft[0].names, count.index), element(data.google_compute_zones.raft[0].names, count.index + 1)]
+            ) : [google_compute_disk.raft[count.index].zone]
           }
         }
       }

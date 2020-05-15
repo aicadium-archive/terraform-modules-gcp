@@ -62,11 +62,6 @@ variable "global_enabled" {
   default     = true
 }
 
-variable "tls_disabled" {
-  description = "Disable TLS for Vault"
-  default     = false
-}
-
 variable "injector_enabled" {
   description = "Enable Vault Injector"
   default     = true
@@ -388,6 +383,10 @@ variable "tls_cert_pem" {
 
 variable "tls_cert_key" {
   description = "PEM encoded private key for Vault"
+}
+
+variable "tls_cert_ca" {
+  description = "PEM encoded CA for Vault"
 }
 
 variable "tls_cipher_suites" {
