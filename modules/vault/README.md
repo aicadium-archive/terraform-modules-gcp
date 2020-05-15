@@ -174,6 +174,13 @@ Vault is set up to [auto unseal](https://www.vaultproject.io/docs/concepts/seal.
 using the KMS key provisioned by this module. You will generally not have to worry about manually
 unsealing Vault if the nodes have access to the keys.
 
+## Requirements
+
+| Name | Version |
+|------|---------|
+| terraform | >= 0.12.17 |
+| helm | >= 1.0 |
+
 ## Providers
 
 | Name | Version |
@@ -186,7 +193,7 @@ unsealing Vault if the nodes have access to the keys.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:-----:|
+|------|-------------|------|---------|:--------:|
 | agent\_image\_repository | Image repository for the Vault agent that is injected | `string` | `"vault"` | no |
 | agent\_image\_tag | Image tag for the Vault agent that is injected | `string` | `"1.4.0"` | no |
 | auth\_path | Mount path of the Kubernetes Auth Engine that the injector will use | `string` | `"auth/kubernetes"` | no |
