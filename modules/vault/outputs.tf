@@ -8,6 +8,16 @@ output "key_ring_self_link" {
   value       = google_kms_key_ring.vault.self_link
 }
 
+output "unseal_key_self_link" {
+  description = "Self-link of the KMS Key for unseal"
+  value       = google_kms_crypto_key.unseal.id
+}
+
+output "storage_key_self_link" {
+  description = "Self-link of the KMS Key for storage"
+  value       = google_kms_crypto_key.storage.id
+}
+
 output "node_pool_service_account" {
   description = "Email ID of the GKE node pool service account if created"
   value       = local.node_service_account

@@ -334,4 +334,6 @@ unsealing Vault if the nodes have access to the keys.
 | key\_ring\_self\_link | Self-link of the KMS Keyring created for Vault |
 | node\_pool\_service\_account | Email ID of the GKE node pool service account if created |
 | release\_name | Release name of the Helm chart |
+| storage\_key\_self\_link | Self-link of the KMS Key for storage |
+| unseal\_key\_self\_link | Self-link of the KMS Key for unseal |
 | vault\_server\_service\_account | Email ID of the Vault server Service Account if created |
