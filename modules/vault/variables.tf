@@ -479,6 +479,18 @@ variable "raft_extra_parameters" {
   default     = {}
 }
 
+variable "raft_disk_labels" {
+  description = "Override labels for Raft GCE PD resources. Will use `var.labels` if set to null"
+  default     = null
+  type        = map(string)
+}
+
+variable "raft_disk_snapshot_labels" {
+  description = "Override labels for Raft GCE PD snapshot resources. Will use `var.labels` if set to null"
+  default     = null
+  type        = map(string)
+}
+
 ##################################
 # Raft Data Disk Backup
 ##################################

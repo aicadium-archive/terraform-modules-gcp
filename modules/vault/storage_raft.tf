@@ -10,7 +10,7 @@ resource "google_compute_disk" "raft" {
 
   description = "Vault server data disks replica ${count.index}"
 
-  labels  = var.labels
+  labels  = coalesce(var.raft_disk_labels, var.labels)
   project = var.project_id
 
   disk_encryption_key {
@@ -38,7 +38,7 @@ resource "google_compute_region_disk" "raft" {
 
   description = "Vault server data disks replica ${count.index}"
 
-  labels  = var.labels
+  labels  = coalesce(var.raft_disk_labels, var.labels)
   project = var.project_id
 
   disk_encryption_key {
@@ -97,7 +97,7 @@ resource "google_compute_resource_policy" "raft_backup" {
     }
 
     snapshot_properties {
-      labels            = var.labels
+      labels            = coalesce(var.raft_disk_snapshot_labels, var.labels)
       storage_locations = [var.raft_region]
     }
   }
