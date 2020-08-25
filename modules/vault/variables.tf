@@ -25,17 +25,17 @@ variable "release_name" {
 
 variable "chart_name" {
   description = "Helm chart name to provision"
-  default     = "https://github.com/hashicorp/vault-helm/archive/master.tar.gz"
+  default     = "vault"
 }
 
 variable "chart_repository" {
   description = "Helm repository for the chart"
-  default     = ""
+  default     = "https://helm.releases.hashicorp.com"
 }
 
 variable "chart_version" {
   description = "Version of Chart to install. Set to empty to install the latest version"
-  default     = ""
+  default     = "0.7.0"
 }
 
 variable "max_history" {
@@ -62,9 +62,29 @@ variable "global_enabled" {
   default     = true
 }
 
+variable "psp_enabled" {
+  description = "Enable PSP"
+  default     = false
+}
+
+variable "psp_annotations" {
+  description = "Template YAML string for PSP annotations"
+  default     = <<-EOF
+      seccomp.security.alpha.kubernetes.io/allowedProfileNames: docker/default,runtime/default
+      apparmor.security.beta.kubernetes.io/allowedProfileNames: runtime/default
+      seccomp.security.alpha.kubernetes.io/defaultProfileName:  runtime/default
+      apparmor.security.beta.kubernetes.io/defaultProfileName:  runtime/default
+      EOF
+}
+
 variable "injector_enabled" {
   description = "Enable Vault Injector"
   default     = true
+}
+
+variable "injector_metrics_enabled" {
+  description = "enable a node exporter metrics endpoint at /metrics"
+  default     = false
 }
 
 variable "external_vault_addr" {
@@ -79,7 +99,7 @@ variable "injector_image_repository" {
 
 variable "injector_image_tag" {
   description = "Image tag for Vault Injector"
-  default     = "0.3.0"
+  default     = "0.5.0"
 }
 
 variable "injector_log_level" {
@@ -133,7 +153,7 @@ variable "agent_image_repository" {
 
 variable "agent_image_tag" {
   description = "Image tag for the Vault agent that is injected"
-  default     = "1.4.0"
+  default     = "1.5.2"
 }
 
 variable "auth_path" {
@@ -163,7 +183,7 @@ variable "server_image_repository" {
 
 variable "server_image_tag" {
   description = "Server image tag"
-  default     = "1.4.0"
+  default     = "1.5.2"
 }
 
 variable "server_update_strategy" {
@@ -324,8 +344,23 @@ variable "ingress_tls" {
   default     = []
 }
 
+variable "service_account_create" {
+  description = "Create service account for server"
+  default     = true
+}
+
+variable "service_account_name" {
+  description = "Override name for service account"
+  default     = ""
+}
+
 variable "service_account_annotations" {
   description = "Annotations for service account"
+  default     = {}
+}
+
+variable "sts_annotations" {
+  description = "Annotations for server StatefulSet"
   default     = {}
 }
 

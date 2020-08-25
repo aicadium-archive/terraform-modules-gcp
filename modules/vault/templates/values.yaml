@@ -10,10 +10,22 @@ global:
   #   - name: image-pull-secret
   # TLS for end-to-end encrypted transport
   tlsDisable: false
+  # If deploying to OpenShift
+  openshift: false
+  # Create PodSecurityPolicy for pods
+  psp:
+    enable: ${psp_enabled}
+    # Annotation for PodSecurityPolicy.
+    # This is a multi-line templated string map, and can also be set as YAML.
+    annotations: ${psp_annotations}
 
 injector:
   # True if you want to enable vault agent injection.
   enabled: ${injector_enabled}
+
+  # If true, will enable a node exporter metrics endpoint at /metrics.
+  metrics:
+    enabled: ${injector_metrics_enabled}
 
   # External vault server address for the injector to use. Setting this will
   # disable deployment of a vault server along with the injector.
@@ -288,6 +300,8 @@ server:
     storageClass: ${storage_class}
     # Access Mode of the storage device being used for the PVC
     accessMode: ReadWriteOnce
+    # Annotations to apply to the PVC
+    annotations: {}
 
   # This configures the Vault Statefulset to create a PVC for audit
   # logs.  Once Vault is deployed, initialized and unseal, Vault must
@@ -303,6 +317,8 @@ server:
     storageClass: null
     # Access Mode of the storage device being used for the PVC
     accessMode: ReadWriteOnce
+    # Annotations to apply to the PVC
+    annotations: {}
 
   # Run Vault in "dev" mode. This requires no further setup, no state management,
   # and no initialization. This is useful for experimenting with Vault without
@@ -380,10 +396,22 @@ server:
 
   # Definition of the serviceAccount used to run Vault.
   serviceAccount:
+    # Specifies whether a service account should be created
+    create: ${service_account_create}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ${service_account_name}
     # Extra annotations for the serviceAccount definition. This can either be
     # YAML or a YAML-formatted multi-line templated string map of the
     # annotations to apply to the serviceAccount.
     annotations: ${service_account_annotations}
+
+  # Settings for the statefulSet used to run Vault.
+  statefulSet:
+    # Extra annotations for the statefulSet. This can either be YAML or a
+    # YAML-formatted multi-line templated string map of the annotations to apply
+    # to the statefulSet.
+    annotations: ${sts_annotations}
 
 # Vault UI
 ui:
