@@ -12,6 +12,9 @@ image:
 
 consul:
   address: ${consul_address}
+  tls:
+    enabled: ${tls_enabled}
+    cacert: ${tls_cacert}
 
 nodeSelector: ${node_selector}
 

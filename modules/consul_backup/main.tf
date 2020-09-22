@@ -22,6 +22,8 @@ locals {
     pull_policy = var.pull_policy
 
     consul_address = var.consul_address
+    tls_enabled    = var.tls_enabled
+    tls_cacert     = var.tls_cacert != null ? jsonencode(var.tls_cacert) : "null"
 
     node_selector = jsonencode(var.node_selector)
     tolerations   = jsonencode(var.tolerations)

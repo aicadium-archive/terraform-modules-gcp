@@ -86,6 +86,17 @@ variable "consul_address" {
   default     = "consul-server.service.consul:8500"
 }
 
+variable "tls_enabled" {
+  description = "Enable TLS for Consul Server"
+  type        = bool
+  default     = false
+}
+
+variable "tls_cacert" {
+  description = "CA Certificate for Consul Server, if any"
+  default     = null
+}
+
 variable "node_selector" {
   description = "Node selector for the job"
   default     = {}
