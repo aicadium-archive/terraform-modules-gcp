@@ -11,10 +11,8 @@ GCS.
 
 Either:
 
-- A Vault server with [Kubernetes Auth Engine](https://www.vaultproject.io/docs/auth/kubernetes.html)
-    configured for the job to authenticate and a
-    [GCP Secrets Engine](https://www.vaultproject.io/docs/secrets/gcp/index.html) mounted.
 - GKE cluster with Workload Identity enabled
+- Service Account Key
 
 ## Providers
 

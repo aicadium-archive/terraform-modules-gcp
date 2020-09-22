@@ -1,12 +1,3 @@
-resource "google_service_account" "workload_identity" {
-  count = var.enable_workload_identity ? 1 : 0
-
-  account_id   = var.workload_identity_service_account
-  display_name = "Consul Backup"
-  description  = "Performs Backup from Consul to GCS"
-  project      = var.gcp_bucket_project
-}
-
 resource "google_service_account_iam_member" "workload_identity" {
   count = var.enable_workload_identity ? 1 : 0
 

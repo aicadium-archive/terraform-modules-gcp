@@ -22,19 +22,7 @@ affinity: ${affinity}
 gcs:
   bucket: ${gcs_bucket}
   prefix: ${gcs_prefix}
-
-vault:
-  enabled: ${enable_vault_agent}
-  pullPolicy: IfNotPresent
-  address: ${vault_address}
-  # PEM encoded CA used to issue Vault's Certificate
-  ca: ${vault_ca}
-  auth:
-    path: ${vault_auth_path}
-    role: ${vault_auth_role}
-  gcp:
-    path: ${vault_gcp_path}
-  env: []
+  serviceAccountKey: ${service_account_key}
 
 env: ${env}
 

@@ -1,26 +1,19 @@
 resource "helm_release" "consul_backup" {
   name       = var.release_name
   chart      = var.chart_name
-  repository = data.helm_repository.selected.metadata[0].name
+  repository = var.chart_repository_url
   version    = var.chart_version
   namespace  = var.namespace
 
   max_history = var.max_history
 
   values = [
-    data.template_file.values.rendered,
+    templatefile("${path.module}/templates/values.yaml", local.values),
   ]
 }
 
-data "helm_repository" "selected" {
-  name = var.chart_repository
-  url  = var.chart_repository_url
-}
-
-data "template_file" "values" {
-  template = file("${path.module}/templates/values.yaml")
-
-  vars = {
+locals {
+  values = {
     schedule = var.schedule
     env      = jsonencode(var.env)
 
@@ -37,19 +30,12 @@ data "template_file" "values" {
     gcs_bucket = var.gcp_bucket_name
     gcs_prefix = var.gcs_prefix
 
-    vault_address = var.vault_address
-    vault_ca      = jsonencode(var.vault_ca)
-
-    enable_vault_agent = var.enable_vault_agent
-    vault_auth_path    = var.kubernetes_auth_path
-    vault_auth_role    = var.enable_vault_agent ? vault_kubernetes_auth_backend_role.job[0].role_name : ""
+    service_account_key = var.create_service_account_key ? jsonencode(google_service_account_key.key[0].private_key) : "null"
 
     service_account = var.service_account_name
     service_account_annotations = jsonencode(var.enable_workload_identity ? {
       "iam.gke.io/gcp-service-account" = var.enable_workload_identity ? google_service_account.workload_identity[0].email : ""
     } : {})
-
-    vault_gcp_path = local.gcp_secret_path
 
     ttl_seconds = var.ttl_seconds
   }
@@ -66,4 +52,18 @@ resource "google_project_iam_custom_role" "object_writer" {
   ]
 
   project = var.gcp_bucket_project
+}
+
+resource "google_service_account" "workload_identity" {
+  count = var.enable_workload_identity || var.create_service_account_key ? 1 : 0
+
+  account_id   = var.workload_identity_service_account
+  display_name = "Consul Backup"
+  description  = "Performs Backup from Consul to GCS"
+  project      = var.gcp_bucket_project
+}
+
+resource "google_service_account_key" "key" {
+  count              = var.create_service_account_key ? 1 : 0
+  service_account_id = google_service_account.workload_identity[0].name
 }
