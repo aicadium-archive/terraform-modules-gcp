@@ -1,7 +1,7 @@
 resource "helm_release" "cloudsql_backup" {
   name       = var.release_name
   chart      = var.chart_name
-  repository = data.helm_repository.selected.metadata[0].name
+  repository = var.chart_repository_url
   version    = var.chart_version
   namespace  = var.namespace
 
@@ -10,11 +10,6 @@ resource "helm_release" "cloudsql_backup" {
   values = [
     data.template_file.values.rendered,
   ]
-}
-
-data "helm_repository" "selected" {
-  name = var.chart_repository
-  url  = var.chart_repository_url
 }
 
 locals {

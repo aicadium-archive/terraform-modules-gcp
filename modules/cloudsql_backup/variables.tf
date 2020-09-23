@@ -8,11 +8,6 @@ variable "chart_name" {
   default     = "gcloud-cron"
 }
 
-variable "chart_repository" {
-  description = "Helm repository for the chart"
-  default     = "amoy"
-}
-
 variable "chart_repository_url" {
   description = "URL of the Chart Repository"
   default     = "https://charts.amoy.ai"
