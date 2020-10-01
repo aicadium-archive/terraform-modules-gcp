@@ -8,22 +8,23 @@ resource "null_resource" "certmanager_crds" {
   triggers = {
     certmanager_crd_version = var.certmanager_crd_version
     kubeconfig              = var.kubeconfig_path
+    manifest_url            = "https://raw.githubusercontent.com/jetstack/cert-manager/release-${var.certmanager_crd_version}/deploy/manifests/00-crds.yaml"
   }
 
   provisioner "local-exec" {
-    command = "kubectl apply --validate=false -f https://raw.githubusercontent.com/jetstack/cert-manager/release-${var.certmanager_crd_version}/deploy/manifests/00-crds.yaml"
+    command = "kubectl apply --validate=false -f ${self.triggers.manifest_url}"
 
     environment = {
-      KUBECONFIG = var.kubeconfig_path
+      KUBECONFIG = self.triggers.kubeconfig
     }
   }
 
   provisioner "local-exec" {
     when    = destroy
-    command = "kubectl delete -f https://raw.githubusercontent.com/jetstack/cert-manager/release-${var.certmanager_crd_version}/deploy/manifests/00-crds.yaml"
+    command = "kubectl delete -f ${self.triggers.manifest_url}"
 
     environment = {
-      KUBECONFIG = var.kubeconfig_path
+      KUBECONFIG = self.triggers.kubeconfig
     }
   }
 }
@@ -34,7 +35,7 @@ resource "helm_release" "certmanager" {
   depends_on = [null_resource.certmanager_crds]
 
   name       = "cert-manager"
-  repository = data.helm_repository.repository[0].metadata[0].name
+  repository = "https://charts.amoy.ai"
   version    = var.certmanager_chart_version
   chart      = "cert-manager-aio"
 
@@ -43,13 +44,6 @@ resource "helm_release" "certmanager" {
   max_history = var.max_history
 
   values = concat([data.template_file.certmanager[0].rendered], var.additional_values)
-}
-
-data "helm_repository" "repository" {
-  count = local.certmanager_enabled
-
-  name = "amoy"
-  url  = "https://charts.amoy.ai"
 }
 
 data "template_file" "certmanager" {
