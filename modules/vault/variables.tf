@@ -35,7 +35,7 @@ variable "chart_repository" {
 
 variable "chart_version" {
   description = "Version of Chart to install. Set to empty to install the latest version"
-  default     = "0.7.0"
+  default     = "0.8.0"
 }
 
 variable "max_history" {
@@ -87,6 +87,11 @@ variable "injector_metrics_enabled" {
   default     = false
 }
 
+variable "injector_failure_policy" {
+  description = "Configures failurePolicy of the webhook. Default behaviour depends on the admission webhook version. See https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy"
+  default     = null
+}
+
 variable "external_vault_addr" {
   description = "External vault server address for the injector to use. Setting this will disable deployment of a vault server along with the injector."
   default     = ""
@@ -99,7 +104,7 @@ variable "injector_image_repository" {
 
 variable "injector_image_tag" {
   description = "Image tag for Vault Injector"
-  default     = "0.5.0"
+  default     = "0.6.0"
 }
 
 variable "injector_log_level" {
