@@ -66,6 +66,12 @@ injector:
   #      sidecar-injector: enabled
   namespaceSelector: ${namespace_selector}
 
+  # Configures failurePolicy of the webhook. By default webhook failures are ignored.
+  # To block pod creation while webhook is unavailable, set the policy to `Fail` below.
+  # See https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy
+  #
+  failurePolcy: ${injector_failure_policy}
+
   certs:
     # secretName is the name of the secret that has the TLS certificate and
     # private key to serve the injector webhook. If this is null, then the
@@ -93,7 +99,7 @@ injector:
   #     memory: 256Mi
   #     cpu: 250m
 
-  # extraEnvironmentVars is a list of extra enviroment variables to set in the
+  # extraEnvironmentVars is a list of extra environment variables to set in the
   # injector deployment.
   extraEnvironmentVars: ${injector_env}
     # KUBERNETES_SERVICE_HOST: kubernetes.default.svc
@@ -117,6 +123,11 @@ injector:
 
   # Priority class for injector pods
   priorityClassName: "${injector_priority_class_name}"
+
+  # Extra annotations to attach to the injector pods
+  # This can either be YAML or a YAML-formatted multi-line templated string map
+  # of the annotations to apply to the injector pods
+  annotations: {}
 
 server:
   # Resource requests, limits, etc. for the server cluster placement. This
@@ -184,23 +195,42 @@ server:
     enabled: ${server_readiness_probe_enable}
     # If you need to use a http path instead of the default exec
     path: ${server_readiness_probe_path}
+    # When a probe fails, Kubernetes will try failureThreshold times before giving up
+    failureThreshold: 2
+    # Number of seconds after the container has started before probe initiates
+    initialDelaySeconds: 5
+    # How often (in seconds) to perform the probe
+    periodSeconds: 5
+    # Minimum consecutive successes for the probe to be considered successful after having failed
+    successThreshold: 1
+    # Number of seconds after which the probe times out.
+    timeoutSeconds: 3
   # Used to enable a livenessProbe for the pods
   livenessProbe:
     enabled: ${server_liveness_probe_enable}
     path: ${server_liveness_probe_path}
+    # When a probe fails, Kubernetes will try failureThreshold times before giving up
+    failureThreshold: 2
+    # Number of seconds after the container has started before probe initiates
     initialDelaySeconds: 60
+    # How often (in seconds) to perform the probe
+    periodSeconds: 5
+    # Minimum consecutive successes for the probe to be considered successful after having failed
+    successThreshold: 1
+    # Number of seconds after which the probe times out.
+    timeoutSeconds: 3
 
   # Used to set the sleep time during the preStop step
   preStopSleepSeconds: 5
 
-  # extraEnvironmentVars is a list of extra enviroment variables to set with the stateful set. These could be
+  # extraEnvironmentVars is a list of extra environment variables to set with the stateful set. These could be
   # used to include variables required for auto-unseal.
   extraEnvironmentVars: ${server_env}
     # GOOGLE_REGION: global
     # GOOGLE_PROJECT: myproject
     # GOOGLE_APPLICATION_CREDENTIALS: /vault/userconfig/myproject/myproject-creds.json
 
-  # extraSecretEnvironmentVars is a list of extra enviroment variables to set with the stateful set.
+  # extraSecretEnvironmentVars is a list of extra environment variables to set with the stateful set.
   # These variables take value from existing Secret objects.
   extraSecretEnvironmentVars: ${server_secret_env}
     # - envName: AWS_SECRET_ACCESS_KEY
@@ -240,6 +270,10 @@ server:
   # nodeSelector: |
   #   beta.kubernetes.io/arch: amd64
   nodeSelector: {}
+
+  # Enables network policy for server pods
+  networkPolicy:
+    enabled: false
 
   # Priority class for server pods
   priorityClassName: "${server_priority_class_name}"
@@ -295,6 +329,8 @@ server:
     enabled: ${data_storage_enable}
     # Size of the PVC created
     size: ${data_storage_size}
+    # Location where the PVC will be mounted.
+    mountPath: "/vault/audit"
     # Name of the storage class to use.  If null it will use the
     # configured default Storage Class.
     storageClass: ${storage_class}
@@ -312,6 +348,8 @@ server:
     enabled: false
     # Size of the PVC created
     size: 10Gi
+    # Location where the PVC will be mounted.
+    mountPath: "/vault/audit"
     # Name of the storage class to use.  If null it will use the
     # configured default Storage Class.
     storageClass: null
@@ -395,6 +433,8 @@ server:
       maxUnavailable: null
 
   # Definition of the serviceAccount used to run Vault.
+  # These options are also used when using an external Vault server to validate
+  # Kubernetes tokens.
   serviceAccount:
     # Specifies whether a service account should be created
     create: ${service_account_create}
