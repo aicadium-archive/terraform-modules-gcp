@@ -55,7 +55,7 @@ locals {
     namespace_selector = jsonencode(var.namespace_selector)
 
     injector_metrics_enabled = var.injector_metrics_enabled
-    injector_failure_policy  = yamlencode(var.injector_failure_policy)
+    injector_failure_policy  = var.injector_failure_policy != null ? var.injector_failure_policy : "null"
 
     ####################################
     # Server
