@@ -196,18 +196,19 @@ unsealing Vault if the nodes have access to the keys.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | agent\_image\_repository | Image repository for the Vault agent that is injected | `string` | `"vault"` | no |
-| agent\_image\_tag | Image tag for the Vault agent that is injected | `string` | `"1.4.0"` | no |
+| agent\_image\_tag | Image tag for the Vault agent that is injected | `string` | `"1.5.2"` | no |
+| api\_addr | Set the api\_addr configuration for Vault HA. See https://www.vaultproject.io/docs/configuration#api_addr If set to null, this will be set to the Pod IP Address | `any` | `null` | no |
 | auth\_path | Mount path of the Kubernetes Auth Engine that the injector will use | `string` | `"auth/kubernetes"` | no |
-| chart\_name | Helm chart name to provision | `string` | `"https://github.com/hashicorp/vault-helm/archive/master.tar.gz"` | no |
-| chart\_repository | Helm repository for the chart | `string` | `""` | no |
-| chart\_version | Version of Chart to install. Set to empty to install the latest version | `string` | `""` | no |
+| chart\_name | Helm chart name to provision | `string` | `"vault"` | no |
+| chart\_repository | Helm repository for the chart | `string` | `"https://helm.releases.hashicorp.com"` | no |
+| chart\_version | Version of Chart to install. Set to empty to install the latest version | `string` | `"0.8.0"` | no |
 | enable\_auth\_delegator | uthDelegator enables a cluster role binding to be attached to the service account.  This cluster role binding can be used to setup Kubernetes auth method. https://www.vaultproject.io/docs/auth/kubernetes.html | `bool` | `true` | no |
 | external\_vault\_addr | External vault server address for the injector to use. Setting this will disable deployment of a vault server along with the injector. | `string` | `""` | no |
 | fullname\_override | Helm resources full name override | `string` | `""` | no |
 | gcs\_extra\_parameters | Additional paramaters for GCS storage. See https://www.vaultproject.io/docs/configuration/storage/google-cloud-storage | `map` | `{}` | no |
 | gcs\_storage\_enable | Enable the use of GCS Storage | `any` | n/a | yes |
 | gcs\_storage\_use | Use GCS storage in Vault configuration. Setting this to false allows GCS storage resouces to be created but not used with Vault | `bool` | `true` | no |
-| gke\_cluster | Cluster to create node pool for | `string` | `"\u003cREQUIRED if gke_pool_create is true\u003e"` | no |
+| gke\_cluster | Cluster to create node pool for | `string` | `"<REQUIRED if gke_pool_create is true>"` | no |
 | gke\_disk\_type | Disk type for the nodes | `string` | `"pd-standard"` | no |
 | gke\_labels | Labels for the GKE nodes | `map` | `{}` | no |
 | gke\_machine\_type | Machine type for the GKE nodes. Make sure this matches the resources you are requesting | `string` | `"n1-standard-2"` | no |
@@ -217,7 +218,7 @@ unsealing Vault if the nodes have access to the keys.
 | gke\_node\_upgrade\_settings | Surge upgrade settings as per https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-upgrades#surge | `object({ max_surge = number, max_unavailable = number })` | <pre>{<br>  "max_surge": 1,<br>  "max_unavailable": 0<br>}</pre> | no |
 | gke\_node\_upgrade\_settings\_enabled | Enable/disable gke node pool surge upgrade settings | `bool` | `false` | no |
 | gke\_pool\_create | Whether to create the GKE node pool or not | `bool` | `false` | no |
-| gke\_pool\_location | Location for the node pool | `string` | `"\u003cREQUIRED if gke_pool_create is true\u003e"` | no |
+| gke\_pool\_location | Location for the node pool | `string` | `"<REQUIRED if gke_pool_create is true>"` | no |
 | gke\_pool\_name | Name of the GKE Pool name to create | `string` | `"vault"` | no |
 | gke\_tags | Network tags for the GKE nodes | `list` | `[]` | no |
 | gke\_taints | List of map of taints for GKE nodes. It is highly recommended you do set this alongside the pods toleration. See https://www.terraform.io/docs/providers/google/r/container_cluster.html#key for the keys and the README for more information | `list` | `[]` | no |
@@ -230,10 +231,12 @@ unsealing Vault if the nodes have access to the keys.
 | injector\_affinity | YAML string for injector pod affinity | `string` | `""` | no |
 | injector\_enabled | Enable Vault Injector | `bool` | `true` | no |
 | injector\_env | Extra environment variable for the injector pods | `map` | `{}` | no |
+| injector\_failure\_policy | Configures failurePolicy of the webhook. Default behaviour depends on the admission webhook version. See https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy | `any` | `null` | no |
 | injector\_image\_repository | Image repository for Vault Injector | `string` | `"hashicorp/vault-k8s"` | no |
-| injector\_image\_tag | Image tag for Vault Injector | `string` | `"0.3.0"` | no |
+| injector\_image\_tag | Image tag for Vault Injector | `string` | `"0.6.0"` | no |
 | injector\_log\_format | Log format for the injector. standard or json | `string` | `"standard"` | no |
 | injector\_log\_level | Log level for the injector. Supported log levels: trace, debug, error, warn, info | `string` | `"info"` | no |
+| injector\_metrics\_enabled | enable a node exporter metrics endpoint at /metrics | `bool` | `false` | no |
 | injector\_priority\_class\_name | Priority class name for injector pods | `string` | `""` | no |
 | injector\_resources | Resources for the injector | `map` | <pre>{<br>  "limits": {<br>    "cpu": "250m",<br>    "memory": "256Mi"<br>  },<br>  "requests": {<br>    "cpu": "250m",<br>    "memory": "256Mi"<br>  }<br>}</pre> | no |
 | injector\_tolerations | YAML string for injector tolerations | `string` | `""` | no |
@@ -248,6 +251,8 @@ unsealing Vault if the nodes have access to the keys.
 | namespace\_selector | The selector for restricting the webhook to only specific namespaces. See https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#matching-requests-namespaceselector for more details. | `map` | `{}` | no |
 | node\_port | If type is set to 'NodePort', a specific nodePort value can be configured, will be random if left blank. | `string` | `"30000"` | no |
 | project\_id | Project ID for GCP Resources | `any` | n/a | yes |
+| psp\_annotations | Template YAML string for PSP annotations | `string` | `"seccomp.security.alpha.kubernetes.io/allowedProfileNames: docker/default,runtime/default\napparmor.security.beta.kubernetes.io/allowedProfileNames: runtime/default\nseccomp.security.alpha.kubernetes.io/defaultProfileName:  runtime/default\napparmor.security.beta.kubernetes.io/defaultProfileName:  runtime/default\n"` | no |
+| psp\_enabled | Enable PSP | `bool` | `false` | no |
 | raft\_backup\_max\_retention\_days | Maximum daily age of the snapshot that is allowed to be kept. | `number` | `14` | no |
 | raft\_backup\_policy | Data disk backup policy name | `string` | `"vault-data-backup"` | no |
 | raft\_disk\_labels | Override labels for Raft GCE PD resources. Will use `var.labels` if set to null | `map(string)` | `null` | no |
@@ -280,7 +285,7 @@ unsealing Vault if the nodes have access to the keys.
 | server\_extra\_args | Extra args for the server | `string` | `""` | no |
 | server\_extra\_containers | Extra containers for Vault server as a raw YAML string | `string` | `""` | no |
 | server\_image\_repository | Server image repository | `string` | `"vault"` | no |
-| server\_image\_tag | Server image tag | `string` | `"1.4.0"` | no |
+| server\_image\_tag | Server image tag | `string` | `"1.5.2"` | no |
 | server\_labels | Labels for server | `map` | `{}` | no |
 | server\_liveness\_probe\_enable | Enable server liness probe | `bool` | `true` | no |
 | server\_liveness\_probe\_path | Server liveness probe path | `string` | `"/v1/sys/health?standbyok=true"` | no |
@@ -295,6 +300,8 @@ unsealing Vault if the nodes have access to the keys.
 | server\_update\_strategy | Configure the Update Strategy Type for the StatefulSet. See https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies | `string` | `"RollingUpdate"` | no |
 | server\_volumes | Extra volumes for server | `list` | `[]` | no |
 | service\_account\_annotations | Annotations for service account | `map` | `{}` | no |
+| service\_account\_create | Create service account for server | `bool` | `true` | no |
+| service\_account\_name | Override name for service account | `string` | `""` | no |
 | service\_annotations | Annotations for the service | `map` | `{}` | no |
 | service\_type | Service type for Vault | `string` | `"ClusterIP"` | no |
 | storage\_bucket\_class | Storage class of the bucket. See https://cloud.google.com/storage/docs/storage-classes | `string` | `"REGIONAL"` | no |
@@ -305,6 +312,7 @@ unsealing Vault if the nodes have access to the keys.
 | storage\_ha\_enabled | Use the GCS bucket to provide HA for Vault. Set to false if you are using alternative HA storage like Consul | `bool` | `true` | no |
 | storage\_key\_name | Name of the Vault storage key | `string` | `"storage"` | no |
 | storage\_key\_rotation\_period | Rotation period of the Vault storage key. Defaults to 90 days | `string` | `"7776000s"` | no |
+| sts\_annotations | Annotations for server StatefulSet | `map` | `{}` | no |
 | timeout | Time in seconds to wait for any individual kubernetes operation. | `number` | `600` | no |
 | tls\_cert\_ca | PEM encoded CA for Vault | `any` | n/a | yes |
 | tls\_cert\_key | PEM encoded private key for Vault | `any` | n/a | yes |
@@ -326,7 +334,7 @@ unsealing Vault if the nodes have access to the keys.
 | vault\_node\_service\_account | Service Account for Vault Node Pools if Workload Identity is enabled | `string` | `"vault-gke-node"` | no |
 | vault\_server\_location\_description | Location of Vault server to put in description strings of resources | `string` | `""` | no |
 | vault\_server\_service\_account | Service Account name for the Vault Server | `string` | `"vault-server"` | no |
-| vault\_service\_account | Required if you did not create a node pool. This should be the service account that is used by the nodes to run Vault workload. They will be given additional permissions to use the keys for auto unseal and to write to the storage bucket | `string` | `"\u003cREQUIRED if not creating GKE node pool\u003e"` | no |
+| vault\_service\_account | Required if you did not create a node pool. This should be the service account that is used by the nodes to run Vault workload. They will be given additional permissions to use the keys for auto unseal and to write to the storage bucket | `string` | `"<REQUIRED if not creating GKE node pool>"` | no |
 | workload\_identity\_enable | Enable Workload Identity on the GKE Node Pool. For more information, see https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity | `bool` | `false` | no |
 | workload\_identity\_project | Project to Create the Service Accoutn for Vault Pods  if Workload Identity is enabled. Defaults to the GKE project. | `string` | `""` | no |
 

@@ -124,6 +124,7 @@ locals {
     replicas         = var.server_replicas
     raft_enable      = var.raft_storage_enable && var.raft_storage_use
     raft_set_node_id = var.raft_set_node_id
+    api_addr         = var.api_addr != null ? jsonencode(var.api_addr) : "null"
 
     server_configuration = jsonencode(local.server_configuration)
   }

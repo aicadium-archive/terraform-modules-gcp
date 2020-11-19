@@ -158,7 +158,7 @@ variable "agent_image_repository" {
 
 variable "agent_image_tag" {
   description = "Image tag for the Vault agent that is injected"
-  default     = "1.5.2"
+  default     = "1.6.0"
 }
 
 variable "auth_path" {
@@ -188,7 +188,7 @@ variable "server_image_repository" {
 
 variable "server_image_tag" {
   description = "Server image tag"
-  default     = "1.5.2"
+  default     = "1.6.0"
 }
 
 variable "server_update_strategy" {
@@ -437,6 +437,11 @@ variable "tls_cipher_suites" {
 variable "unauthenticated_metrics_access" {
   description = "If set to true, allows unauthenticated access to the /v1/sys/metrics endpoint."
   default     = false
+}
+
+variable "api_addr" {
+  description = "Set the api_addr configuration for Vault HA. See https://www.vaultproject.io/docs/configuration#api_addr If set to null, this will be set to the Pod IP Address"
+  default     = null
 }
 
 variable "server_config" {
